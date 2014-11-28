@@ -1,0 +1,129 @@
+.wraper-container {
+    clear: both;
+    min-height: 328px;
+    width: 960px;
+    margin: 0px auto;
+}
+
+.left {
+    float: left;
+    width: 50%;
+    padding-bottom: 20px;
+    height: 100%;
+}
+
+.containers {
+    float: right;
+    width: 50%;
+    height: 100%;
+}
+
+.mapContainer, .mapContainerGBIF {
+    height: 600px;
+    width: 48%;
+}
+
+.mapContainer {
+    float: left;
+}
+
+.mapContainerGBIF {
+    float: right;
+}
+
+.nombre-completo {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.subtitulo {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#contribucionBarrasREUNA, #contribucionBarrasGBIF {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: -20px;
+    height: 230px;
+}
+
+.busqueda {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#reunaGbifBarras {
+    margin-left: -20px;
+    height: 250px;
+    bottom: 0;
+}
+
+.parrafo {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    text-align: justify;
+    text-justify: auto;
+}
+
+#institucionPieREUNA,#REUNATable{
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    width: 47%;
+}
+
+#institucionPieGBIF, #GBIFTable {
+    float: right;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    width: 47%;
+}
+.key{
+    float:left;
+    width: 90%;
+}
+.value{
+    float:right;
+    width: 10%;
+}
+.tableElement{
+    clear:both;
+    margin-bottom: 5px;
+    overflow: hidden;
+    border-bottom: 2px solid #a1a1a1;
+}
+.vernacular{
+    margin-top: 5px;
+}
+#GbifStacked,#ReunaStacked{
+    margin-left: -20px;
+    height: 200px;
+    bottom: 0;
+}
+#amount{
+    border:0;
+    position:relative;
+    bottom: -36px;
+    color:#f6931f;
+    font-weight:bold;
+}
+#slider-range{
+    clear: both;
+    bottom: -30px;
+}
+.mapTitle{
+    font-weight: bold;
+    text-align: center;
+}
+.tableRow{
+    color: #444444;
+    font-weight: bold;
+    width:90%;
+    float: left;
+}
+.error {
+    display: none;
+}

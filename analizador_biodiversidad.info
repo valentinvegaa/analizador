@@ -1,0 +1,3 @@
+name = Analizador Biodiversidad
+description = Analizador de Biodiversidad Instituto de Ciencias Forestales de la UACh.
+core = 7.x

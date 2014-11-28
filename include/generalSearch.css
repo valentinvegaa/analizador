@@ -1,0 +1,51 @@
+.scientificName{
+    font-size: 1.2em;
+    font-weight: bolder;
+    border-bottom: 1px solid #444444;
+    text-decoration: none;
+}
+.title {
+    color: #f6931f;
+    font-size: 1.2em;
+    font-weight: bolder;
+}
+.subtitle{
+    padding-left: 20px;
+}
+.result {
+    padding: 20px;
+    margin-bottom: 10px;
+    /*border: 1px solid;
+    border-color: #f6931f;
+    border-radius: 5px;*/
+}
+.url{
+    margin-top: 10px;
+}
+a:link {
+    color: #000000;
+    text-decoration: none;
+}
+
+.ui-widget-header {
+    border: 0px;
+    border-bottom: 1px solid #aaaaaa;
+    background: none;
+}
+
+.ui-tabs, .ui-tabs-nav {
+    padding: 0;
+}
+
+.ui-widget-content {
+    background: none;
+    border: none;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 1em 0px 1.4em 0px;
+}
+
+.ui-border-all {
+    border-radius: 0px;
+}

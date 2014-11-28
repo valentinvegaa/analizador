@@ -1,0 +1,8 @@
+h1.page-title {
+    display: none;
+!important
+}
+
+div.olControlAttribution {
+    bottom: 3px;
+}

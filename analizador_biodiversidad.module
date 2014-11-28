@@ -1,0 +1,211 @@
+<?php
+/**
+ * @file
+ * A description of what your module does.
+ */
+/**
+ * Implements hook_permission().
+ */
+function analizador_biodiversidad_permission()
+{
+    return array(
+        'access analizador' => array(
+            'title' => t('Access analizador'),
+            'description' => t('Access analizador on this site'),
+        ),
+    );
+}
+
+/**
+ *  Implements hook_menu().
+ */
+function analizador_biodiversidad_menu()
+{
+    $items = array();
+    $items['analizador'] = array(
+        'title' => 'Analizador de Biodiversidad',
+        'page callback' => 'analizador_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
+    $items['analizador/species/%'] = array(
+        'title' => 'Species search',
+        'page callback' => 'species_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
+    $items['analizador/genus/%'] = array(
+        'title' => 'Genus search',
+        'page callback' => 'species_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
+    $items['analizador/family/%'] = array(
+        'title' => 'Family search',
+        'page callback' => 'species_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
+    $items['admin/settings/analizador_biodiversidad'] = array(
+        'title' => 'Analizador',
+        'description' => 'Settings Analizador Biodiversidad',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('analizador_biodiversidad_admin'),
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('administer analizador_biodiversidad settings'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+function species_callback()
+{
+    $path = drupal_get_path('module', 'analizador_biodiversidad');
+    $content['overlay'] = array(
+        '#attached' => array(
+            'css' => array(
+                $path . '/include/busqueda_especies.css',
+            ),
+            'library' => array(
+                array('system', 'ui.autocomplete'),
+                array('system', 'ui.slider'),
+                array('system', 'ui.tabs'),
+            ),
+        ),
+    );
+    $content['overlay']['#attached']['js'] = array(
+        'http://openlayers.org/en/v3.0.0/build/ol.js' => array(
+            'type' => 'external',
+        ),
+        $path . '/highcharts/js/highcharts.js' => array(
+            'type' => 'file',
+        ),
+    );
+    return $content;
+}
+
+function analizador_callback()
+{
+    $path = drupal_get_path('module', 'analizador_biodiversidad');
+    $content['overlay'] = array(
+        '#attached' => array(
+            'css' => array(
+                $path . '/include/analizador.css',
+                $path . '/include/generalSearch.css',
+            ),
+            'library' => array(
+                array('system', 'ui.autocomplete'),
+                array('system', 'ui.slider'),
+                array('system', 'ui.tabs'),
+            ),
+        ),
+    );
+
+    $content['overlay']['#attached']['js'] = array(
+        'http://openlayers.org/en/v3.0.0/build/ol.js' => array(
+            'type' => 'external',
+        ),
+        $path . '/highcharts/js/highcharts.js' => array(
+            'type' => 'file',
+        ),
+    );
+    return $content;
+}
+
+/**
+ * Implements hook_admin().
+ */
+function analizador_biodiversidad_admin()
+{
+    $form = array();
+    $var1 = variable_get('desc_chart_1');
+    $var2 = variable_get('desc_chart_2');
+    $var3 = variable_get('desc_chart_3');
+    $form['desc_chart_1'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Descripción del primer gráfico.'),
+        '#default_value' => $var1['value'],
+        '#description' => t("Descripción del primer gráfico."),
+        '#format' => $var1['format'],
+    );
+    $form['desc_chart_2'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Descripción del segundo gráfico.'),
+        '#default_value' => $var2['value'],
+        '#description' => t("Descripción del segundo gráfico."),
+        '#format' => 'full_html',
+    );
+    $form['desc_chart_3'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Descripción del tercer gráfico.'),
+        '#default_value' => $var3['value'],
+        '#description' => t("Descripción del tercer gráfico."),
+        '#format' => 'full_html',
+    );
+
+    return system_settings_form($form);
+}
+
+/**
+ *  Implements hook_block_list_alter().
+ */
+function analizador_biodiversidad_block_list_alter(&$blocks)
+{
+    if (current_path() === 'analizador'
+        || drupal_match_path(current_path(), "analizador/species/*")
+        || drupal_match_path(current_path(), "analizador/genus/*")
+        || drupal_match_path(current_path(), "analizador/family/*")
+    ) {
+        foreach ($blocks as $i => $block) {
+            if ('sidebar_first' === $block->region) {
+                unset($blocks[$i]);
+            }
+        }
+    } else {
+        return;
+    }
+}
+
+function analizador_biodiversidad_theme()
+{
+    return array(
+        'analizador_page' => array(
+            'template' => 'theme/analizador_page',
+            'render element' => 'page'
+        ),
+        'species_page' => array(
+            'template' => 'theme/species_page',
+            'render element' => 'page',
+        ),
+        'genus_page' => array(
+            'template' => 'theme/genus_page',
+            'render element' => 'page',
+        ),
+        'family_page' => array(
+            'template' => 'theme/family_page',
+            'render element' => 'page',
+        ),
+    );
+}
+
+function analizador_biodiversidad_preprocess_page(&$variables, $hook)
+{
+    if (current_path() === 'analizador') {
+        $variables['theme_hook_suggestions'][] = 'analizador_page';
+    }
+    if (drupal_match_path(current_path(), "analizador/species/*")) {
+        $variables['theme_hook_suggestions'][] = 'species_page';
+    }
+    if (drupal_match_path(current_path(), "analizador/genus/*")) {
+        $variables['theme_hook_suggestions'][] = 'genus_page';
+    }
+    if (drupal_match_path(current_path(), "analizador/family/*")) {
+        $variables['theme_hook_suggestions'][] = 'family_page';
+    }else {
+        return;
+    }
+}
