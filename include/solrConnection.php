@@ -6,7 +6,7 @@
  * Time: 23:56
  */
 $USR = "biosolr";
-$PSWD = "Biodiversid@d2013Reuna";
-$HOST = "bio-nl01-apl.reuna.cl";
-$PORT = 8080;
-$SOLRPATH = '/solr/';
+$PSWD = "analizador2014";
+$HOST = "fcm-ucn.redbiodiversidad.cl";
+$PORT = 80;
+$SOLRPATH = "/solr/coleccionBio/";

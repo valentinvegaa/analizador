@@ -12,8 +12,8 @@ $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
 //echo $path . '_path';
 echo 'specieskey: ' . $speciesKey;
-//var_dump($yearCount);
 //var_dump($yearCountGbif);
+var_dump($categoriesGBIF);
 ?>
 <!--<div>
     <form  accept-charset="utf-8" method="post">
@@ -21,25 +21,52 @@ echo 'specieskey: ' . $speciesKey;
         <input type="submit" value="Search"/>
     </form>
 </div>-->
-<div class="nombre-completo"><?php if (isset($speciesFound[0])) echo $speciesFound[0]; ?> <span style="color: darkgray">(SPECIES)</span>
+<div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
 </div>
-<div class="wraper-container" style="border: thick; border-color: black;">
-    <div class="left">
-        <div class="texto">
-            <b style="font-size: 11px;">Database ocurrences</b><br>
-            <b>REUNA: <?php echo $totalReuna; ?></b> observations <span
-                style="color: darkgray">(<?php echo $totalReunaConCoordenadas; ?> georeferenced)</span><br>
-            <b>GBIF: <?php echo $totalGBIF;//count(explode(',',$coordYearsGBIF))-1;//antes era $totalGBIF (-1 pq usa un arreglo terminado en coma)?></b>
-            observations<br>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
+Explore los resultados:
+<div style="margin:20px 0 20px 0;">
+    <!--<div class="top-index">
+        <div class="title-a">Composición Taxonómica</div>
+        <div class="line"><a href="#ReunaStacked"><span><?php //echo sizeof($taxonChildrens);?> Géneros</span> en la base de datos REUNA.</a></div>
+        <div class="line"><a href="#GbifStacked"><span><?php //echo sizeof($familyChildrens);?> Géneros</span> en la base de datos GBIF.</a></div>
+        <div class="endline">Último género de la Familia ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
+    </div>-->
+    <div class="bottom-index">
+        <div class="left">
+            <div id="left-index-a">
+                <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
+                <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)));?></span> años con registros en la base de datos Reuna</div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
+                <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+                <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
+            </div>
+            <div id="left-index-b">
+                <div class="title-b"><a href="#institucion">Instituciones</a></div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+            </div>
         </div>
+        <div id="top-rb-index">
+            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
+            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
+        </div>
+    </div>
+</div>
+<div class="wraper-container">
+    <div class="left" id="temporal">
+        <div class="title-a subtitulo">Distribución Temporal</div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
         <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div>
-        <div id="reunaGbifBarras" class="column_12"></div>
+        <div id="reunaGbifBarras"></div>
+        <div id="acumuladas"></div>
     </div>
     <div id="containers" class="containers">
-        <div class="subtitulo">Georeferenced Data</div>
+        <div class="title-a subtitulo" id="geografica">Distribución Geográfica</div>
+        <div style="margin-left:10px;"><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
         <div id="mapContainer" class="mapContainer">
             <div style="font-weight: bold;text-align: center">Reuna</div>
         </div>
@@ -52,6 +79,7 @@ echo 'specieskey: ' . $speciesKey;
     </div>
 </div>
 <div class="wraper-container" style="padding-top: 40px;">
+    <div class="title-a subtitulo" id="institucion">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
     <div style="width: 45%;float:left"><b>Contributors</b> to <?php if (isset($specie)) echo $specie; ?> records <span
             style="color: darkgray">REUNA Database</span></div>
@@ -62,15 +90,15 @@ echo 'specieskey: ' . $speciesKey;
 
     <div id="institucionPieGBIF" class="institucionPie"></div>
     <div id="REUNATable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:90%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:10%;float: right">Value</div></div>';
+        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
         foreach($institutionNames as $key=>$value){
             print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
         }
         ?></div>
     <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:90%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:10%;float: right">Value</div></div>';
+        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
         foreach($institutionNamesGBIF as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
         }
         ?></div>
 </div>
@@ -83,7 +111,7 @@ function changeFeatures(first, last) {
     var j = 0;
     var k = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        if (coordYearsReuna[k] < last && coordYearsReuna[k] >= first) {
+        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
             var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
             newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
             j++;
@@ -95,7 +123,7 @@ function changeFeatures(first, last) {
     var j = 0;
     var k = 0;
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] < last) {
+        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
             var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
             newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
             j++;
@@ -127,7 +155,7 @@ function changeFeatures(first, last) {
             $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
         }
     };
-    var chartREUNA, colors = Highcharts.getOptions().colors;
+    var chartREUNA, chartAccumulated, colors = Highcharts.getOptions().colors;
     var chartGBIF;
     var decadas = [];
 
@@ -232,6 +260,31 @@ function changeFeatures(first, last) {
         }
         return [out, decadas];
     }
+    function setAccumulatedYears(yearCount){
+        var result=[];
+        var year=new Date().getFullYear();
+        var n=0;
+        var last=0;
+        for(var i=0;i<=20;i++){
+            if(typeof yearCount[year-20+i]!=='undefined'){
+                n=yearCount[year-20+i];
+            }
+            else{n=0;}
+            last+=n;
+            result.push(last);
+        }
+        return result;
+    }
+    function setCategoryYears(){
+        var result=[];
+        var year=new Date().getFullYear();
+        var n=0;
+        for(var i=0;i<=20;i++){
+            n=year-20+i;
+            result.push(n.toString());
+        }
+        return result;
+    }
 
     $(document).ready(function ($) {
         var graph =<?php echo json_encode($institutionNames); ?>;
@@ -275,7 +328,11 @@ function changeFeatures(first, last) {
             }]
         });
         graph =<?php echo json_encode($institutionNamesGBIF); ?>;
+        var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+        var catNames=<?php echo json_encode($categoriesGBIF); ?>;
         data = setPieData(graph);
+        console.log(data[0]);
+        console.log(instNames);
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -284,7 +341,7 @@ function changeFeatures(first, last) {
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,
@@ -311,10 +368,10 @@ function changeFeatures(first, last) {
             series: [{
                 type: 'pie',
                 name: 'Total',
-                data: data[0]
+                data: instNames//data[0]
             }]
         });
-        $('#institucionBar').highcharts({
+        /*$('#institucionBar').highcharts({
             chart: {
                 type: 'bar'
             },
@@ -324,7 +381,7 @@ function changeFeatures(first, last) {
                 x: 15
             },
             xAxis: {
-                categories: data[1],
+                categories: catNames,//data[1],
                 title: {
                     text: null
                 }
@@ -358,13 +415,15 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             series: [{
-                name: data[1],
+                name: catNames,//data[1],
                 data: data[2]
             }]
-        });
+        });*/
         //var categories = decadas;
-        var name = 'Decade';
+        var name = 'Decada';
         var yearCount =<?php echo json_encode($yearCount); ?>;
+        var accumulatedData=setAccumulatedYears(yearCount);
+        console.log(accumulatedData);
         var tempREUNA = setYearCountData(yearCount);
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
@@ -535,6 +594,7 @@ function changeFeatures(first, last) {
 
         var monthCount =<?php echo json_encode($monthCount); ?>;
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
+        var categoryYears=setCategoryYears();
         $('#reunaGbifBarras').highcharts({
             chart: {
                 type: 'column'
@@ -581,12 +641,65 @@ function changeFeatures(first, last) {
                     data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
                 }]
         });
+        $('#acumuladas').highcharts({
+            chart: {
+                type: 'area'
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: null,
+                style: '"fontSize": "12px"'
+            },
+            xAxis: {
+                categories: categoryYears,
+                labels: {
+                    rotation: 90
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '<b>Observaciones</b>'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:8px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                area: {
+                    //pointStart: 1940,
+                    marker: {
+                        enabled: false,
+                        symbol: 'circle',
+                        radius: 2,
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Observaciones acumuladas REUNA',
+                data: accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
+            }]
+        });
+
     });
 })(jQuery);
 var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
+console.log(arrayCoordinatesGBIFInJS.length);
 console.log(coordYearsGBIF);
 var largo = (arrayCoordinatesInJS.length) / 2;
 if (largo > 0) {
@@ -651,6 +764,7 @@ var clusters = new ol.layer.Vector({
 var geoJsonSource = new ol.source.GeoJSON({
     projection: 'EPSG:3857',
     url: '<?php echo $path;?>/regiones/regiones.json'
+    //url: '<?php echo $path;?>/regiones/cuads25k_ll.geojson'
 });
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',
@@ -709,7 +823,8 @@ if (largoGBIF > 0) {
         var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
         var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        featuresGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+        featuresGBIF[j] = new ol.Feature({'visible': 'true'});
+        featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
         j++;
     }
     ;
@@ -752,6 +867,7 @@ var mapGBIF = new ol.Map({
     renderer: 'canvas',
     view: mapView
 });
+/***************************************/
 var selectClick = new ol.interaction.Select({
     condition: ol.events.condition.click,
     style: new ol.style.Style({
@@ -768,82 +884,41 @@ var selectClick = new ol.interaction.Select({
 var collection = selectClick.getFeatures();
 collection.on('add', function () {
     collection = selectClick.getFeatures();
+    var newFeaturesGBIF=[];
+    var index=0;
     collection.forEach(function (f) {
             var text = f.get('NOMBRE');
             console.log(text);
-            source.forEachFeature(function (e) {
+
+            changeFeatures(-1,3000);
+
+            sourceGBIF.forEachFeature(function (e) {
                 if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
+                    //console.log('adentro');
+                    newFeaturesGBIF[index]=e;
+                    index++;
                 }
                 else {
-                    console.log('afuera');
+                    //console.log('afuera');
                 }
             });
         }
     );
+    sourceGBIF.clear();
+    sourceGBIF.addFeatures(newFeaturesGBIF);
 
     //console.log(featuresinBox);
     //featuresSelected.push(e);
 });
 collection.on('remove', function () {
-    console.log('remove');
+    changeFeatures(-1,3000);
 });
-var selectClickGBIF = new ol.interaction.Select({
-    condition: ol.events.condition.click,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(0, 255, 0, 0.2)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 0.5
-        })
-    })
-});
-var collectionGBIF = selectClickGBIF.getFeatures();
-collectionGBIF.on('add', function () {
-    collectionGBIF = selectClickGBIF.getFeatures();
-    collectionGBIF.forEach(function (f) {
-            var text = f.get('NOMBRE');
-            console.log(text);
-            source.forEachFeature(function (e) {
-                if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
-                }
-                else {
-                    console.log('afuera');
-                }
-            });
-        }
-    );
-});
-//collection.on('remove', function(){console.log('remove');});
 var changeInteraction = function () {
-    select = selectClick;
-    map.addInteraction(select);
-    mapGBIF.addInteraction(selectClickGBIF);
+    mapGBIF.addInteraction(selectClick);
+    //mapGBIF.addInteraction(selectClickGBIF);
 };
-var boxControl = new ol.interaction.DragBox({
-    condition: ol.events.condition.shiftKeyOnly,
-    style: new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#ffcc33',
-            width: 2
-        })
-    })
-});
-map.addInteraction(boxControl);
-boxControl.on('boxend', function () {
-    var featuresinBox = [];
-    source.forEachFeature(function (e) {
-        if (ol.extent.containsCoordinate(boxControl.getGeometry().extent, e.getGeometry().getCoordinates())) {
-            featuresinBox.push(e);
-        }
-    });
-    //document.getElementById("msg").innerHTML = featuresinBox.length;
-    console.log(featuresinBox);
-});
 changeInteraction();
-//mapGBIF.bindTo('layergroup', map);
+
+/***************************************/
 mapGBIF.bindTo('view', map);
 </script>

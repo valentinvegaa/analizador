@@ -69,7 +69,7 @@ function getOrganizationNames($organizations)
 }
 
 function getChildrenNames($key){
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=50'), true);//106311492
+    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
     $result=array();
     foreach($children['results'] as $i){
         $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL'),true);
@@ -79,7 +79,6 @@ function getChildrenNames($key){
         }
         //echo 'species '.$i['species'].' count '.$count;
     };
-    //var_dump($result);
     return $result;
 }
 $limit = 10000;
@@ -123,10 +122,7 @@ if ($search) {
     if (get_magic_quotes_gpc() == 1) $query = stripslashes($query);
     $additionalParameters = array(
         'fq' => 'dwc.genus_mt:*' . $search . '*',
-        'fl' => 'dwc.order_s,
-                 dwc.phylum_s,
-                 dwc.family_s,
-                 dwc.month_s,
+        'fl' => 'dwc.month_s,
                  dwc.year_s,
                  dwc.institutionCode_s,
                  dwc.genus_mt,
@@ -134,6 +130,7 @@ if ($search) {
                  dc.subject,
                  dwc.latlong_p',
     );
+    if(false)
     try {
         $results = $solr->search($query, 0, $limit, $additionalParameters);
     } catch (Exception $e) {
@@ -217,50 +214,49 @@ if ($search) {
         //echo $coordinatesInPHP;
     }
     //print_r($institutionNames);
-    $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
-    $genusKey = $json['results'][0]['key'];
+    $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&rank=GENUS&limit=1'), true);
+    $genusKey = $json['results'][0]['nubKey'];
     //if(false)
     if ($search) {//355609060576005
         //$json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
         //$genusKey = $json['results'][0]['key'];
         echo $genusKey . 'genusKey';
-        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=106605002&limit=0';
-        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=' . $genusKey . '&limit=0';
+        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?rank=SPECIES&highertaxon_key=' . $genusKey . '&limit=0';
         $result = json_decode(file_get_contents($urlHigherTaxon), true);
         $countSpecies = $result['count'];
-        $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $search);
+        /*$url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $search);
         $content = file_get_contents($url_species);
         $json = json_decode($content, true);
-        $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
-        //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
-        //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=1";
-        //$url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&limit='.$count.'&offset='.$offset;
-        $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&country=CL';
-        $content = isset($json['speciesKey']) ? file_get_contents($url) : null;
+        $speciesKey = isset($json['genusKey']) ? json_encode($json['genusKey']) : null;*/
+        $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL';
+        $totalGBIF = file_get_contents($url);
         //echo 'content_'.$content;
         //$json = json_decode($content, true);
         //var_dump($json);
+        echo 'asdasd<br>';
+        var_dump($totalGBIF);
         $offset = 0;
-        $count = $content;//$json['count'];
-        $totalGBIF = $count;
+        //$count = $content;//$json['count'];
+        //$totalGBIF = $count;
+        $count=$totalGBIF;
         $coordinatesGBIFInPHP = "";
-        $yearCountGbif = countYears($speciesKey, $count);
-        $asdasd = array();
+        $yearCountGbif = countYears($genusKey, $count);
+        $temporaryArray = array();
         if ($count > 300) {
             while ($count > 0) {
                 //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=$count&offset=$offset";
                 //$content = file_get_contents($url);
                 //$json = json_decode($content, true);
                 //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
-                $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
+                $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $genusKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
                 $content = file_get_contents($url);
                 $json = json_decode($content, true);
                 isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
-                $someVar = countMonths($speciesKey);
+                $someVar = countMonths($genusKey);
                 foreach ($json['results'] as $i) {
                     //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
-                    array_push($asdasd, $i['decimalLongitude']);
-                    array_push($asdasd, $i['decimalLatitude']);
+                    array_push($temporaryArray, $i['decimalLongitude']);
+                    array_push($temporaryArray, $i['decimalLatitude']);
                     $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
                     if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                         $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
@@ -272,14 +268,14 @@ if ($search) {
                 $offset += 300;
             }
         } else {
-            $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
+            $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $genusKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
             $content = file_get_contents($url);
             $json = json_decode($content, true);
-            $someVar = countMonths($speciesKey);
+            $someVar = countMonths($genusKey);
             //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
             foreach ($json['results'] as $i) {
-                array_push($asdasd, $i['decimalLongitude']);
-                array_push($asdasd, $i['decimalLatitude']);
+                array_push($temporaryArray, $i['decimalLongitude']);
+                array_push($temporaryArray, $i['decimalLatitude']);
                 if (isset($i['year'])) {
                     if ($i['year'] != '') {
                         $coordYearsGBIF .= $i['year'] . ',';
@@ -295,7 +291,7 @@ if ($search) {
                 }
             }
         }
-        $coordinatesGBIFInPHP = implode(', ', $asdasd);
+        $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
     }
@@ -381,15 +377,7 @@ if ($search) {
 <div id="pageBorder" <?php print $noborder; ?>>
     <?php if ((!$usebanner && $page['advertise']) || ($usebanner && $banner_image)): ?>
         <!--start advertise section-->
-        <div id="header-images" <?php print ($usebanner == 0) ? 'class="unlimited"' : ""; ?>>
-            <?php if (!$usebanner): // Use drupal region ?>
-                <?php print render($page['advertise']); ?>
-            <?php elseif ($banner_image): // Use marinelli banners ?>
-                <?php print $banner_text; ?>
-                <?php print $banner_nav; ?>
-                <?php print $banner_image; ?>
-            <?php endif; ?>
-        </div>
+
         <!--end advertise-->
     <?php endif; ?>
 

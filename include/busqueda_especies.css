@@ -2,7 +2,8 @@
     clear: both;
     min-height: 328px;
     width: 960px;
-    margin: 0px auto;
+    margin: 20px 0 auto 10px;
+    display: inline-block;
 }
 
 .left {
@@ -11,7 +12,6 @@
     padding-bottom: 20px;
     height: 100%;
 }
-
 .containers {
     float: right;
     width: 50%;
@@ -33,7 +33,7 @@
 
 .nombre-completo {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 1.6em;
 }
 
 .subtitulo {
@@ -46,17 +46,53 @@
     margin-top: 10px;
     margin-bottom: 10px;
     margin-left: -20px;
-    height: 230px;
+    height: 200px;
 }
-
+.bignumber{
+    font-size: 1.2em;
+}
 .busqueda {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-
-#reunaGbifBarras {
+#index{
+    margin:20px 0 25px 0;
+}
+#left-index{
+    float:left;
+    width:48%;
+    margin-right: 10px;
+}
+#left-t-index{
+    background-color: #d9d9d9;
+    padding:10px;
+    width: auto;
+    margin-bottom: 10px;
+}
+#left-b-index{
+    padding: 10px;
+    width: auto;
+    background-color: #9fc5e8;
+}
+#right-index{
+    float:left;
+    width:50%;
+}
+#right-t-index{
+    width:auto;
+    background-color: #9fc5e8;
+    padding:10px;
+    margin-bottom: 10px;
+}
+#right-b-index{
+    width:auto;
+    background-color: #d9d9d9;
+    padding:10px;
+    height: 64px;
+}
+#reunaGbifBarras, #acumuladas{
     margin-left: -20px;
-    height: 250px;
+    height: 200px;
     bottom: 0;
 }
 
@@ -121,8 +157,54 @@
 .tableRow{
     color: #444444;
     font-weight: bold;
-    width:90%;
+    width:87%;
     float: left;
+}
+#top-rb-index{
+    background-color: #d9d9d9;
+    padding: 10px;
+    margin: 0 0 15px 0;
+    height: 138px;
+    width: 47%;
+    float:right;
+}
+.title-a{
+    color: #0b5394;
+    font-size: 1.2em;
+    margin:0 0 10px 0;
+    font-weight: bolder;
+}
+.title-b{
+    color: #fff;
+    font-size: 1.2em;
+    margin:0 0 10px 0;
+    font-weight: bolder;
+}
+.line{
+    margin-left: 10px;
+}
+.endline{
+    margin: 10px 0 0px 10px;
+}
+#bottom-rb-index{
+    background-color: #9fc5e8;
+    padding:10px;
+}
+#left-index-a{
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background-color: #9fc5e8;
+}
+#left-index-b{
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background-color: #9fc5e8;
+}
+
+#acumuladas{
+    height: 200px;
 }
 .error {
     display: none;

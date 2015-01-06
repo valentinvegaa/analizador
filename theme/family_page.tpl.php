@@ -67,12 +67,13 @@ function getOrganizationNames($organizations)
     //var_dump($result);
     return $result;
 }
-function getFamilyChildrens($key){
+function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&highertaxon_key='.$key), true);//106311492
     $result=array();
     foreach($children['results'] as $i){
-        $childrenCount=getChildrenNames($i['key']);
+        //$childrenCount=getChildrenNames($i['key']);
         //var_dump($childrenCount);
+        $childrenCount = json_decode(file_get_contents('http://api.gbif.org/v1/occurrences/count?taxonKey='.$i['key']), true);//106311492
         $count = 0;
         foreach($childrenCount as $key=>$value){
             $count+=$value;
@@ -87,7 +88,7 @@ function getFamilyChildrens($key){
     return $result;
 }
 function getChildrenNames($key){
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=50'), true);//106311492
+    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
     $result=array();
     foreach($children['results'] as $i){
         $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL'),true);
@@ -182,6 +183,10 @@ if ($search) {
                         break;
                     case 'dwc.genus_mt':
                         $value=explode(' ',$value);
+                        if(sizeof($value)==0){
+                            $value[0]='no';
+                            $value[1]='asignado';//XD
+                        }
                         if(!array_key_exists($value[0].' '.$value[1], $taxonChildrens)){
                             $taxonChildrens[$value[0].' '.$value[1]]=1;
                         }
@@ -229,16 +234,16 @@ if ($search) {
     //print_r($institutionNames);
     $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=FAMILY&limit=1'), true);
     $familyKey = $json['results'][0]['key'];
-    //if(false)
+    if(false)
     if ($search) {//355609060576005
         //$json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
-        //$genusKey = $json['results'][0]['key'];
-        echo $genusKey . 'genusKey';
-        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=106605002&limit=0';
-        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=' . $genusKey . '&limit=0';
+        //$orderKey = $json['results'][0]['key'];
+        echo $familyKey . 'orderKey';
+        //$urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=106605002&limit=0';
+        $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=' . $familyKey . '&limit=0';
         $result = json_decode(file_get_contents($urlHigherTaxon), true);
         $countSpecies = $result['count'];
-        $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $search);
+        $url_species = 'http://api.gbif.org/v1/species/match?name='.$search;
         $content = file_get_contents($url_species);
         $json = json_decode($content, true);
         $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
@@ -391,15 +396,6 @@ if ($search) {
 <div id="pageBorder" <?php print $noborder; ?>>
     <?php if ((!$usebanner && $page['advertise']) || ($usebanner && $banner_image)): ?>
         <!--start advertise section-->
-        <div id="header-images" <?php print ($usebanner == 0) ? 'class="unlimited"' : ""; ?>>
-            <?php if (!$usebanner): // Use drupal region ?>
-                <?php print render($page['advertise']); ?>
-            <?php elseif ($banner_image): // Use marinelli banners ?>
-                <?php print $banner_text; ?>
-                <?php print $banner_nav; ?>
-                <?php print $banner_image; ?>
-            <?php endif; ?>
-        </div>
         <!--end advertise-->
     <?php endif; ?>
 
