@@ -5,8 +5,49 @@
  * Date: 28-10-2014
  * Time: 20:22
  */
+class Gbif{
+    private $nombreCientifico='';
+    private $autor='';
+    private $genero='';
+    private $familia='';
+    private $orden='';
+
+    private $posReuna=array();
+    private $posGbif=array();
+    private $anyo=array();
+    private $mes=array();
+    private $institucion=array();
+    //private $region='';
+    private $categories=array();
+    //Nombre que relaciona el objeto de esta clase con el objeto constructedData con los datos creados a partir de la lista
+    private $constructedDataName='';
+    public function setGbif($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucion){
+        $this->nombreCientifico=$nombreCientifico;
+        /*$this->autor=$autor;
+        $this->genero=$genero;
+        $this->familia=$familia;
+        $this->orden=$orden;*/
+        $this->posReuna=$posicionReuna;
+        $this->posGbif=$posicionGbif;
+        $this->anyo=$anyo;
+        $this->mes=$mes;
+        $this->institucion=$institucion;
+        //$this->categories=$this->setCategories($institucion);
+    }
+    public function getCategories(){
+        $categs=array();
+        foreach($this->institucion as $key=>$value){
+            array_push($categs,$value[0]);
+        }
+        return $categs;
+    }
+    public function getInstitucion(){
+        return $this->institucion;
+    }
+
+}
+
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
-$limitGBIF = 20;
 if ($queryFilterWord) {
     print "<script type=\"text/javascript\">location.href = 'http://www.ecoinformatica.cl/site/analizador/species/$queryFilterWord';</script>";
 }
@@ -61,13 +102,14 @@ function getOrganizationNames($organizations)
     $result = array();
     foreach ($organizations as $key => $i) {
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/organization/' . $key), true);
-        $result[$json['title']] = $i;
+        //$result[$json['title']] = $i;
+        array_push($result,array($json['title'],$i));
         //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
+    ksort($result);
     //var_dump($result);
     return $result;
 }
-
 $limit = 10000;
 $tipo = "";
 $someVar = "";
@@ -94,7 +136,6 @@ $institutionNames = array();
 $institutionNamesGBIF = array();
 $instituionsNamesOcurr = array();
 $yearCount = array();
-$yearCountGBIF = array();
 $yearsGBIFforRange = array();
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $yearCountGbif = array();
@@ -103,28 +144,163 @@ $coordYearsGBIF = '';
 $additionalParameters = array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $specie = substr(current_path(), strripos(current_path(), '/') + 1);
-if ($specie) {
-    $query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
-    if (get_magic_quotes_gpc() == 1) $query = stripslashes($query);
-    $additionalParameters = array(
-        'fq' => 'dwc.scientificName_mt:*' . $specie . '*',
-        'fl' => 'dwc.order_s,
-                 dwc.phylum_s,
-                 dwc.family_s,
-                 dwc.month_s,
+if($specie){
+    if ($cached = cache_get($specie, 'cache')){
+
+    }
+    else{
+        $query='*:*';
+        $search=explode(' ',$specie);
+        $additionalParameters = array(
+            'fq' => 'dwc.genus_mt:'.$search[0].' AND dwc.specificEpithet_mt:'.$search[1],
+            'fl' => 'dwc.month_s,
                  dwc.year_s,
                  dwc.institutionCode_s,
-                 dwc.genus_mt,
+                 dwc.scientificName_mt,
+                 dc.subject,
+                 dwc.latlong_p',
+        );
+        try {
+            $results = $solr->search($query, 0, $limit, $additionalParameters);
+        } catch (Exception $e) {
+            die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+        }
+        $coordinatesReuna=array();
+        if ($results) {
+            $totalReuna = $results->response->numFound;
+            $i = 0;
+            foreach ($results->response->docs as $doc) {
+                foreach ($doc as $field => $value) {
+                    switch ($field) {
+                        case 'dwc.latlong_p'://[(a,b),(a,b)
+                            $coord=explode(',',$value);
+                            array_push($coordinatesReuna,$coord);
+                            $totalReunaConCoordenadas++;
+                            $i++;
+                            break;
+                        case 'dwc.institutionCode_s':
+                            if (!array_key_exists($value, $institutionNames)) {
+                                $institutionNames[$value] = 1;
+                            } else {
+                                $institutionNames[$value]++;
+                            }
+                            break;
+                        case 'dwc.year_s':
+                            if (!array_key_exists($value, $yearCount)) {
+                                $yearCount[$value] = 1;
+                            } else {
+                                $yearCount[$value]++;
+                            }
+                            $coordYearsREUNA .= $value . ',';
+                            break;
+                        case 'dwc.month_s':
+                            $monthCount[$value - 1]++;
+                            break;
+                    }
+                }
+            }
+            ksort($yearCount);
+            $reunaVacios = $totalReuna - $i;
+        }
+        $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $specie);
+        $content = file_get_contents($url_species);
+        $json = json_decode($content, true);
+        //se obtiene la llave que identifica a la especie en el repositorio de especies de GBIF
+        $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
+        //Obtenemos la cantidad de ocurrencias chilenas georeferenciadas usando la llave que encontramos antes
+        $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&isGeoreferenced=true&country=CL';
+        $totalGBIF = isset($json['speciesKey']) ? file_get_contents($url) : null;
+        $offset = 0;
+        $count=$totalGBIF;
+        $coordinatesGBIFInPHP = "";
+        //obtenemos un arreglo con los años como llave y en cada posicion la cantidad de ocurrencias para ese año(llave del arreglo)
+        $yearCountGbif = countYears($speciesKey, $count);
+        var_dump($yearCountGbif);
+        $gbifObject=new Gbif();
+        $temporaryArray = array();
+        if ($count > 300) {
+            while ($count > 0) {
+                //obtenemos las ocurrencias chilenas georefernciadas
+                $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
+                $content = file_get_contents($url);
+                $json = json_decode($content, true);
+                isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
+                $someVar = countMonths($speciesKey);
+                foreach ($json['results'] as $i) {
+                    //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
+                    array_push($temporaryArray, $i['decimalLongitude']);
+                    array_push($temporaryArray, $i['decimalLatitude']);
+                    $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '-1' . ',';
+                    if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
+                        $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
+                    } else {
+                        $OrganizationKeyArray[$i['publishingOrgKey']]++;
+                    }
+                }
+                $count -= 300;
+                $offset += 300;
+            }
+        } else {
+            $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
+            $content = file_get_contents($url);
+            $json = json_decode($content, true);
+            $someVar = countMonths($speciesKey);
+            //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
+            foreach ($json['results'] as $i) {
+                array_push($temporaryArray, $i['decimalLongitude']);
+                array_push($temporaryArray, $i['decimalLatitude']);
+                if (isset($i['year'])) {
+                    if ($i['year'] != '') {
+                        $coordYearsGBIF .= $i['year'] . ',';
+                    } else {
+                        $coordYearsGBIF .= '-1,';
+                    }
+                }
+                else {
+                    $coordYearsGBIF .= '-1,';
+                }
+                //echo '_año_'.$i['year'].'_año';
+                if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
+                    $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
+                } else {
+                    $OrganizationKeyArray[$i['publishingOrgKey']]++;
+                }
+            }
+        }
+        $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
+        //$yearsGBIFforRange=implode(', ',$tempRange);
+        $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+        //$results = json_decode(file_get_contents($search_url));
+        $gbifObject->setGbif($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNamesGBIF);
+
+        cache_set($specie, $gbifObject, 'cache', 60*60*30*24); //30 dias
+        echo 'NO cache!';
+    }
+}
+var_dump($coordinatesReuna);
+if ($specie) {
+    $time_a=date("h:i:sa");
+    //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
+    $query='*:*';
+    if (get_magic_quotes_gpc() == 1) $query = stripslashes($query);
+    $search=explode(' ',$specie);
+    $additionalParameters = array(
+        'fq' => 'dwc.genus_mt:'.$search[0].' AND dwc.specificEpithet_mt:'.$search[1],
+        'fl' => 'dwc.month_s,
+                 dwc.year_s,
+                 dwc.institutionCode_s,
                  dwc.scientificName_mt,
                  dc.subject,
                  dwc.latlong_p',
     );
+    //if(false)
     try {
         $results = $solr->search($query, 0, $limit, $additionalParameters);
     } catch (Exception $e) {
         die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
     $i = 0;
+    $coordinatesReuna=array();
     if ($results) {
         $totalReuna = $results->response->numFound;
         $i = 0;
@@ -132,15 +308,16 @@ if ($specie) {
             foreach ($doc as $field => $value) {
                 switch ($field) {
                     case 'dwc.latlong_p':
-                        $coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
+                        array_push($coordinatesReuna,$value);
+                        //$coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
                         $totalReunaConCoordenadas++;
                         $i++;
                         break;
-                    case 'dwc.scientificName_mt':
+                    /*case 'dwc.scientificName_mt':
                         if (!in_array($value, $speciesFound)) {
                             array_push($speciesFound, $value);
                         }
-                        break;
+                        break;*/
                     case 'dwc.institutionCode_s':
                         if (!array_key_exists($value, $institutionNames)) {
                             $institutionNames[$value] = 1;
@@ -160,115 +337,28 @@ if ($specie) {
                         $monthCount[$value - 1]++;
                         break;
                 }
-                /*if($field=='dwc.latlong_p') {
-                    $coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
-                    $totalReunaConCoordenadas++;
-                    $i++;
-                }
-                if($field=='dwc.scientificName_mt') {
-                    if (!in_array($value, $speciesFound)) {
-                        array_push($speciesFound, $value);
-                    }
-                }
-                if($field=='dwc.institutionCode_s'){
-                    if(!array_key_exists($value,$institutionNames)){
-                        $institutionNames[$value]=1;
-                    }
-                    else{
-                        $institutionNames[$value]++;
-                    }
-                }
-                if($field=='dwc.year_s'){
-                    if(!array_key_exists($value,$yearCount)){
-                        $yearCount[$value]=1;
-                    }
-                    else{$yearCount[$value]++;}
-                }
-                if($field=='dwc.month_s'){
-                    $monthCount[$value-1]++;
-                }*/
             }
-            //echo $institutionNames[$value][0];
         }
         ksort($yearCount);
-        var_dump($yearCount);
         $reunaVacios = $totalReuna - $i;
         //echo $coordinatesInPHP;
     }
     //print_r($institutionNames);
     //if(false)
     if ($specie) {
-        $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $specie);
-        $content = file_get_contents($url_species);
-        $json = json_decode($content, true);
-        $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
-        //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
-        //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=1";
-        //$url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&limit='.$count.'&offset='.$offset;
-        $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&country=CL';
-        $content = isset($json['speciesKey']) ? file_get_contents($url) : null;
-        //echo 'content_'.$content;
-        //$json = json_decode($content, true);
-        //var_dump($json);
-        $offset = 0;
-        $count = $content;//$json['count'];
-        $totalGBIF = $count;
-        $coordinatesGBIFInPHP = "";
-        $yearCountGbif = countYears($speciesKey, $count);
-        $asdasd = array();
-        if ($count > 300) {
-            while ($count > 0) {
-                //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=$count&offset=$offset";
-                //$content = file_get_contents($url);
-                //$json = json_decode($content, true);
-                //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
-                $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
-                $content = file_get_contents($url);
-                $json = json_decode($content, true);
-                isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
-                $someVar = countMonths($speciesKey);
-                foreach ($json['results'] as $i) {
-                    //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
-                    array_push($asdasd, $i['decimalLongitude']);
-                    array_push($asdasd, $i['decimalLatitude']);
-                    $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
-                    if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
-                        $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
-                    } else {
-                        $OrganizationKeyArray[$i['publishingOrgKey']]++;
-                    }
-                }
-                $count -= 300;
-                $offset += 300;
-            }
-        } else {
-            $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
-            $content = file_get_contents($url);
-            $json = json_decode($content, true);
-            $someVar = countMonths($speciesKey);
-            //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
-            foreach ($json['results'] as $i) {
-                array_push($asdasd, $i['decimalLongitude']);
-                array_push($asdasd, $i['decimalLatitude']);
-                if (isset($i['year'])) {
-                    if ($i['year'] != '') {
-                        $coordYearsGBIF .= $i['year'] . ',';
-                    } else {
-                        $coordYearsGBIF .= '0000,';
-                    }
-                }
-                //echo '_año_'.$i['year'].'_año';
-                if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
-                    $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
-                } else {
-                    $OrganizationKeyArray[$i['publishingOrgKey']]++;
-                }
-            }
+        if ($cached = cache_get($specie, 'cache'))
+        {
+            $results = $cached->data;
+            $institutionNamesGBIF=$results->getInstitucion();
+            $categoriesGBIF=$results->getCategories();
+            echo 'cache!';
         }
-        $coordinatesGBIFInPHP = implode(', ', $asdasd);
-        //$yearsGBIFforRange=implode(', ',$tempRange);
-        $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+        else
+        {
+
+        }
     }
+    $time_b=date("h:i:sa");
 }
 ?>
 <?php // page template ?>
@@ -351,15 +441,6 @@ if ($specie) {
 <div id="pageBorder" <?php print $noborder; ?>>
     <?php if ((!$usebanner && $page['advertise']) || ($usebanner && $banner_image)): ?>
         <!--start advertise section-->
-        <div id="header-images" <?php print ($usebanner == 0) ? 'class="unlimited"' : ""; ?>>
-            <?php if (!$usebanner): // Use drupal region ?>
-                <?php print render($page['advertise']); ?>
-            <?php elseif ($banner_image): // Use marinelli banners ?>
-                <?php print $banner_text; ?>
-                <?php print $banner_nav; ?>
-                <?php print $banner_image; ?>
-            <?php endif; ?>
-        </div>
         <!--end advertise-->
     <?php endif; ?>
 

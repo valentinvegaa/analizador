@@ -194,15 +194,7 @@ if ($queryFilterWord) {
     <div id="pageBorder" <?php print $noborder; ?>>
         <?php if ((!$usebanner && $page['advertise']) || ($usebanner && $banner_image)): ?>
             <!--start advertise section-->
-            <div id="header-images" <?php print ($usebanner == 0) ? 'class="unlimited"' : ""; ?>>
-                <?php if (!$usebanner): // Use drupal region ?>
-                    <?php print render($page['advertise']); ?>
-                <?php elseif ($banner_image): // Use marinelli banners ?>
-                    <?php print $banner_text; ?>
-                    <?php print $banner_nav; ?>
-                    <?php print $banner_image; ?>
-                <?php endif; ?>
-            </div>
+            <!-- advertise section removed, look in original theme_page.tpl.php-->
             <!--end advertise-->
         <?php endif; ?>
 

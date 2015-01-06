@@ -30,21 +30,28 @@ function analizador_biodiversidad_menu()
         'access arguments' => array('access content'),
     );
     $items['analizador/species/%'] = array(
-        'title' => 'Species search',
+        'title' => 'Búsqueda por Especie',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/genus/%'] = array(
-        'title' => 'Genus search',
+        'title' => 'Búsqueda por Género',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/family/%'] = array(
-        'title' => 'Family search',
+        'title' => 'Búsqueda por Familia',
+        'page callback' => 'species_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
+    $items['analizador/order/%'] = array(
+        'title' => 'Búsqueda por Orden',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
@@ -127,16 +134,16 @@ function analizador_biodiversidad_admin()
     $var3 = variable_get('desc_chart_3');
     $form['desc_chart_1'] = array(
         '#type' => 'text_format',
-        '#title' => t('Descripción del primer gráfico.'),
+        '#title' => t('Descripción de los gráficos temporales por año.'),
         '#default_value' => $var1['value'],
-        '#description' => t("Descripción del primer gráfico."),
+        '#description' => t("Gráficos de observaciones por año"),
         '#format' => $var1['format'],
     );
     $form['desc_chart_2'] = array(
         '#type' => 'text_format',
-        '#title' => t('Descripción del segundo gráfico.'),
+        '#title' => t('Descripción del gráfico de acumulación de especies por mes.'),
         '#default_value' => $var2['value'],
-        '#description' => t("Descripción del segundo gráfico."),
+        '#description' => t("Gráfico con la acumulación de observaciones por mes."),
         '#format' => 'full_html',
     );
     $form['desc_chart_3'] = array(
@@ -159,9 +166,10 @@ function analizador_biodiversidad_block_list_alter(&$blocks)
         || drupal_match_path(current_path(), "analizador/species/*")
         || drupal_match_path(current_path(), "analizador/genus/*")
         || drupal_match_path(current_path(), "analizador/family/*")
+        || drupal_match_path(current_path(), "analizador/order/*")
     ) {
         foreach ($blocks as $i => $block) {
-            if ('sidebar_first' === $block->region) {
+            if ('sidebar_first' === $block->region || 'advertise' === $block->region) {
                 unset($blocks[$i]);
             }
         }
@@ -189,6 +197,10 @@ function analizador_biodiversidad_theme()
             'template' => 'theme/family_page',
             'render element' => 'page',
         ),
+        'order_page' => array(
+            'template' => 'theme/order_page',
+            'render element' => 'page',
+        ),
     );
 }
 
@@ -205,6 +217,9 @@ function analizador_biodiversidad_preprocess_page(&$variables, $hook)
     }
     if (drupal_match_path(current_path(), "analizador/family/*")) {
         $variables['theme_hook_suggestions'][] = 'family_page';
+    }
+    if (drupal_match_path(current_path(), "analizador/order/*")) {
+        $variables['theme_hook_suggestions'][] = 'order_page';
     }else {
         return;
     }

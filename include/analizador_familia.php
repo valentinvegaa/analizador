@@ -10,8 +10,8 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
-echo $path . '_path';
-echo isset($genusKey) ? $genusKey : '';
+echo isset($familyKey) ? $familyKey : '';
+$familyChildrens=getFamilyGenus($familyKey);
 //var_dump($speciesFound);
 //var_dump($yearCountGbif);
 ?>
@@ -21,22 +21,49 @@ echo isset($genusKey) ? $genusKey : '';
         <input type="submit" value="Search"/>
     </form>
 </div>-->
-<div class="nombre-completo"><?php if (isset($search)) echo $search; ?> <span style="color: darkgray">(FAMILIA)</span>
+<div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($search)) echo $search; ?>
+</div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
+Explore los resultados:
+<div style="margin:20px 0 20px 0;">
+    <div class="top-index">
+        <div class="title-a">Composición Taxonómica</div>
+        <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($taxonChildrens);?> Géneros</span> en la base de datos REUNA.</a></div>
+        <div class="line"><a href="#GbifStacked"><span><?php echo sizeof($familyChildrens);?> Géneros</span> en la base de datos GBIF.</a></div>
+        <div class="endline">Último género de la Familia ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
+    </div>
+    <div class="bottom-index">
+        <div id="left-b-index">
+            <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
+            <div class="line"><span><?php echo sizeof(array_unique($coordYearsREUNA))?></span> años con registros en la base de datos Reuna</div>
+            <div class="endline">Periodo registros: <span><?php //rango de años, menor - mayor?></span></div>
+        </div>
+        <div id="right-b-index">
+            <div id="top-rb-index">
+                <div class="title-a">Distribución Geográfica</div>
+                <div class="line"><a href="#geografica"><span><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span></span> Ocurrencias Georeferenciadas</a></div>
+                <div class="endline"><span><?php //numero de regiones?></span> Regiones presentes</div>
+            </div>
+            <div id="bottom-rb-index">
+                <div class="title-b">Instituciones</div>
+                <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="wraper-container" style="border: thick; border-color: black;">
-    <div class="left">
+    <div class="left" id="temporal">
+        <div class="title-a subtitulo">Distribución Temporal</div>
         <div class="texto">
-            <b style="font-size: 11px;">Ocurrencias en la Base de Datos</b><br>
-            <b>REUNA: <?php echo $totalReuna; ?></b> observaciones <span
-                style="color: darkgray">(<?php echo $totalReunaConCoordenadas; ?> georeferenciadas)</span><br>
             <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
         </div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
     </div>
-    <div id="containers" class="containers">
-        <div class="subtitulo">Datos Georeferenciados</div>
+    <div id="containers geografica" class="containers">
+        <div class="title-a subtitulo">Distribución Geográfica</div>
+        <div style="margin-left:10px;"><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
         <div id="mapContainer" class="mapContainer">
             <div class="mapTitle">REUNA</div>
         </div>
@@ -48,9 +75,11 @@ echo isset($genusKey) ? $genusKey : '';
     </div>
 </div>
 <div class="wraper-container" style="padding-top: 40px;">
+    <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
     <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
     <div id="ReunaStacked"></div>
     <div id="GbifStacked"></div>
+    <div class="title-a subtitulo">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
     <div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
             style="color: darkgray">Base de Datos REUNA</span></div>
@@ -61,13 +90,13 @@ echo isset($genusKey) ? $genusKey : '';
 
     <div id="institucionPieGBIF" class="institucionPie"></div>
     <div id="REUNATable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:10%;float: right">Registros</div></div>';
+        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
         foreach($institutionNames as $key=>$value){
             print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
         }
         ?></div>
     <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:10%;float: right">Registros</div></div>';
+        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
         foreach($institutionNamesGBIF as $key=>$value){
             print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
         }
@@ -82,19 +111,18 @@ function changeFeatures(first, last) {
     var j = 0;
     var k = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        if (coordYearsReuna[k] < last && coordYearsReuna[k] >= first) {
+        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
             var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
             newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
             j++;
         }
         k++;
     }
-    ;
     var newFeaturesGBIF = [];
-    var j = 0;
-    var k = 0;
+    j = 0;
+    k = 0;
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] < last) {
+        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
             var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
             newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
             j++;
@@ -235,7 +263,7 @@ function changeFeatures(first, last) {
     function addSeriesStacked(chart,data){
         for(var x in data){
             chart.addSeries({
-                name:x,
+                name:(x.length>1?x:'No asignado'),
                 data:[data[x]]
             });
         }
@@ -373,6 +401,7 @@ function changeFeatures(first, last) {
         //var categories = decadas;
         var name = 'Decada';
         var yearCount =<?php echo json_encode($yearCount); ?>;
+        console.log(yearCount);
         var tempREUNA = setYearCountData(yearCount);
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
@@ -543,7 +572,7 @@ function changeFeatures(first, last) {
 
         var monthCount =<?php echo json_encode($monthCount); ?>;
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedGbifData=<?php echo json_encode(getFamilyChildrens($familyKey));?>;
+        var stackedGbifData=<?php echo json_encode($familyChildrens);?>;
         var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
         console.log(stackedGbifData);
         console.log(stackedReunaData);
@@ -656,7 +685,9 @@ var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesIn
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(coordYearsGBIF);
+console.log('asd');
+console.log(coordYearsReuna);
+console.log('asd');
 var largo = (arrayCoordinatesInJS.length) / 2;
 if (largo > 0) {
     var features = new Array(largo);
