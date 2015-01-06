@@ -99,7 +99,7 @@ function getOrganizationNames($organizations)
         //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
     ksort($result);
-    //var_dump($result);
+    //var_dump($result);sdaasf
     return $result;
 }
 $limit = 10000;
