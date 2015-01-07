@@ -5,7 +5,7 @@
  * Date: 28-10-2014
  * Time: 20:22
  */
-class Gbif{
+class Especie{
     private $nombreCientifico='';
     private $autor='';
     private $genero='';
@@ -16,16 +16,18 @@ class Gbif{
     private $posGbif=array();
     private $anyo=array();
     private $mes=array();
+    private $institucionReuna=array();
     private $institucion=array();
     //private $region='';
     private $categories=array();
 
-    public function setGbif($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucion){
+    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucionReuna,$institucion){
         $this->nombreCientifico=$nombreCientifico;
         $this->posReuna=$posicionReuna;
         $this->posGbif=$posicionGbif;
         $this->anyo=$anyo;
         $this->mes=$mes;
+        $this->institucionReuna=$institucionReuna;
         $this->institucion=$institucion;
     }
     public function getCategories(){
@@ -35,8 +37,17 @@ class Gbif{
         }
         return $categs;
     }
+    public function getInstitucionReuna(){
+        return $this->institucionReuna;
+    }
     public function getInstitucion(){
         return $this->institucion;
+    }
+    public function getPosition(){
+        return $this->posGbif;
+    }
+    public function getReunaPosition(){
+        return $this->posReuna;
     }
 
 }
@@ -136,11 +147,15 @@ $coordYearsGBIF = '';
 $additionalParameters = array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $specie = substr(current_path(), strripos(current_path(), '/') + 1);
+$coordinatesReuna=array();
 if($specie){
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucion();
         $categoriesGBIF=$results->getCategories();
+        $coordinatesGBIFInPHP=$results->getPosition();
+        $coordinatesReuna=$results->getReunaPosition();
+        $institutionNames=$results->getInstitucionReuna();
         echo 'cache!';
     }
     else{
@@ -160,7 +175,6 @@ if($specie){
         } catch (Exception $e) {
             die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
         }
-        $coordinatesReuna=array();
         if ($results) {
             $totalReuna = $results->response->numFound;
             $i = 0;
@@ -211,7 +225,7 @@ if($specie){
         //obtenemos un arreglo con los años como llave y en cada posicion la cantidad de ocurrencias para ese año(llave del arreglo)
         $yearCountGbif = countYears($speciesKey, $count);
         var_dump($yearCountGbif);
-        $gbifObject=new Gbif();
+        $SpeciesObject=new Especie();
         $temporaryArray = array();
         if ($count > 300) {
             while ($count > 0) {
@@ -266,9 +280,9 @@ if($specie){
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         //$results = json_decode(file_get_contents($search_url));
-        $gbifObject->setGbif($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNamesGBIF);
+        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNames,$institutionNamesGBIF);
 
-        cache_set($specie, $gbifObject, 'cache', 60*60*30*24); //30 dias
+        cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
     }
 }

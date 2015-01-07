@@ -131,7 +131,7 @@ function changeFeatures(first, last) {
         k++;
     }
     ;
-    console.log(j);
+    //console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
     source.addFeatures(newFeatures);
 }
@@ -297,7 +297,7 @@ function changeFeatures(first, last) {
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,
@@ -331,8 +331,8 @@ function changeFeatures(first, last) {
         var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
         var catNames=<?php echo json_encode($categoriesGBIF); ?>;
         data = setPieData(graph);
-        console.log(data[0]);
-        console.log(instNames);
+        //console.log(data[0]);
+        //console.log(instNames);
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -423,7 +423,7 @@ function changeFeatures(first, last) {
         var name = 'Decada';
         var yearCount =<?php echo json_encode($yearCount); ?>;
         var accumulatedData=setAccumulatedYears(yearCount);
-        console.log(accumulatedData);
+        //console.log(accumulatedData);
         var tempREUNA = setYearCountData(yearCount);
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
@@ -695,25 +695,22 @@ function changeFeatures(first, last) {
 
     });
 })(jQuery);
-var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
+var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+console.log(arrayCoordinatesGBIFInJS);
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(arrayCoordinatesGBIFInJS.length);
-console.log(coordYearsGBIF);
-var largo = (arrayCoordinatesInJS.length) / 2;
+
+var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+    for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
         //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]];
+        var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        features[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-        j++;
+        features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
     }
-    ;
 }
 var mapView = new ol.View({
     projection: 'EPSG:3857',
@@ -832,7 +829,6 @@ if (largoGBIF > 0) {
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
 });
-
 var clusterSourceGBIF = new ol.source.Cluster({
     distance: 2,
     source: sourceGBIF
@@ -888,7 +884,7 @@ collection.on('add', function () {
     var index=0;
     collection.forEach(function (f) {
             var text = f.get('NOMBRE');
-            console.log(text);
+            //console.log(text);
 
             changeFeatures(-1,3000);
 
@@ -918,7 +914,6 @@ var changeInteraction = function () {
     //mapGBIF.addInteraction(selectClickGBIF);
 };
 changeInteraction();
-
 /***************************************/
 mapGBIF.bindTo('view', map);
 </script>
