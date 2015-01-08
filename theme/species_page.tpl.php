@@ -125,6 +125,9 @@ function suma($data,$decada){
 function getYears($data,$decada){
 
 }
+function getData($data,$decada){
+
+}
 function createDrilldown($var){
     $out=array();
     $decadas=array();
