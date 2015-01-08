@@ -327,11 +327,9 @@ function changeFeatures(first, last) {
                 data: data[0]
             }]
         });
-        graph =<?php echo json_encode($institutionNamesGBIF); ?>;
         var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
         var catNames=<?php echo json_encode($categoriesGBIF); ?>;
-        data = setPieData(graph);
-        //console.log(data[0]);
+        console.log('salida');
         //console.log(instNames);
         $('#institucionPieGBIF').highcharts({
             chart: {
@@ -368,62 +366,12 @@ function changeFeatures(first, last) {
             series: [{
                 type: 'pie',
                 name: 'Total',
-                data: instNames//data[0]
+                data: instNames
             }]
         });
-        /*$('#institucionBar').highcharts({
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Registros por institucion',
-                style: '"fontSize": "14px"',
-                x: 15
-            },
-            xAxis: {
-                categories: catNames,//data[1],
-                title: {
-                    text: null
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: null,
-                    align: 'high'
-                },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            tooltip: {
-                pointFormat: '<b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true
-                    },
-                    showInLegend: true
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right'
-            },
-            credits: {
-                enabled: false
-            },
-            series: [{
-                name: catNames,//data[1],
-                data: data[2]
-            }]
-        });*/
-        //var categories = decadas;
         var name = 'Decada';
         var yearCount =<?php echo json_encode($yearCount); ?>;
         var accumulatedData=setAccumulatedYears(yearCount);
-        //console.log(accumulatedData);
         var tempREUNA = setYearCountData(yearCount);
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({

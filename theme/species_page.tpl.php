@@ -20,8 +20,9 @@ class Especie{
     private $institucion=array();
     //private $region='';
     private $categories=array();
+    private $drilldownData=array();
 
-    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucionReuna,$institucion){
+    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucionReuna,$institucion,$drilldownData){
         $this->nombreCientifico=$nombreCientifico;
         $this->posReuna=$posicionReuna;
         $this->posGbif=$posicionGbif;
@@ -29,6 +30,7 @@ class Especie{
         $this->mes=$mes;
         $this->institucionReuna=$institucionReuna;
         $this->institucion=$institucion;
+        $this->drilldownData=$drilldownData;
     }
     public function getCategories(){
         $categs=array();
@@ -112,6 +114,48 @@ function getOrganizationNames($organizations)
     ksort($result);
     //var_dump($result);sdaasf
     return $result;
+}
+function suma($data,$decada){
+    $sum=0;
+    foreach($data as $key=>$value){
+        if($key==$decada)$sum+=$value;
+    }
+    return $sum;
+}
+function getYears($data,$decada){
+
+}
+function createDrilldown($var){
+    $out=array();
+    $decadas=array();
+    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    for($i=0;$i<sizeof($var);$i++){
+        $dec=substr($var[i],0,3).'0';
+        if(!in_array($dec,$decadas)){
+            array_push($decadas,$dec);
+            $out[i]=array(
+                'y'=>suma($var,substr($var[i],0,3)),
+                'color'=>$colors[i],
+                'drilldown'=>array(
+                    'name'=>$dec,
+                    'categories'=>getYears($var,substr($var[i],0,3)),
+                    'data'=>getData($var,substr($var[i],0,3)),
+                    'color'=>$colors[i]
+                )
+            );
+        }
+    }
+    return $out;
+}
+function createDrilldownCategories($var){
+    $decadas=array();
+    for($i=0;$i<sizeof($var);$i++){
+        $dec=substr($var[i],0,3).'0';
+        if(!in_array($dec,$decadas)){
+            array_push($decadas,$dec);
+        }
+    }
+    return $decadas;
 }
 $limit = 10000;
 $tipo = "";
@@ -280,7 +324,8 @@ if($specie){
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         //$results = json_decode(file_get_contents($search_url));
-        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNames,$institutionNamesGBIF);
+        $drilldown=createDrilldown($yearCountGbif);
+        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNames,$institutionNamesGBIF,$drilldown);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
