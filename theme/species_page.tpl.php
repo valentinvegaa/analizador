@@ -18,10 +18,16 @@ class Especie{
     private $mes=array();
     private $institucionReuna=array();
     private $institucion=array();
+    /**/
+     private $monthCount=array();
+    //private $yearCount=array();
+     /**/
+
+
     //private $region='';
     private $categories=array();
 
-    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucionReuna,$institucion){
+    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mes,$institucionReuna,$institucion,$monthCount){
         $this->nombreCientifico=$nombreCientifico;
         $this->posReuna=$posicionReuna;
         $this->posGbif=$posicionGbif;
@@ -29,6 +35,11 @@ class Especie{
         $this->mes=$mes;
         $this->institucionReuna=$institucionReuna;
         $this->institucion=$institucion;
+        /*agregar monthCount?*/
+        $this->monthCount=$monthCount;
+        //$this->$yearCount=$yearCount;
+        /**/
+
     }
     public function getCategories(){
         $categs=array();
@@ -49,6 +60,21 @@ class Especie{
     public function getReunaPosition(){
         return $this->posReuna;
     }
+    /**/
+    public function getMonthCount(){
+        return $this->monthCount;
+
+    }
+    public function getSomeVar(){
+        return $this->mes;
+    }
+    public function getAnyo(){
+        return $this->anyo;
+    }
+    /*public function getYearCount(){
+        return $this->yearCount;
+    }
+    /**/
 
 }
 
@@ -113,6 +139,18 @@ function getOrganizationNames($organizations)
     //var_dump($result);sdaasf
     return $result;
 }
+/**
+function suma($yearCount, $dec){
+    $data=$yearCount;
+    $sum=0;
+    foreach($data as $valor){
+        if($valor.substr(0,3)==$dec){
+            $sum+=$valor;
+        }
+    }
+    return $sum;
+}
+/**/
 $limit = 10000;
 $tipo = "";
 $someVar = "";
@@ -156,6 +194,12 @@ if($specie){
         $coordinatesGBIFInPHP=$results->getPosition();
         $coordinatesReuna=$results->getReunaPosition();
         $institutionNames=$results->getInstitucionReuna();
+        /**/
+        $monthCount=$results->getMonthCount();
+        $someVar=$results->getSomeVar();
+        $yearCountGbif=$results->getAnyo();
+        //$yearCount=$results->getYearCount();
+        /**/
         echo 'cache!';
     }
     else{
@@ -280,7 +324,7 @@ if($specie){
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         //$results = json_decode(file_get_contents($search_url));
-        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNames,$institutionNamesGBIF);
+        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$someVar,$institutionNames,$institutionNamesGBIF,$monthCount);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
