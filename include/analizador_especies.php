@@ -246,7 +246,9 @@ function changeFeatures(first, last) {
             if (!isInArray(dec, decadas)) {
                 decadas.push(dec);
                 out[i] = {
+
                     y: suma(yearCount, dec.substring(0, 3)),
+
                     color: colors[i],
                     drilldown: {
                         name: dec.substring(0, 3) + "0",
