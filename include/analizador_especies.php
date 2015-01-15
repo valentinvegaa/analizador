@@ -192,11 +192,12 @@ function changeFeatures(first, last) {
         var n=0;
         var last=0;
         var pre;
-        for(var i=0;i<=20;i++){
-            pre=yearCount[year-20+i];
+        var anyo=40;
+        for(var i=0;i<=anyo;i++){
+            pre=yearCount[year-anyo+i];
             if(typeof pre !='undefined'){
-                n=yearCount[year-20+i];
-                console.log(666);
+                n=yearCount[year-anyo+i];
+                //console.log(666);
             }
             else{n=0;}
             last+=n;
@@ -205,11 +206,12 @@ function changeFeatures(first, last) {
         return result;
     }
     function setCategoryYears(){
+        var anyo=40;
         var result=[];
         var year=new Date().getFullYear();
         var n=0;
-        for(var i=0;i<=20;i++){
-            n=year-20+i;
+        for(var i=0;i<=anyo;i++){
+            n=year-anyo+i;
             result.push(n.toString());
         }
         return result;

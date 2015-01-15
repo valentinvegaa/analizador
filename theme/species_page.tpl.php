@@ -413,7 +413,7 @@ if($specie){
                             $i++;
                             break;
                         case 'dwc.institutionCode_s':
-                            if (!array_key_exists($value, $institutionNames)) {
+                            if (!array_key_exists($value, $institutionNamesReuna)) {
                                 $institutionNamesReuna[$value] = 1;
                             } else {
                                 $institutionNamesReuna[$value]++;
