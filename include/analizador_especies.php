@@ -36,7 +36,7 @@ Explore los resultados:
         <div class="left">
             <div id="left-index-a">
                 <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)));?></span> años con registros en la base de datos Reuna</div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos Reuna</div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
                 <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
                 <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
@@ -91,8 +91,8 @@ Explore los resultados:
     <div id="institucionPieGBIF" class="institucionPie"></div>
     <div id="REUNATable"><?php
         print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
-        foreach($institutionNamesReuna as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+        foreach($institutionNamesReuna as $elemento){
+            print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
         }
         ?></div>
     <div id="GBIFTable"><?php
@@ -185,41 +185,23 @@ function changeFeatures(first, last) {
         return out;
     }
 
-
-    function setAccumulatedYears(yearCount){
-        var result=[];
-        var year=new Date().getFullYear();
-        var n=0;
-        var last=0;
-        var pre;
-        var anyo=40;
-        for(var i=0;i<=anyo;i++){
-            pre=yearCount[year-anyo+i];
-            if(typeof pre !='undefined'){
-                n=yearCount[year-anyo+i];
-                //console.log(666);
-            }
-            else{n=0;}
-            last+=n;
-            result.push(last);
-        }
-        return result;
-    }
-    function setCategoryYears(){
-        var anyo=40;
-        var result=[];
-        var year=new Date().getFullYear();
-        var n=0;
-        for(var i=0;i<=anyo;i++){
-            n=year-anyo+i;
-            result.push(n.toString());
-        }
-        return result;
-    }
-
     $(document).ready(function ($) {
         var graph =<?php echo json_encode($institutionNamesReuna); ?>;
-       // var data = setPieData(graph);
+        var name = 'Decada';
+        var yearCount =<?php echo json_encode($yearCount); ?>;
+        var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
+        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
+        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
+        var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
+        var dataREUNA = tempREUNA[0];
+        var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+        var catNames=<?php echo json_encode($categoriesGBIF); ?>;
+        var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
+        var dataGBIF = tempGBIF[0];
+        var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
+        var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
+        var categoryYears=<?php echo json_encode($categoryYears)?>;
+
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -258,10 +240,7 @@ function changeFeatures(first, last) {
                 data: graph//data[0]
             }]
         });
-        var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
-        var catNames=<?php echo json_encode($categoriesGBIF); ?>;
-        console.log('salida');
-        //console.log(instNames);
+
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -300,19 +279,7 @@ function changeFeatures(first, last) {
                 data: instNames
             }]
         });
-        var name = 'Decada';
-        var yearCount =<?php echo json_encode($yearCount); ?>;
-        console.log(yearCount);
-        var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
-        console.log(yearCountGbif);
-        var accumulatedData=setAccumulatedYears(yearCount);
-        console.log(accumulatedData);
-        var accumulatedDataGbif=setAccumulatedYears(yearCountGbif);
-        console.log(accumulatedDataGbif);
-        //var tempREUNA = setYearCountData(yearCount);
-        var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
 
-        var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasREUNA',
@@ -394,13 +361,7 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        //var yearCountGbif =<?php echo json_encode($yearCountGbif); ?>;
-        //console.log(yearCountGbif);
-        //var tempGBIF = setYearCountData(yearCountGbif);
-        var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
-        //console.log(tempGBIF);
-        var dataGBIF = tempGBIF[0];
-        console.log(tempGBIF[0]);
+
         chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
@@ -483,9 +444,7 @@ function changeFeatures(first, last) {
             }
         });
 
-        var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
-        var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
-        var categoryYears=setCategoryYears();
+
         $('#reunaGbifBarras').highcharts({
             chart: {
                 type: 'column'
@@ -581,7 +540,7 @@ function changeFeatures(first, last) {
             series: [{
                 name: 'Observaciones acumuladas Reuna',
                 /*Datos de prueba*/
-                data: [1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                data:accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
             },{
                 name:'Observaciones acumuladas Gbif',
                 /*Datos de prueba*/
