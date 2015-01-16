@@ -305,7 +305,7 @@ function changeFeatures(first, last) {
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,
@@ -345,7 +345,7 @@ function changeFeatures(first, last) {
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,

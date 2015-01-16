@@ -31,10 +31,15 @@ class Especie{
     private $totalGbif;
     private $totalReunaConCoordenadas;
     private $totalReuna;
+    private $categoryYears;
+    private $AccumulatedYearsGbif;
+    private $AccumulatedYearsReuna;
     /**/
 
 
-    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna){
+    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+    ,$AccumulatedYearsGbif,$AccumulatedYearsReuna){
+
         $this->nombreCientifico=$nombreCientifico;
         $this->posReuna=$posicionReuna;
         $this->posGbif=$posicionGbif;
@@ -53,6 +58,9 @@ class Especie{
         $this->totalReunaConCoordenadas=$totalReunaConCoordenadas;
         $this->totalReuna=$totalReuna;
         $this->DrillDownDataReuna=$DrillDownDataReuna;
+        $this->categoryYears=$categoryYears;
+        $this->AccumulatedYearsGbif=$AccumulatedYearsGbif;
+        $this->AccumulatedYearsReuna=$AccumulatedYearsReuna;
         /**/
 
     }
@@ -114,6 +122,15 @@ class Especie{
     }
     public function getDrillDownDataReuna(){
         return $this->DrillDownDataReuna;
+    }
+    public function getCategoryYears(){
+        return $this->categoryYears;
+    }
+    public function getAccumulatedYearsGbif(){
+        return $this->AccumulatedYearsGbif;
+    }
+    public function getAccumulatedYearsReuna(){
+        return $this->AccumulatedYearsReuna;
     }
     /**/
 
@@ -277,26 +294,46 @@ function createDrilldownCategories($var){
 
 
 }
-
+/*
 function setPieData($graph){
     $out=array();
 
 
     return $out;
-}
+}*/
 
 function setAccumulatedYears($yearCount){
 
     $result=array();
-
-
+    $year=date('Y');
+    $n=0;
+    $last=0;
+    $anyo=40;
+    for($i=0;$i<=$anyo;$i++){
+        if($yearCount[$year-$anyo+$i]!=0){
+           $n=$yearCount[$year-$anyo+$i];
+        }
+        else{
+            $n=0;
+        }
+        $last+=$n;
+        array_push($result,$last);
+    }
     return $result;
 
 }
 
 function setCategoryYears(){
 
+    $anyo=40;
     $result=array();
+    $year=date('Y');
+    $n=0;
+    for($i=0;$i<=$anyo;$i++){
+        $n=$year-$anyo+$i;
+        $ene=strval($n);
+        array_push($result,$ene);
+    }
 
     return $result;
 
@@ -315,6 +352,7 @@ $yearCountGbif = array();
 $coordYearsGBIF = '';
 $totalGBIF = 0;
 $drilldownData=array();
+$accumulatedYearsGbif=array();
 /*------------------------*/
 
 /*__Variables Reuna__*/
@@ -329,9 +367,10 @@ $coordYearsREUNA = '';
 $coordinatesReuna=array();
 $institutionNamesReuna = array();
 $DrillDownDataReuna=array();
+$accumulatedYearsReuna=array();
 /*-------------------*/
 
-
+$categoryYears=array();
 $limit = 10000;
 $tipo = "";
 $results = false;
@@ -379,6 +418,9 @@ if($specie){
         $totalReunaConCoordenadas=$results->getTotalReunaConCoordenadas();
         $totalReuna=$results->getTotalReuna();
         $DrillDownDataReuna=$results->getDrillDownDataReuna();
+        $categoryYears=$results->getCategoryYears();
+        $accumulatedYearsGbif=$results->getAccumulatedYearsGbif();
+        $accumulatedYearsReuna=$results->getAccumulatedYearsReuna();
         /**/
 
         echo 'cache!';
@@ -433,6 +475,11 @@ if($specie){
                     }
                 }
             }
+            $instNamesReuna=array();
+            foreach($institutionNamesReuna as $key=>$value){
+                array_push($instNamesReuna,array($key,$value));
+            }
+            $institutionNamesReuna=$instNamesReuna;
             ksort($yearCount);
             $reunaVacios = $totalReuna - $i;
         }
@@ -507,7 +554,11 @@ if($specie){
         //$results = json_decode(file_get_contents($search_url));
        $DrillDownDataGbif=createDrilldown($yearCountGbif);
         $DrillDownDataReuna=createDrilldown($yearCount);
-        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna);
+        $categoryYears=setCategoryYears();
+        $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
+        $accumulatedYearsReuna=setAccumulatedYears($yearCount);
+        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+                                    ,$accumulatedYearsGbif,$accumulatedYearsReuna);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
