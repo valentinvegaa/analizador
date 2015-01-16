@@ -33,16 +33,19 @@ Explore los resultados:
         <div class="endline">Último género de la Familia ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
     </div>
     <div class="bottom-index">
-        <div id="left-b-index">
+        <div id="left-index-a">
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span><?php echo sizeof(array_unique($coordYearsREUNA))?></span> años con registros en la base de datos Reuna</div>
-            <div class="endline">Periodo registros: <span><?php //rango de años, menor - mayor?></span></div>
+            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)));?></span> años con registros en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
+            <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
         </div>
         <div id="right-b-index">
             <div id="top-rb-index">
-                <div class="title-a">Distribución Geográfica</div>
-                <div class="line"><a href="#geografica"><span><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span></span> Ocurrencias Georeferenciadas</a></div>
-                <div class="endline"><span><?php //numero de regiones?></span> Regiones presentes</div>
+                <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
+                <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
+                <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+                <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
             </div>
             <div id="bottom-rb-index">
                 <div class="title-b">Instituciones</div>
@@ -272,6 +275,8 @@ function changeFeatures(first, last) {
     $(document).ready(function ($) {
         var graph =<?php echo json_encode($institutionNames); ?>;
         var data = setPieData(graph);
+        console.log(data[0]);
+        console.log('aqui');
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -404,6 +409,7 @@ function changeFeatures(first, last) {
         console.log(yearCount);
         var tempREUNA = setYearCountData(yearCount);
         var dataREUNA = tempREUNA[0];
+
         chartREUNA = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasREUNA',
@@ -632,76 +638,27 @@ function changeFeatures(first, last) {
         });
         addSeriesStacked(GbifStacked,stackedGbifData);
         addSeriesStacked(ReunaStacked,stackedReunaData);
-
-        /*$('').highcharts({
-         chart: {
-         type: 'column'
-         },
-         credits: {
-         enabled: false
-         },
-         title: {
-         text: null,
-         style: '"fontSize": "14px"'
-         },
-         xAxis: {
-         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-         },
-         yAxis: {
-         min: 0,
-         title: {
-         text: '<b>Observations</b>'
-         }
-         },
-         tooltip: {
-         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-         pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-         '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-         footerFormat: '</table>',
-         shared: true,
-         useHTML: true
-         },
-         plotOptions: {
-         column: {
-         pointPadding: 0.2,
-         borderWidth: 0
-         },
-         series: {
-         pointWidth: 10
-         }
-         },
-         series: [{
-         name: 'REUNA',
-         data: monthCount//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
-         },
-         {
-         name: 'GBIF',
-         data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
-         }]
-         });*/
     });
 })(jQuery);
-var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
+var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
 console.log('asd');
-console.log(coordYearsReuna);
+//console.log(arrayCoordinatesInJS);
 console.log('asd');
-var largo = (arrayCoordinatesInJS.length) / 2;
+var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+    for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
         //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]];
+        var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        features[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-        j++;
+        features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
     }
-    ;
 }
+
 var mapView = new ol.View({
     projection: 'EPSG:3857',
     center: ol.proj.transform([-72.184306, -36.398612], 'EPSG:4326', 'EPSG:3857'),
