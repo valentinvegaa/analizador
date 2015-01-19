@@ -189,7 +189,7 @@ function changeFeatures(first, last) {
         return array.indexOf(value) > -1;
     }
 
-    function suma(yearCount, dec) {
+    /*function suma(yearCount, dec) {
         var data = yearCount;
         var sum = 0;
         for (var x in data) {
@@ -259,7 +259,7 @@ function changeFeatures(first, last) {
             }
         }
         return [out, decadas];
-    }
+    }*/
     function addSeriesStacked(chart,data){
         for(var x in data){
             chart.addSeries({
@@ -268,7 +268,7 @@ function changeFeatures(first, last) {
             });
         }
     }
-    function setAccumulatedYears(yearCount){
+    /*function setAccumulatedYears(yearCount){
         var result=[];
         var year=new Date().getFullYear();
         var n=0;
@@ -282,8 +282,8 @@ function changeFeatures(first, last) {
             result.push(last);
         }
         return result;
-    }
-    function setCategoryYears(){
+    }*/
+    /*function setCategoryYears(){
         var result=[];
         var year=new Date().getFullYear();
         var n=0;
@@ -292,7 +292,7 @@ function changeFeatures(first, last) {
             result.push(n.toString());
         }
         return result;
-    }
+    }*/
 
     $(document).ready(function ($) {
         var graph =<?php echo json_encode($institutionNames); ?>;
@@ -425,9 +425,11 @@ function changeFeatures(first, last) {
         });
         //var categories = decadas;
         var name = 'Década';
-        var yearCount =<?php echo json_encode($yearCount); ?>;
-        var accumulatedData=setAccumulatedYears(yearCount);
-        var tempREUNA = setYearCountData(yearCount);
+        //var yearCount =<?php echo json_encode($yearCount); ?>;
+        //var accumulatedData=setAccumulatedYears(yearCount);
+       // var tempREUNA = setYearCountData(yearCount);
+
+        var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
             chart: {
@@ -510,8 +512,9 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        yearCount =<?php echo json_encode($yearCountGbif); ?>;
-        var tempGBIF = setYearCountData(yearCount);
+        //yearCount =<?php echo json_encode($yearCountGbif); ?>;
+        //var tempGBIF = setYearCountData(yearCount);//
+        var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
         var dataGBIF = tempGBIF[0];
         chartGBIF = new Highcharts.Chart({
             chart: {
@@ -594,7 +597,10 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        var categoryYears=setCategoryYears();
+        //var categoryYears=setCategoryYears();
+        var categoryYears=<?php echo json_encode($categoryYears); ?>;
+        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
+        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
         $('#acumuladas').highcharts({
             chart: {
                 type: 'area'
@@ -644,7 +650,13 @@ function changeFeatures(first, last) {
             series: [{
                 name: 'Observaciones acumuladas REUNA',
                 data: accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
-            }]
+
+            },
+
+                {
+                    name: 'Observaciones acumuladas Gbif',
+                    data: accumulatedDataGbif//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
+                }]
         });
 
         var monthCount =<?php echo json_encode($monthCount); ?>;
