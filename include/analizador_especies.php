@@ -62,7 +62,6 @@ Explore los resultados:
         <div id="contribucionBarrasGBIF"></div>
         <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div>
         <div id="reunaGbifBarras"></div>
-        <div id="acumuladas"></div>
     </div>
     <div id="containers" class="containers">
         <div class="title-a subtitulo" id="geografica">Distribución Geográfica</div>
@@ -78,6 +77,7 @@ Explore los resultados:
                style="border:0; position:relative; bottom: -30px; color:#f6931f; font-weight:bold;">
     </div>
 </div>
+<div id="acumuladas" style="margin-left: 10px;"></div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div class="title-a subtitulo" id="institucion">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>

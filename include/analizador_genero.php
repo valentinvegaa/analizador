@@ -430,6 +430,7 @@ function changeFeatures(first, last) {
        // var tempREUNA = setYearCountData(yearCount);
 
         var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
+        console.log(tempREUNA);
         var dataREUNA = tempREUNA[0];
         chartREUNA = new Highcharts.Chart({
             chart: {
@@ -663,8 +664,8 @@ function changeFeatures(first, last) {
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
         var stackedGbifData=<?php echo json_encode(getChildrenNames($genusKey));?>;
         var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
-        console.log(stackedGbifData);
-        console.log(stackedReunaData);
+        //console.log(stackedGbifData);
+        //console.log(stackedReunaData);
 
         GbifStacked = new Highcharts.Chart({
             chart: {
@@ -774,7 +775,7 @@ var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesIn
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(coordYearsGBIF);
+//console.log(coordYearsGBIF);
 var largo = (arrayCoordinatesInJS.length) / 2;
 if (largo > 0) {
     var features = new Array(largo);

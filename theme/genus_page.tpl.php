@@ -287,8 +287,10 @@ function setAccumulatedYears($yearCount){
     $last=0;
     $anyo=40;
     for($i=0;$i<=$anyo;$i++){
-        if($yearCount[$year-$anyo+$i]!=0){
-            $n=$yearCount[$year-$anyo+$i];
+        if(array_key_exists($year-$anyo+$i,$yearCount)){
+            if($yearCount[$year-$anyo+$i]!=0){
+                $n=$yearCount[$year-$anyo+$i];
+            }
         }
         else{
             $n=0;
@@ -390,7 +392,7 @@ if ($search) {
         $query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
         if (get_magic_quotes_gpc() == 1) $query = stripslashes($query);
         $additionalParameters = array(
-            'fq' => 'dwc.genus_mt:*' . $search . '*',
+            'fq' => 'dwc.genus_s:'.$search,
             'fl' => 'dwc.month_s,
                  dwc.year_s,
                  dwc.institutionCode_s,
@@ -399,12 +401,12 @@ if ($search) {
                  dc.subject,
                  dwc.latlong_p',
         );
-        if (false)
-            try {
-                $results = $solr->search($query, 0, $limit, $additionalParameters);
-            } catch (Exception $e) {
-                die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
-            }
+        //if (false)
+        try {
+            $results = $solr->search($query, 0, $limit, $additionalParameters);
+        } catch (Exception $e) {
+            die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+        }
         $i = 0;
         if ($results) {
             $totalReuna = $results->response->numFound;
@@ -477,7 +479,9 @@ if ($search) {
                 //echo $institutionNames[$value][0];
             }
             ksort($yearCount);
+            echo('qwe');
             var_dump($yearCount);
+            echo('qwe');
             $reunaVacios = $totalReuna - $i;
             //echo $coordinatesInPHP;
         }
@@ -496,13 +500,12 @@ if ($search) {
             $content = file_get_contents($url_species);
             $json = json_decode($content, true);
             $speciesKey = isset($json['genusKey']) ? json_encode($json['genusKey']) : null;*/
-            $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL';
+            $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL&isGeoreferenced=true';
             $totalGBIF = file_get_contents($url);
             //echo 'content_'.$content;
             //$json = json_decode($content, true);
             //var_dump($json);
             echo 'asdasd<br>';
-            var_dump($totalGBIF);
             $offset = 0;
             //$count = $content;//$json['count'];
             //$totalGBIF = $count;
@@ -568,6 +571,8 @@ if ($search) {
             $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
             $accumulatedYearsReuna=setAccumulatedYears($yearCount);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+            echo('qwe');
+            var_dump($institutionNamesGBIF);
 
             $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
                 $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears);

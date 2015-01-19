@@ -24,15 +24,25 @@ class Family{
     private $regionesPresentesGbif=array();
 
     private $observacionesReuna=array();
-    private $observacionesGbif=array();
-    public function setFamily($nombreFamilia,$generos,$especies,$cantidadGeneros,$cantidadEspecies,$observacionesReuna,$observacionesGbif){
+    private $drillDownDataReuna=array();
+    private $stackedChildrensReuna=array();
+    public function setFamily($nombreFamilia,
+                              $generos,
+                              $especies,
+                              $cantidadGeneros,
+                              $cantidadEspecies,
+                              $observacionesReuna,
+                              $drillDownDataReuna,
+                              $stackedChildrensReuna
+    ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
         $this->especies=$especies;
         $this->cantidadGeneros=$cantidadGeneros;
         $this->cantidadEspecies=$cantidadEspecies;
         $this->observacionesReuna=$observacionesReuna;
-        $this->observacionesGbif=$observacionesGbif;
+        $this->drillDownDataReuna=$drillDownDataReuna;
+        $this->stackedChildrensReuna=$stackedChildrensReuna;
     }
     public function getGeneros(){}
     public function getEspecies(){}
@@ -40,8 +50,11 @@ class Family{
     public function getObservacionesReuna(){
         return $this->observacionesReuna;
     }
-    public function getObservacionesGbif(){
-        return $this->observacionesGbif;
+    public function getDrillDownDataReuna(){
+        return $this->drillDownDataReuna;
+    }
+    public function getStackedChildrens(){
+        return $this->stackedChildrensReuna;
     }
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
@@ -138,6 +151,92 @@ function getChildrenNames($key){
     //var_dump($result);
     return $result;
 }
+function suma($data,$decada){
+    $sum=0;
+    foreach($data as $key=>$value){
+        if(substr($key,0,3)==$decada) {
+            $sum +=$value;//duda
+        }
+    }
+    return $sum;
+}
+function getYears($data,$decada){
+
+
+    $years=array();
+    $i=0;
+    foreach($data as $key=>$value){
+        if(substr($key,0,3)==$decada){
+            $years[$i]=$key;
+            $i+=1;
+        }
+    }
+    $temp=$years;
+    for($i=0;$i<10;$i++){
+        $cambio=strval($i);
+        $trans=$decada.$cambio;
+        if($temp!=(int)$trans){//error
+            $years[$i]=(int)$trans;
+
+        }
+        else{
+            $years[$i]=$temp;
+        }
+    }
+    return $years;
+
+}
+function getData($data,$decada){
+
+    $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    $i=0;
+    foreach($data as $key=>$value){
+        if(substr($key,0,3)==$decada){
+            $out[substr($key,3,4)]=$value;
+            $i=$i+1;
+        }
+    }
+    return $out;
+}
+function createDrilldown($var){//function setYearCountData(yearCount)
+    $out=array();
+    $decadas=array();
+    $i=0;
+    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    //for($i=0;$i<sizeof($var);$i++){
+    foreach($var as $key=>$valor){
+        $dec=substr($key,0,3);//.'0';
+        $dec2=$dec.'0';
+        if(!in_array($dec2,$decadas)){
+            array_push($decadas,$dec2);
+            //$algo=substr($key,0,3);//error
+            $out[$i]=array(
+                'y'=>suma($var,$dec),//error
+                'color'=>$colors[$i],
+                'drilldown'=>array(
+                    'name'=>$dec2,
+                    'categories'=>getYears($var,$dec),//error
+                    'data'=>getData($var,$dec),//error
+                    'color'=>$colors[$i]
+                )
+            );//
+            $i+=1;
+        }
+    }
+    return array($out,$decadas);//entrega las decadas pero una no sale en orden.
+}
+function createDrilldownCategories($var){
+    $decadas=array();
+    for($i=0;$i<sizeof($var);$i++){
+        $dec=substr($var[$i],0,3).'0';
+        if(!in_array($dec,$decadas)){
+            array_push($decadas,$dec);
+        }
+    }
+    return $decadas;
+}
+
+
 $limit = 10000;
 $someVar = "";
 $results = false;
@@ -163,11 +262,18 @@ $additionalParameters = array();
 $taxonChildrens=array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $family = substr(current_path(), strripos(current_path(), '/') + 1);
+
 $FamilyObject=new Family();
+$drillDownDataGbif=array();
+$drillDownDataReuna=array();
+$stackedChildrens=array();
+
 if ($family) {
     if($cached=cache_get($family,'cache')){
         $results = $cached->data;
         $coordinatesReuna=$results->getObservacionesReuna();
+        $drillDownDataReuna=$results->getDrillDownDataReuna();
+        $stackedChildrens=$results->getStackedChildrens();
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -233,27 +339,12 @@ if ($family) {
                                 $value=explode(' ',$value);
                                 $taxonChildrens[$value[0].' '.$value[1]]++;
                             }
-
-                            /*$value=explode(' ',$value);
-                            if(sizeof($value)==0){
-                                $value[0]='no';
-                                $value[1]='asignado';//XD
-                            }
-                            if(!array_key_exists($value[0].' '.$value[1], $taxonChildrens)){
-                                $taxonChildrens[$value[0].' '.$value[1]]=1;
-                            }
-                            else{
-                                $value=explode(' ',$value);
-                                $taxonChildrens[$value[0].' '.$value[1]]++;
-                            }*/
                             break;
                     }
                 }
             }
             ksort($yearCount);
-            //var_dump($coordinatesReuna);
             $reunaVacios = $totalReuna - $i;
-            //echo $coordinatesInPHP;
         }
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $family . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=FAMILY&limit=1'), true);
         $familyKey = $json['results'][0]['key'];
@@ -337,7 +428,13 @@ if ($family) {
             //$yearsGBIFforRange=implode(', ',$tempRange);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         }
-        $FamilyObject->setFamily($family,array(),array(),0,0,$coordinatesReuna);
+        foreach($taxonChildrens as $key=>$value){
+            array_push($stackedChildrens,array('name'=>$key,'data'=>$value));
+        }
+        $drillDownDataGbif=createDrilldown($yearCountGbif);
+        $drillDownDataReuna=createDrilldown($yearCount);
+
+        $FamilyObject->setFamily($family,array(),array(),0,0,$coordinatesReuna,$drillDownDataReuna,$stackedChildrens);
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
 }

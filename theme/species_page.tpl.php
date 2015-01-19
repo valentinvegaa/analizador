@@ -294,13 +294,6 @@ function createDrilldownCategories($var){
 
 
 }
-/*
-function setPieData($graph){
-    $out=array();
-
-
-    return $out;
-}*/
 
 function setAccumulatedYears($yearCount){
 
@@ -308,7 +301,7 @@ function setAccumulatedYears($yearCount){
     $year=date('Y');
     $n=0;
     $last=0;
-    $anyo=40;
+    $anyo=100;
     for($i=0;$i<=$anyo;$i++){
         if($yearCount[$year-$anyo+$i]!=0){
            $n=$yearCount[$year-$anyo+$i];
@@ -325,7 +318,7 @@ function setAccumulatedYears($yearCount){
 
 function setCategoryYears(){
 
-    $anyo=40;
+    $anyo=100;
     $result=array();
     $year=date('Y');
     $n=0;

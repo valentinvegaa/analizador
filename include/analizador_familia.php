@@ -406,8 +406,7 @@ function changeFeatures(first, last) {
         //var categories = decadas;
         var name = 'Decada';
         var yearCount =<?php echo json_encode($yearCount); ?>;
-        console.log(yearCount);
-        var tempREUNA = setYearCountData(yearCount);
+        var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
         var dataREUNA = tempREUNA[0];
 
         chartREUNA = new Highcharts.Chart({
@@ -423,7 +422,7 @@ function changeFeatures(first, last) {
             },
             yAxis: {
                 title: {
-                    text: 'Observaciones REUNA',
+                    text: 'Observations REUNA',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -463,9 +462,9 @@ function changeFeatures(first, last) {
                     var point = this.point,
                         s = this.x + ':<b>' + this.y + '</b><br/>';
                     if (point.drilldown) {
-                        s += 'Click para expandir a ' + point.category;
+                        s += 'Click to expand to ' + point.category;
                     } else {
-                        s += 'Click para volver atrás.';
+                        s += 'Click to return.';
                     }
                     return s;
                 }
@@ -579,9 +578,7 @@ function changeFeatures(first, last) {
         var monthCount =<?php echo json_encode($monthCount); ?>;
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
         var stackedGbifData=<?php echo json_encode($familyChildrens);?>;
-        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
-        console.log(stackedGbifData);
-        console.log(stackedReunaData);
+        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;$stackedChildrens
 
         GbifStacked = new Highcharts.Chart({
             chart: {
@@ -637,7 +634,8 @@ function changeFeatures(first, last) {
             }
         });
         addSeriesStacked(GbifStacked,stackedGbifData);
-        addSeriesStacked(ReunaStacked,stackedReunaData);
+        var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
+        ReunaStacked.addSeries(stackedReunaData);
     });
 })(jQuery);
 var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
