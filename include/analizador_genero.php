@@ -58,7 +58,7 @@ Explore los resultados:
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
-        <div id="acumuladas"></div>
+
     </div>
     <div id="containers" class="containers">
         <div class="title-a subtitulo">Distribución Geográfica</div>
@@ -73,6 +73,7 @@ Explore los resultados:
         <input type="text" id="amount" readonly>
     </div>
 </div>
+<div id="acumuladas" style="margin-left: 10px"></div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
     <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
@@ -169,97 +170,7 @@ function changeFeatures(first, last) {
         });
     }
 
-    function setPieData(graph) {
-        var data = graph;
-        var outPie = [];
-        var i = 0;
-        var outBar = [];
-        var categorias = []
-        for (var x in data) {
-            outPie[i] = [x, data[x]];
-            categorias[i] = x;
-            outBar[i] = {y: data[x], color: colors[i]};
-            i++;
-        }
-        var out = [outPie, categorias, outBar];
-        return out;
-    }
 
-    function isInArray(value, array) {
-        return array.indexOf(value) > -1;
-    }
-
-    /*function suma(yearCount, dec) {
-        var data = yearCount;
-        var sum = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                sum += data[x];
-            }
-        }
-        return sum;
-    }
-
-    function getYears(yearCount, dec) {
-        var data = yearCount;
-        var years = [];
-        var i = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                years[i] = x;
-                i++;
-            }
-        }
-        temp = years;
-        for (var i = 0; i < 10; i++) {
-            if (temp != parseInt(dec + i.toString())) {
-                years[i] = parseInt(dec + i.toString());
-            }
-            else {
-                years[i] = temp;
-            }
-        }
-        return years;
-    }
-
-    function getData(yearCount, dec) {
-        var data = yearCount;
-        var out = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        var i = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                out[x.substr(3, 4)] = data[x];
-                i++;
-            }
-        }
-        return out;
-    }
-
-    function setYearCountData(yearCount) {
-        var out = [];
-        var data = yearCount;
-        var i = 0;
-        var decadas = [];
-
-        for (var x in data) {
-            var dec = x.substring(0, 3) + "0";
-            if (!isInArray(dec, decadas)) {
-                decadas.push(dec);
-                out[i] = {
-                    y: suma(yearCount, dec.substring(0, 3)),
-                    color: colors[i],
-                    drilldown: {
-                        name: dec.substring(0, 3) + "0",
-                        categories: getYears(yearCount, dec.substring(0, 3)),//obtener años que empiezan por dec
-                        data: getData(yearCount, dec.substring(0, 3)),
-                        color: colors[i]
-                    }
-                };
-                i++;
-            }
-        }
-        return [out, decadas];
-    }*/
     function addSeriesStacked(chart,data){
         for(var x in data){
             chart.addSeries({
@@ -268,35 +179,12 @@ function changeFeatures(first, last) {
             });
         }
     }
-    /*function setAccumulatedYears(yearCount){
-        var result=[];
-        var year=new Date().getFullYear();
-        var n=0;
-        var last=0;
-        for(var i=0;i<=20;i++){
-            if(typeof yearCount[year-20+i]!=='undefined'){
-                n=yearCount[year-20+i];
-            }
-            else{n=0;}
-            last+=n;
-            result.push(last);
-        }
-        return result;
-    }*/
-    /*function setCategoryYears(){
-        var result=[];
-        var year=new Date().getFullYear();
-        var n=0;
-        for(var i=0;i<=20;i++){
-            n=year-20+i;
-            result.push(n.toString());
-        }
-        return result;
-    }*/
+
 
     $(document).ready(function ($) {
-        var graph =<?php echo json_encode($institutionNames); ?>;
-        var data = setPieData(graph);
+        //var graph =<?php echo json_encode($institutionNames); ?>;
+        //var data = setPieData(graph);
+        var data=<?php echo json_encode($dataReuna); ?>;
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -335,8 +223,9 @@ function changeFeatures(first, last) {
                 data: data[0]
             }]
         });
-        graph =<?php echo json_encode($institutionNamesGBIF); ?>;
-        data = setPieData(graph);
+        //graph =<?php echo json_encode($institutionNamesGBIF); ?>;
+        //data = setPieData(graph);
+        var data=<?php echo json_encode($dataGbif); ?>;
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -610,7 +499,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             title: {
-                text: null,
+                text: 'Observaciones Acumuladas',
                 style: '"fontSize": "12px"'
             },
             xAxis: {
@@ -691,8 +580,7 @@ function changeFeatures(first, last) {
                 series: {
                     stacking: 'percent'
                 }
-            },
-            series: []
+            }
         });
         ReunaStacked = new Highcharts.Chart({
             chart: {
@@ -723,52 +611,7 @@ function changeFeatures(first, last) {
         addSeriesStacked(GbifStacked,stackedGbifData);
         addSeriesStacked(ReunaStacked,stackedReunaData);
 
-        /*$('').highcharts({
-         chart: {
-         type: 'column'
-         },
-         credits: {
-         enabled: false
-         },
-         title: {
-         text: null,
-         style: '"fontSize": "14px"'
-         },
-         xAxis: {
-         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-         },
-         yAxis: {
-         min: 0,
-         title: {
-         text: '<b>Observations</b>'
-         }
-         },
-         tooltip: {
-         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-         pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-         '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-         footerFormat: '</table>',
-         shared: true,
-         useHTML: true
-         },
-         plotOptions: {
-         column: {
-         pointPadding: 0.2,
-         borderWidth: 0
-         },
-         series: {
-         pointWidth: 10
-         }
-         },
-         series: [{
-         name: 'REUNA',
-         data: monthCount//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
-         },
-         {
-         name: 'GBIF',
-         data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
-         }]
-         });*/
+
     });
 })(jQuery);
 var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
