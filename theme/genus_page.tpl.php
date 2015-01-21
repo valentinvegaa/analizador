@@ -14,7 +14,7 @@ class Genero{
         private $totalReunaConCoordenadas;
         private $totalGBIF;
         private $coordYearsREUNA='';
-        private $coordYearsGbif='';
+        private $coordYearsGBIF='';
         private $yearCountGbif=array();
         private $institutionNames=array();//(reuna)
         private $specie=array();
@@ -27,13 +27,18 @@ class Genero{
         private $accumulatedYearsGbif;
         private $accumulatedYearsReuna;
          private $categoryYears;
+    private $coordinatesGBIFInPHP;
+    private $coordinatesInPHP;
+    private $dataReuna=array();
+    private $dataGbif=array();
 
 
     /*-------------*/
 
     public function setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
-                                $coordYearsGbif,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,
-                                $drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears){
+                                $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,
+                                $drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears,$coordinatesGBIFInPHP,$coordinatesInPHP
+                            ,$dataReuna,$dataGbif){
 
         //$this->specie=$specie;
         $this->genusKey=$genusKey;
@@ -43,7 +48,7 @@ class Genero{
         $this->totalReunaConCoordenadas=$totalReunaConCoordenadas;
         $this->totalGBIF=$totalGBIF;
         $this->coordYearsREUNA=$coordYearsREUNA;
-        $this->coordYearsGbif=$coordYearsGbif;
+        $this->coordYearsGBIF=$coordYearsGBIF;
         $this->yearCountGbif=$yearCountGbif;
         $this->institutionNames=$institutionNames;
         $this->institutionNamesGBIF=$institutionNamesGBIF;
@@ -55,6 +60,10 @@ class Genero{
         $this->accumulatedYearsGbif=$accumulatedYearsGbif;
         $this->accumulatedYearsReuna=$accumulatedYearsReuna;
         $this->categoryYears=$categoryYears;
+        $this->coordinatesGBIFInPHP=$coordinatesGBIFInPHP;
+        $this->coordinatesInPHP=$coordinatesInPHP;
+        $this->dataReuna=$dataReuna;
+        $this->dataGbif=$dataGbif;
 
     }
     public function getSpecie(){
@@ -116,6 +125,18 @@ class Genero{
     }
     public function getCategoryYears(){
         return $this->categoryYears;
+    }
+    public function getCoordinatesGBIFInPHP(){
+        return $this->coordinatesGBIFInPHP;
+    }
+    public function getCoordinatesInPHP(){
+        return $this->coordinatesInPHP;
+    }
+    public function getDataReuna(){
+        return $this->dataReuna;
+    }
+    public function getDataGbif(){
+        return $this->dataGbif;
     }
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
@@ -285,7 +306,7 @@ function setAccumulatedYears($yearCount){
     $year=date('Y');
     $n=0;
     $last=0;
-    $anyo=40;
+    $anyo=100;
     for($i=0;$i<=$anyo;$i++){
         if(array_key_exists($year-$anyo+$i,$yearCount)){
             if($yearCount[$year-$anyo+$i]!=0){
@@ -303,7 +324,7 @@ function setAccumulatedYears($yearCount){
 }
 function setCategoryYears(){
 
-    $anyo=40;
+    $anyo=100;
     $result=array();
     $year=date('Y');
     $n=0;
@@ -316,6 +337,29 @@ function setCategoryYears(){
     return $result;
 
 }
+
+function setPieData($graph){
+    $data=$graph;
+    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    $outPie=array();
+    $i=0;
+    $outBar=array();
+    $categorias=array();
+    foreach($data as $key=>$value){
+        $outPie[$i]=array($key,$value);
+        $categorias[$i]=$key;
+        $outBar[$i]=array(
+            "y"=>$value,
+            "color"=>$colors[$i]
+        );
+        $i+=1;
+    }
+    $out=array($outPie,$categorias,$outBar);
+    return $out;
+
+}
+$dataReuna=array();
+$dataGbif=array();
 $drillDownDataGbif=array();
 $drillDownDataReuna=array();
 $limit = 10000;
@@ -384,6 +428,10 @@ if ($search) {
         $accumulatedYearsGbif=$results->getAccumulatedYearsGbif();
         $accumulatedYearsReuna=$results->getAccumulatedYearsReuna();
         $categoryYears=$results->getCategoryYears();
+        $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
+        $coordinatesInPHP=$results->getCoordinatesInPHP();
+        $dataReuna=$results->getDataReuna();
+        $dataGbif=$results->getDataGbif();
 
         echo 'cache!';
 
@@ -571,11 +619,14 @@ if ($search) {
             $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
             $accumulatedYearsReuna=setAccumulatedYears($yearCount);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+            $dataReuna=setPieData($institutionNames);
+            $dataGbif=setPieData($institutionNamesGBIF);
             echo('qwe');
             var_dump($institutionNamesGBIF);
 
             $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
-                $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears);
+                $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
+                    ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif);
 
             cache_set($search, $genusObject, 'cache', 60*60*30*24); //30 dias
             echo 'NO cache!';
