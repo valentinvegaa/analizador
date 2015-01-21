@@ -26,6 +26,11 @@ class Family{
     private $observacionesReuna=array();
     private $drillDownDataReuna=array();
     private $stackedChildrensReuna=array();
+
+    private $observacionesGbif=array();
+    private $drillDownDataGbif=array();
+    private $stackedChildrensGbif=array();
+
     public function setFamily($nombreFamilia,
                               $generos,
                               $especies,
@@ -33,7 +38,8 @@ class Family{
                               $cantidadEspecies,
                               $observacionesReuna,
                               $drillDownDataReuna,
-                              $stackedChildrensReuna
+                              $stackedChildrensReuna,
+                              $stackedChildrensGbif
     ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
@@ -43,6 +49,7 @@ class Family{
         $this->observacionesReuna=$observacionesReuna;
         $this->drillDownDataReuna=$drillDownDataReuna;
         $this->stackedChildrensReuna=$stackedChildrensReuna;
+        $this->stackedChildrensGbif=$stackedChildrensGbif;
     }
     public function getGeneros(){}
     public function getEspecies(){}
@@ -55,6 +62,9 @@ class Family{
     }
     public function getStackedChildrens(){
         return $this->stackedChildrensReuna;
+    }
+    public function getStackedChildrensGbif(){
+        return $this->stackedChildrensGbif;
     }
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
@@ -118,24 +128,51 @@ function getOrganizationNames($organizations)
     return $result;
 }
 function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&highertaxon_key='.$key), true);//106311492
+    //d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
+    //fab88965-e69d-4491-a04d-e3198b626e52
+    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
     $result=array();
-    foreach($children['results'] as $i){
-        //$childrenCount=getChildrenNames($i['key']);
-        //var_dump($childrenCount);
-        $childrenCount = json_decode(file_get_contents('http://api.gbif.org/v1/occurrences/count?taxonKey='.$i['key']), true);//106311492
-        $count = 0;
-        foreach($childrenCount as $key=>$value){
-            $count+=$value;
+    $genusCount=$children['count'];
+    $offset=0;
+    $genus=array();
+    if($genusCount>300){
+        while($genusCount>0){
+            foreach($children['results'] as $i){
+                array_push($genus,array($i['genus']=>$i['key']));
+            };
+            $genusCount-=300;
+            $offset+=300;
+            $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&offset='.$offset.'&highertaxon_key='.$key), true);
         }
-        if($count>0){
-            //$result.="{'name':'".$i['species']."','data':[".$count."]},";
-            $result[$i['genus']]=$count;
+    }
+    else{
+        foreach($children['results'] as $i){
+            array_push($genus,array($i['genus'],$i['key']));
+        };
+    }
+    $count=array();
+    $i=0;
+    foreach($genus as $value){
+        foreach($value as $key=>$value){
+            $localTemp=json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?scientificName='.$key.'&hasCoordinate=true&limit=0&country=CL'), true);//106311492
+            if(array_key_exists('count',$localTemp)&&$localTemp['count']>0){
+                $count[$key]=$localTemp['count'];
+            }
         }
-        //echo 'species '.$i['species'].' count '.$count;
-    };
-    //var_dump($result);
-    return $result;
+    }
+    /*
+    $count = 0;
+    $speciesKeys = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=SPECIES&limit=300&highertaxon_key='.$i['key']), true);//106311492
+    $result[$i['genus']]=0;
+    foreach($speciesKeys['results'] as $j){
+        $count+=json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?country=CL&taxonKey='.$j['key']), true);
+    }
+    $result[$i['genus']]=$count;
+    *///
+    return $count;
+}
+function getSpeciesCountFromGenus($key){
+
 }
 function getChildrenNames($key){
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
@@ -267,6 +304,7 @@ $FamilyObject=new Family();
 $drillDownDataGbif=array();
 $drillDownDataReuna=array();
 $stackedChildrens=array();
+$stackedChildrensGbif=array();
 
 if ($family) {
     if($cached=cache_get($family,'cache')){
@@ -274,6 +312,7 @@ if ($family) {
         $coordinatesReuna=$results->getObservacionesReuna();
         $drillDownDataReuna=$results->getDrillDownDataReuna();
         $stackedChildrens=$results->getStackedChildrens();
+        $stackedChildrensGbif=$results->getStackedChildrensGbif();
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -333,11 +372,11 @@ if ($family) {
                             if (!in_array($value, $genusFound)) {
                                 array_push($genusFound, $value);
                                 $value=explode(' ',$value);
-                                $taxonChildrens[$value[0].' '.$value[1]]=1;
+                                $taxonChildrens[$value[0]]=1;
                             }
                             else{
                                 $value=explode(' ',$value);
-                                $taxonChildrens[$value[0].' '.$value[1]]++;
+                                $taxonChildrens[$value[0]]++;
                             }
                             break;
                     }
@@ -346,15 +385,15 @@ if ($family) {
             ksort($yearCount);
             $reunaVacios = $totalReuna - $i;
         }
-        $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $family . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=FAMILY&limit=1'), true);
+        $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $family . '&dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=FAMILY&limit=1'), true);
         $familyKey = $json['results'][0]['key'];
-        if(false)
+        echo('family key:' .$familyKey);
+        //if(false)
         if ($family) {//355609060576005
             //$json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $family . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
             //$orderKey = $json['results'][0]['key'];
-            echo $familyKey . 'familyKey';
             //$urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=106605002&limit=0';
-            $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=SPECIES&highertaxon_key=' . $familyKey . '&limit=0';
+            $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=SPECIES&highertaxon_key=' . $familyKey . '&limit=0';
             $result = json_decode(file_get_contents($urlHigherTaxon), true);
             $countSpecies = $result['count'];
             $url_species = 'http://api.gbif.org/v1/species/match?name='.$family;
@@ -428,13 +467,29 @@ if ($family) {
             //$yearsGBIFforRange=implode(', ',$tempRange);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         }
+        $familyChildrens=getFamilyGenus($familyKey);
+        foreach($familyChildrens as $key=>$value){
+            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value)));
+        }
+        echo('qwerty');
+        var_dump($familyChildrens);
         foreach($taxonChildrens as $key=>$value){
-            array_push($stackedChildrens,array('name'=>$key,'data'=>$value));
+            array_push($stackedChildrens,array('name'=>$key,'data'=>array($value)));
         }
         $drillDownDataGbif=createDrilldown($yearCountGbif);
         $drillDownDataReuna=createDrilldown($yearCount);
 
-        $FamilyObject->setFamily($family,array(),array(),0,0,$coordinatesReuna,$drillDownDataReuna,$stackedChildrens);
+        $FamilyObject->setFamily(
+            $family,
+            array(),
+            array(),
+            0,
+            0,
+            $coordinatesReuna,
+            $drillDownDataReuna,
+            $stackedChildrens,
+            $stackedChildrensGbif
+        );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
 }

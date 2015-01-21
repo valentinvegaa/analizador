@@ -185,7 +185,7 @@ function getChildrenNames($key){
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
     $result=array();
     foreach($children['results'] as $i){
-        $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL'),true);
+        $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL&isGeorefernced=true'),true);
         if($count>0){
             //$result.="{'name':'".$i['species']."','data':[".$count."]},";
             $result[$i['species']]=$count;

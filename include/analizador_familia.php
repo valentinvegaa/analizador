@@ -11,7 +11,6 @@ $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
 echo isset($familyKey) ? $familyKey : '';
-$familyChildrens=getFamilyGenus($familyKey);
 //var_dump($speciesFound);
 //var_dump($yearCountGbif);
 ?>
@@ -578,7 +577,7 @@ function changeFeatures(first, last) {
         var monthCount =<?php echo json_encode($monthCount); ?>;
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
         var stackedGbifData=<?php echo json_encode($familyChildrens);?>;
-        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;$stackedChildrens
+        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
 
         GbifStacked = new Highcharts.Chart({
             chart: {
@@ -633,9 +632,19 @@ function changeFeatures(first, last) {
                 }
             }
         });
-        addSeriesStacked(GbifStacked,stackedGbifData);
+        //addSeriesStacked(GbifStacked,stackedGbifData);
+        console.log(stackedGbifData);
+        console.log('antes y despues');
         var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
-        ReunaStacked.addSeries(stackedReunaData);
+        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+        console.log(stackedReunaData);
+
+        for(var x in stackedGbifData){
+            GbifStacked.addSeries(stackedGbifData[x]);
+        }
+        for(var x in stackedReunaData){
+            ReunaStacked.addSeries(stackedReunaData[x]);
+        }
     });
 })(jQuery);
 var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
