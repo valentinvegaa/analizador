@@ -41,14 +41,15 @@ Explore los resultados:
     <div id="right-index">
         <div id="right-t-index">
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)))?></span> años con registros en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos Reuna</div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-            <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGBIF);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+            <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></span></div>
+            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
             <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
+            <div class="line"><span><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (GBIF) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
         </div>
     </div>
 </div>
@@ -73,7 +74,12 @@ Explore los resultados:
         <input type="text" id="amount" readonly>
     </div>
 </div>
-<div id="acumuladas" style="margin-left: 10px"></div>
+<br>
+<br>
+<div class="wraper-container" style="border: thick; border-color: black;">
+    <div class="title-a subtitulo">Observaciones Acumuladas</div>
+        <div id="acumuladas" style="margin-left: 10px"></div>
+</div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
     <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
@@ -182,9 +188,21 @@ function changeFeatures(first, last) {
 
 
     $(document).ready(function ($) {
-        //var graph =<?php echo json_encode($institutionNames); ?>;
-        //var data = setPieData(graph);
+
         var data=<?php echo json_encode($dataReuna); ?>;
+        var monthCount =<?php echo json_encode($monthCount); ?>;
+        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
+        var stackedGbifData=<?php echo json_encode(getChildrenNames($genusKey));?>;
+        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
+        var name = 'Década';
+        var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
+        var dataREUNA = tempREUNA[0];
+        var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
+        var dataGBIF = tempGBIF[0];
+        var categoryYears=<?php echo json_encode($categoryYears); ?>;
+        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
+        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
+
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -223,9 +241,9 @@ function changeFeatures(first, last) {
                 data: data[0]
             }]
         });
-        //graph =<?php echo json_encode($institutionNamesGBIF); ?>;
-        //data = setPieData(graph);
+
         var data=<?php echo json_encode($dataGbif); ?>;
+
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -264,6 +282,7 @@ function changeFeatures(first, last) {
                 data: data[0]
             }]
         });
+
         $('#institucionBar').highcharts({
             chart: {
                 type: 'bar'
@@ -312,15 +331,8 @@ function changeFeatures(first, last) {
                 data: data[2]
             }]
         });
-        //var categories = decadas;
-        var name = 'Década';
-        //var yearCount =<?php echo json_encode($yearCount); ?>;
-        //var accumulatedData=setAccumulatedYears(yearCount);
-       // var tempREUNA = setYearCountData(yearCount);
 
-        var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
-        console.log(tempREUNA);
-        var dataREUNA = tempREUNA[0];
+
         chartREUNA = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasREUNA',
@@ -402,10 +414,8 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        //yearCount =<?php echo json_encode($yearCountGbif); ?>;
-        //var tempGBIF = setYearCountData(yearCount);//
-        var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
-        var dataGBIF = tempGBIF[0];
+
+
         chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
@@ -487,10 +497,8 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        //var categoryYears=setCategoryYears();
-        var categoryYears=<?php echo json_encode($categoryYears); ?>;
-        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
-        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
+
+
         $('#acumuladas').highcharts({
             chart: {
                 type: 'area'
@@ -499,7 +507,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             title: {
-                text: 'Observaciones Acumuladas',
+                text: '',
                 style: '"fontSize": "12px"'
             },
             xAxis: {
@@ -549,12 +557,8 @@ function changeFeatures(first, last) {
                 }]
         });
 
-        var monthCount =<?php echo json_encode($monthCount); ?>;
-        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedGbifData=<?php echo json_encode(getChildrenNames($genusKey));?>;
-        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
-        //console.log(stackedGbifData);
-        //console.log(stackedReunaData);
+
+
 
         GbifStacked = new Highcharts.Chart({
             chart: {

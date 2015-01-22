@@ -545,7 +545,7 @@ if($specie){
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         //$results = json_decode(file_get_contents($search_url));
-       $DrillDownDataGbif=createDrilldown($yearCountGbif);
+        $DrillDownDataGbif=createDrilldown($yearCountGbif);
         $DrillDownDataReuna=createDrilldown($yearCount);
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
