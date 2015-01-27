@@ -38,12 +38,14 @@ Explore los resultados:
                 <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos Reuna</div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-                <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+                <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></div>
                 <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
             </div>
             <div id="left-index-b">
                 <div class="title-b"><a href="#institucion">Instituciones</a></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesReuna)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+
             </div>
         </div>
         <div id="top-rb-index">
