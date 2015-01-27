@@ -134,7 +134,12 @@
 .vernacular{
     margin-top: 5px;
 }
-#GbifStacked,#ReunaStacked{
+#GbifStacked{
+    margin-left: -20px;
+    height: 250px;
+    bottom: 0;
+}
+#ReunaStacked{
     margin-left: -20px;
     height: 200px;
     bottom: 0;

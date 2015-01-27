@@ -30,6 +30,10 @@ class Family{
     private $observacionesGbif=array();
     private $drillDownDataGbif=array();
     private $stackedChildrensGbif=array();
+    private $institutionDataReuna=array();
+    private $institutionDataGbif=array();
+    private $yearCount=array();
+    private $yearCountGbif=array();
 
     public function setFamily($nombreFamilia,
                               $generos,
@@ -37,9 +41,15 @@ class Family{
                               $cantidadGeneros,
                               $cantidadEspecies,
                               $observacionesReuna,
+                              $observacionesGbif,
                               $drillDownDataReuna,
+                              $drillDownDataGbif,
                               $stackedChildrensReuna,
-                              $stackedChildrensGbif
+                              $stackedChildrensGbif,
+                              $institutionDataReuna,
+                              $institutionDataGbif,
+                              $yearCount,
+                              $yearCountGbif
     ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
@@ -47,18 +57,35 @@ class Family{
         $this->cantidadGeneros=$cantidadGeneros;
         $this->cantidadEspecies=$cantidadEspecies;
         $this->observacionesReuna=$observacionesReuna;
+        $this->observacionesGbif=$observacionesGbif;
         $this->drillDownDataReuna=$drillDownDataReuna;
+        $this->drillDownDataGbif=$drillDownDataGbif;
         $this->stackedChildrensReuna=$stackedChildrensReuna;
         $this->stackedChildrensGbif=$stackedChildrensGbif;
+        $this->institutionDataReuna=$institutionDataReuna;
+        $this->institutionDataGbif=$institutionDataGbif;
+        $this->yearCount=$yearCount;
+        $this->yearCountGbif=$yearCountGbif;
     }
     public function getGeneros(){}
     public function getEspecies(){}
-
+    public function getInstitutionData($rog){//Reuna Or Gbif
+        return (strcmp('reuna',$rog))!=0?$this->institutionDataGbif:$this->institutionDataReuna;
+    }
+    public function getYearCount($rog){
+        return (strcmp('reuna',$rog))!=0?$this->yearCountGbif:$this->yearCount;
+    }
     public function getObservacionesReuna(){
         return $this->observacionesReuna;
     }
+    public function getObservacionesGbif(){
+        return $this->observacionesGbif;
+    }
     public function getDrillDownDataReuna(){
         return $this->drillDownDataReuna;
+    }
+    public function getDrillDownDataGbif(){
+        return $this->drillDownDataGbif;
     }
     public function getStackedChildrens(){
         return $this->stackedChildrensReuna;
@@ -160,34 +187,9 @@ function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada gen
             }
         }
     }
-    /*
-    $count = 0;
-    $speciesKeys = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=SPECIES&limit=300&highertaxon_key='.$i['key']), true);//106311492
-    $result[$i['genus']]=0;
-    foreach($speciesKeys['results'] as $j){
-        $count+=json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?country=CL&taxonKey='.$j['key']), true);
-    }
-    $result[$i['genus']]=$count;
-    *///
     return $count;
 }
-function getSpeciesCountFromGenus($key){
 
-}
-function getChildrenNames($key){
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
-    $result=array();
-    foreach($children['results'] as $i){
-        $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL'),true);
-        if($count>0){
-            //$result.="{'name':'".$i['species']."','data':[".$count."]},";
-            $result[$i['species']]=$count;
-        }
-        //echo 'species '.$i['species'].' count '.$count;
-    };
-    //var_dump($result);
-    return $result;
-}
 function suma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
@@ -198,8 +200,6 @@ function suma($data,$decada){
     return $sum;
 }
 function getYears($data,$decada){
-
-
     $years=array();
     $i=0;
     foreach($data as $key=>$value){
@@ -221,10 +221,8 @@ function getYears($data,$decada){
         }
     }
     return $years;
-
 }
 function getData($data,$decada){
-
     $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     $i=0;
     foreach($data as $key=>$value){
@@ -272,8 +270,47 @@ function createDrilldownCategories($var){
     }
     return $decadas;
 }
+function setCategoryYears(){
 
+    $anyo=100;
+    $result=array();
+    $year=date('Y');
+    $n=0;
+    for($i=0;$i<=$anyo;$i++){
+        $n=$year-$anyo+$i;
+        $ene=strval($n);
+        array_push($result,$ene);
+    }
 
+    return $result;
+
+}
+function setPieData($graph){
+    $data=$graph;
+    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    $outPie=array();
+    $i=0;
+    $outBar=array();
+    $categorias=array();
+    foreach($data as $key=>$value){
+        $outPie[$i]=array($key,$value);
+        $categorias[$i]=$key;
+        $outBar[$i]=array(
+            "y"=>$value,
+            "color"=>$colors[$i]
+        );
+        $i+=1;
+    }
+    $out=array($outPie,$categorias,$outBar);
+    return $out;
+
+}
+function cmp($a,$b){
+    if ($a['data'][0] == $b['data'][0]) {
+        return 0;
+    }
+    return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
+}
 $limit = 10000;
 $someVar = "";
 $results = false;
@@ -289,9 +326,7 @@ $speciesFound = array();
 $genusFound = array();
 $institutionNames = array();
 $institutionNamesGBIF = array();
-$yearCount = array();
-$yearCountGBIF = array();
-$yearsGBIFforRange = array();
+
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $coordYearsREUNA = '';
 $coordYearsGBIF = '';
@@ -305,14 +340,27 @@ $drillDownDataGbif=array();
 $drillDownDataReuna=array();
 $stackedChildrens=array();
 $stackedChildrensGbif=array();
+$institutionDataReuna=array();
+$institutionDataGbif=array();
+$yearCount = array();
+$yearCountGBIF = array();
 
 if ($family) {
     if($cached=cache_get($family,'cache')){
         $results = $cached->data;
         $coordinatesReuna=$results->getObservacionesReuna();
+        $coordinatesGBIFInPHP=$results->getObservacionesGbif();
         $drillDownDataReuna=$results->getDrillDownDataReuna();
+        $drillDownDataGbif=$results->getDrillDownDataGbif();
         $stackedChildrens=$results->getStackedChildrens();
         $stackedChildrensGbif=$results->getStackedChildrensGbif();
+        uasort($stackedChildrensGbif,'cmp');
+        uasort($stackedChildrens,'cmp');
+        var_dump($stackedChildrensGbif);
+        $institutionDataReuna=$results->getInstitutionData('reuna');
+        $institutionDataGbif=$results->getInstitutionData('gbif');
+        $yearCount=$results->getYearCount('reuna');
+        $yearCountGbif=$results->getYearCount('gbif');
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -416,10 +464,6 @@ if ($family) {
             $asdasd = array();
             if ($count > 300) {
                 while ($count > 0) {
-                    //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=$count&offset=$offset";
-                    //$content = file_get_contents($url);
-                    //$json = json_decode($content, true);
-                    //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
                     $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
                     $content = file_get_contents($url);
                     $json = json_decode($content, true);
@@ -439,7 +483,8 @@ if ($family) {
                     $count -= 300;
                     $offset += 300;
                 }
-            } else {
+            }
+            else {
                 $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
                 $content = file_get_contents($url);
                 $json = json_decode($content, true);
@@ -464,20 +509,20 @@ if ($family) {
                 }
             }
             $coordinatesGBIFInPHP = implode(', ', $asdasd);
-            //$yearsGBIFforRange=implode(', ',$tempRange);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         }
         $familyChildrens=getFamilyGenus($familyKey);
         foreach($familyChildrens as $key=>$value){
-            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value)));
+            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
         }
-        echo('qwerty');
-        var_dump($familyChildrens);
         foreach($taxonChildrens as $key=>$value){
-            array_push($stackedChildrens,array('name'=>$key,'data'=>array($value)));
+            array_push($stackedChildrens,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
         }
         $drillDownDataGbif=createDrilldown($yearCountGbif);
         $drillDownDataReuna=createDrilldown($yearCount);
+
+        $institutionDataReuna=setPieData($institutionNames);
+        $institutionDataGbif=setPieData($institutionNamesGBIF);
 
         $FamilyObject->setFamily(
             $family,
@@ -486,9 +531,15 @@ if ($family) {
             0,
             0,
             $coordinatesReuna,
+            $coordinatesGBIFInPHP,
             $drillDownDataReuna,
+            $drillDownDataGbif,
             $stackedChildrens,
-            $stackedChildrensGbif
+            $stackedChildrensGbif,
+            $institutionDataReuna,
+            $institutionDataGbif,
+            $yearCount,
+            $yearCountGbif
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }

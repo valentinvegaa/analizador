@@ -24,32 +24,32 @@ echo isset($familyKey) ? $familyKey : '';
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
 Explore los resultados:
-<div style="margin:20px 0 20px 0;">
-    <div class="top-index">
-        <div class="title-a">Composición Taxonómica</div>
-        <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($taxonChildrens);?> Géneros</span> en la base de datos REUNA.</a></div>
-        <div class="line"><a href="#GbifStacked"><span><?php echo sizeof($familyChildrens);?> Géneros</span> en la base de datos GBIF.</a></div>
-        <div class="endline">Último género de la Familia ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
+<div id="index">
+    <div id="left-index">
+        <div id="left-t-index">
+            <div class="title-a">Composición Taxonómica</div>
+            <div class="line"><a href="#ReunaStacked"><span><?php ?> Especies</span> en la base de datos REUNA.</a></div>
+            <div class="line"><a href="#GbifStacked"><span><?php //sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
+            <div class="endline">Última especie del Genero ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
+        </div>
+        <div id="left-b-index">
+            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
+            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
+        </div>
     </div>
-    <div class="bottom-index">
-        <div id="left-index-a">
+    <div id="right-index">
+        <div id="right-t-index">
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)));?></span> años con registros en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)))?></span> años con registros en la base de datos Reuna</div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
             <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
+            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGBIF);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
         </div>
         <div id="right-b-index">
-            <div id="top-rb-index">
-                <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-                <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
-                <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
-                <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
-            </div>
-            <div id="bottom-rb-index">
-                <div class="title-b">Instituciones</div>
-                <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
-            </div>
+            <div class="title-b"><a href="#institucion">Instituciones</a></div>
+            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
         </div>
     </div>
 </div>
@@ -93,14 +93,14 @@ Explore los resultados:
     <div id="institucionPieGBIF" class="institucionPie"></div>
     <div id="REUNATable"><?php
         print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionNames as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+        foreach($institutionDataReuna[0] as $key=>$value){
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
         }
         ?></div>
     <div id="GBIFTable"><?php
         print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionNamesGBIF as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+        foreach($institutionDataGbif[0] as $key=>$value){
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
         }
         ?></div>
 </div>
@@ -171,111 +171,22 @@ function changeFeatures(first, last) {
         });
     }
 
-    function setPieData(graph) {
-        var data = graph;
-        var outPie = [];
-        var i = 0;
-        var outBar = [];
-        var categorias = []
-        for (var x in data) {
-            outPie[i] = [x, data[x]];
-            categorias[i] = x;
-            outBar[i] = {y: data[x], color: colors[i]};
-            i++;
-        }
-        var out = [outPie, categorias, outBar];
-        return out;
-    }
 
-    function isInArray(value, array) {
-        return array.indexOf(value) > -1;
-    }
-
-    function suma(yearCount, dec) {
-        var data = yearCount;
-        var sum = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                sum += data[x];
-            }
-        }
-        return sum;
-    }
-
-    function getYears(yearCount, dec) {
-        var data = yearCount;
-        var years = [];
-        var i = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                years[i] = x;
-                i++;
-            }
-        }
-        temp = years;
-        for (var i = 0; i < 10; i++) {
-            if (temp != parseInt(dec + i.toString())) {
-                years[i] = parseInt(dec + i.toString());
-            }
-            else {
-                years[i] = temp;
-            }
-        }
-        return years;
-    }
-
-    function getData(yearCount, dec) {
-        var data = yearCount;
-        var out = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        var i = 0;
-        for (var x in data) {
-            if (x.substr(0, 3) == dec) {
-                out[x.substr(3, 4)] = data[x];
-                i++;
-            }
-        }
-        return out;
-    }
-
-    function setYearCountData(yearCount) {
-        var out = [];
-        var data = yearCount;
-        var i = 0;
-        var decadas = [];
-
-        for (var x in data) {
-            var dec = x.substring(0, 3) + "0";
-            if (!isInArray(dec, decadas)) {
-                decadas.push(dec);
-                out[i] = {
-                    y: suma(yearCount, dec.substring(0, 3)),
-                    color: colors[i],
-                    drilldown: {
-                        name: dec.substring(0, 3) + "0",
-                        categories: getYears(yearCount, dec.substring(0, 3)),//obtener años que empiezan por dec
-                        data: getData(yearCount, dec.substring(0, 3)),
-                        color: colors[i]
-                    }
-                };
-                i++;
-            }
-        }
-        return [out, decadas];
-    }
-    function addSeriesStacked(chart,data){
-        for(var x in data){
-            chart.addSeries({
-                name:(x.length>1?x:'No asignado'),
-                data:[data[x]]
-            });
-        }
-    }
 
     $(document).ready(function ($) {
-        var graph =<?php echo json_encode($institutionNames); ?>;
-        var data = setPieData(graph);
-        console.log(data[0]);
-        console.log('aqui');
+        var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
+        var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
+        var name = 'Decada';
+        var yearCount =<?php echo json_encode($yearCount); ?>;
+        var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
+        var dataREUNA = tempREUNA[0];
+        var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
+        var dataGBIF = tempGBIF[0];
+        var monthCount =<?php echo json_encode($monthCount); ?>;
+        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
+        var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
+        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -311,11 +222,9 @@ function changeFeatures(first, last) {
             series: [{
                 type: 'pie',
                 name: 'Total',
-                data: data[0]
+                data: dataReuna[0]
             }]
         });
-        graph =<?php echo json_encode($institutionNamesGBIF); ?>;
-        data = setPieData(graph);
         $('#institucionPieGBIF').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -351,63 +260,9 @@ function changeFeatures(first, last) {
             series: [{
                 type: 'pie',
                 name: 'Total',
-                data: data[0]
+                data: dataGbif[0]
             }]
         });
-        $('#institucionBar').highcharts({
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Registros por institucion',
-                style: '"fontSize": "14px"',
-                x: 15
-            },
-            xAxis: {
-                categories: data[1],
-                title: {
-                    text: null
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: null,
-                    align: 'high'
-                },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            tooltip: {
-                pointFormat: '<b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true
-                    },
-                    showInLegend: true
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right'
-            },
-            credits: {
-                enabled: false
-            },
-            series: [{
-                name: data[1],
-                data: data[2]
-            }]
-        });
-        //var categories = decadas;
-        var name = 'Decada';
-        var yearCount =<?php echo json_encode($yearCount); ?>;
-        var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
-        var dataREUNA = tempREUNA[0];
-
         chartREUNA = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasREUNA',
@@ -489,9 +344,8 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        yearCount =<?php echo json_encode($yearCountGbif); ?>;
-        var tempGBIF = setYearCountData(yearCount);
-        var dataGBIF = tempGBIF[0];
+        console.log(tempGBIF[1]);
+        console.log(dataGBIF);
         chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
@@ -573,12 +427,6 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-
-        var monthCount =<?php echo json_encode($monthCount); ?>;
-        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedGbifData=<?php echo json_encode($familyChildrens);?>;
-        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
-
         GbifStacked = new Highcharts.Chart({
             chart: {
                 type: 'bar',
@@ -601,7 +449,15 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 series: {
-                    stacking: 'percent'
+                    stacking: 'percent',
+                    showInLegend: true//muestra o esconde la leyenda de los graficos
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    var point = this.point,
+                        s = this.series.name + ':<b>' + this.y + '</b><br/>';
+                    return s;
                 }
             },
             series: []
@@ -632,13 +488,6 @@ function changeFeatures(first, last) {
                 }
             }
         });
-        //addSeriesStacked(GbifStacked,stackedGbifData);
-        console.log(stackedGbifData);
-        console.log('antes y despues');
-        var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
-        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
-        console.log(stackedReunaData);
-
         for(var x in stackedGbifData){
             GbifStacked.addSeries(stackedGbifData[x]);
         }
@@ -651,21 +500,18 @@ var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log('asd');
-//console.log(arrayCoordinatesInJS);
-console.log('asd');
+
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
     for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
         var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
         features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
     }
 }
-
+console.log(features);
 var mapView = new ol.View({
     projection: 'EPSG:3857',
     center: ol.proj.transform([-72.184306, -36.398612], 'EPSG:4326', 'EPSG:3857'),
