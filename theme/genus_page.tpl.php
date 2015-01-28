@@ -7,30 +7,36 @@
  */
 class Genero{
     /*__Variables__*/
+
         private $genusKey='';
         private $search='';
+        private $specie=array();
+    /*__Reuna__*/
+
         private $totalReuna;
-        private $taxonChildrens=array();
         private $totalReunaConCoordenadas;
-        private $totalGBIF;
         private $coordYearsREUNA='';
+        private $institutionNames=array();//(reuna)
+        private $accumulatedYearsReuna;
+        private $taxonChildrens=array();
+        private $coordinatesInPHP;
+        private $dataReuna=array();
+        private $yearCount=array();//reuna
+        private $drillDownDataReuna=array();
+
+    /*__Gbif__*/
+
+        private $totalGBIF;
         private $coordYearsGBIF='';
         private $yearCountGbif=array();
-        private $institutionNames=array();//(reuna)
-        private $specie=array();
         private $institutionNamesGBIF=array();
-        private $yearCount=array();//reuna
         private $monthCount=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         private $someVar='';
         private $drillDownDataGbif=array();//grafico Gbif
-        private $drillDownDataReuna=array();
         private $accumulatedYearsGbif;
-        private $accumulatedYearsReuna;
-         private $categoryYears;
-    private $coordinatesGBIFInPHP;
-    private $coordinatesInPHP;
-    private $dataReuna=array();
-    private $dataGbif=array();
+        private $categoryYears;
+        private $coordinatesGBIFInPHP;
+        private $dataGbif=array();
 
 
     /*-------------*/
@@ -496,35 +502,9 @@ if ($search) {
                             $monthCount[$value - 1]++;
                             break;
                     }
-                    /*if($field=='dwc.latlong_p') {
-                        $coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
-                        $totalReunaConCoordenadas++;
-                        $i++;
-                    }
-                    if($field=='dwc.scientificName_mt') {
-                        if (!in_array($value, $speciesFound)) {
-                            array_push($speciesFound, $value);
-                        }
-                    }
-                    if($field=='dwc.institutionCode_s'){
-                        if(!array_key_exists($value,$institutionNames)){
-                            $institutionNames[$value]=1;
-                        }
-                        else{
-                            $institutionNames[$value]++;
-                        }
-                    }
-                    if($field=='dwc.year_s'){
-                        if(!array_key_exists($value,$yearCount)){
-                            $yearCount[$value]=1;
-                        }
-                        else{$yearCount[$value]++;}
-                    }
-                    if($field=='dwc.month_s'){
-                        $monthCount[$value-1]++;
-                    }*/
+
                 }
-                //echo $institutionNames[$value][0];
+
             }
             ksort($yearCount);
             echo('qwe');
@@ -533,17 +513,15 @@ if ($search) {
             $reunaVacios = $totalReuna - $i;
             //echo $coordinatesInPHP;
         }
-        //print_r($institutionNames);
-        $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&rank=GENUS&limit=1'), true);
-        $genusKey = $json['results'][0]['nubKey'];
-        //if(false)
+        $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=1'), true);
+        $genusKey = $json['results'][0]['genusKey'];//nubKey o genusKey
         if ($search) {//355609060576005
             //$json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
             //$genusKey = $json['results'][0]['key'];
             echo $genusKey . 'genusKey';
-            $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?rank=SPECIES&highertaxon_key=' . $genusKey . '&limit=0';
+            $urlHigherTaxon = 'http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=SPECIES&highertaxon_key=' . $genusKey . '&limit=0';
             $result = json_decode(file_get_contents($urlHigherTaxon), true);
-            $countSpecies = $result['count'];
+           // $countSpecies = $result['count'];
             /*$url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $search);
             $content = file_get_contents($url_species);
             $json = json_decode($content, true);
