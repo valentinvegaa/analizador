@@ -33,14 +33,14 @@ function analizador_biodiversidad_menu()
         'title' => 'Búsqueda por Especie',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
-        'access callback' => 'user_is_logged_in',
+        //'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/genus/%'] = array(
         'title' => 'Búsqueda por Género',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
-        'access callback' => 'user_is_logged_in',
+        //'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/family/%'] = array(

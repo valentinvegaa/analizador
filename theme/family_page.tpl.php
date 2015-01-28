@@ -41,6 +41,7 @@ class Family{
                               $cantidadGeneros,
                               $cantidadEspecies,
                               $observacionesReuna,
+                              $coordYearsREUNA,
                               $observacionesGbif,
                               $drillDownDataReuna,
                               $drillDownDataGbif,
@@ -57,6 +58,7 @@ class Family{
         $this->cantidadGeneros=$cantidadGeneros;
         $this->cantidadEspecies=$cantidadEspecies;
         $this->observacionesReuna=$observacionesReuna;
+        $this->coordYearsReuna=$coordYearsREUNA;
         $this->observacionesGbif=$observacionesGbif;
         $this->drillDownDataReuna=$drillDownDataReuna;
         $this->drillDownDataGbif=$drillDownDataGbif;
@@ -77,6 +79,9 @@ class Family{
     }
     public function getObservacionesReuna(){
         return $this->observacionesReuna;
+    }
+    public function getCoordYearsReuna(){
+        return $this->coordYearsReuna;
     }
     public function getObservacionesGbif(){
         return $this->observacionesGbif;
@@ -349,6 +354,7 @@ if ($family) {
     if($cached=cache_get($family,'cache')){
         $results = $cached->data;
         $coordinatesReuna=$results->getObservacionesReuna();
+        $coordYearsREUNA=$results->getCoordYearsReuna();
         $coordinatesGBIFInPHP=$results->getObservacionesGbif();
         $drillDownDataReuna=$results->getDrillDownDataReuna();
         $drillDownDataGbif=$results->getDrillDownDataGbif();
@@ -459,9 +465,9 @@ if ($family) {
             $offset = 0;
             $count = $content;//$json['count'];
             $totalGBIF = $count;
-            $coordinatesGBIFInPHP = "";
+            //$coordinatesGBIFInPHP = "";
             $yearCountGbif = countYears($speciesKey, $count);
-            $asdasd = array();
+            $coordinatesGBIFInPHP = array();
             if ($count > 300) {
                 while ($count > 0) {
                     $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
@@ -471,8 +477,8 @@ if ($family) {
                     $someVar = countMonths($speciesKey);
                     foreach ($json['results'] as $i) {
                         //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
-                        array_push($asdasd, $i['decimalLongitude']);
-                        array_push($asdasd, $i['decimalLatitude']);
+                        $localArray=array($i['decimalLongitude'],$i['decimalLatitude']);
+                        array_push($coordinatesGBIFInPHP,$localArray );
                         $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
                         if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                             $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
@@ -491,8 +497,8 @@ if ($family) {
                 $someVar = countMonths($speciesKey);
                 //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
                 foreach ($json['results'] as $i) {
-                    array_push($asdasd, $i['decimalLongitude']);
-                    array_push($asdasd, $i['decimalLatitude']);
+                    $localArray=array($i['decimalLongitude'],$i['decimalLatitude']);
+                    array_push($coordinatesGBIFInPHP,$localArray );
                     if (isset($i['year'])) {
                         if ($i['year'] != '') {
                             $coordYearsGBIF .= $i['year'] . ',';
@@ -508,7 +514,7 @@ if ($family) {
                     }
                 }
             }
-            $coordinatesGBIFInPHP = implode(', ', $asdasd);
+            //$coordinatesGBIFInPHP = implode(', ', $asdasd);
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         }
         $familyChildrens=getFamilyGenus($familyKey);
@@ -531,6 +537,7 @@ if ($family) {
             0,
             0,
             $coordinatesReuna,
+            $coordYearsREUNA,
             $coordinatesGBIFInPHP,
             $drillDownDataReuna,
             $drillDownDataGbif,

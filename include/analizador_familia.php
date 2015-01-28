@@ -105,37 +105,7 @@ Explore los resultados:
         ?></div>
 </div>
 <script>
-function changeFeatures(first, last) {
-    source.clear();
-    sourceGBIF.clear();
 
-    var newFeatures = [];
-    var j = 0;
-    var k = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-            var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
-            newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-            j++;
-        }
-        k++;
-    }
-    var newFeaturesGBIF = [];
-    j = 0;
-    k = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-            var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
-            newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-            j++;
-        }
-        k++;
-    }
-    ;
-    console.log(j);
-    sourceGBIF.addFeatures(newFeaturesGBIF);
-    source.addFeatures(newFeatures);
-}
 (function ($) {
     var fecha = new Date();
     var today = fecha.getFullYear();
@@ -170,8 +140,6 @@ function changeFeatures(first, last) {
             color: color || 'white'
         });
     }
-
-
 
     $(document).ready(function ($) {
         var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
@@ -344,8 +312,6 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        console.log(tempGBIF[1]);
-        console.log(dataGBIF);
         chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
@@ -496,11 +462,45 @@ function changeFeatures(first, last) {
         }
     });
 })(jQuery);
+function changeFeatures(first, last) {
+    source.clear();
+    sourceGBIF.clear();
+
+    var newFeatures = [];
+    var j = 0;
+    var k = 0;
+    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+            var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+            newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+            j++;
+        }
+        k++;
+    }
+    var newFeaturesGBIF = [];
+    j = 0;
+    k = 0;
+    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
+            var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
+            newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+            j++;
+        }
+        k++;
+    }
+    ;
+    console.log(j);
+    sourceGBIF.addFeatures(newFeaturesGBIF);
+    source.addFeatures(newFeatures);
+}
 var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
-var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-
+console.log(arrayCoordinatesInJS);
+console.log('_');
+console.log(arrayCoordinatesGBIFInJS);
+console.log('_');
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
@@ -511,7 +511,6 @@ if (largo > 0) {
         features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
     }
 }
-console.log(features);
 var mapView = new ol.View({
     projection: 'EPSG:3857',
     center: ol.proj.transform([-72.184306, -36.398612], 'EPSG:4326', 'EPSG:3857'),
