@@ -20,37 +20,37 @@ echo isset($familyKey) ? $familyKey : '';
         <input type="submit" value="Search"/>
     </form>
 </div>-->
-<div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($search)) echo $search; ?>
+<div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($family)) echo $family; ?>
 </div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
 Explore los resultados:
 <div id="index">
     <div id="left-index">
         <div id="left-t-index">
             <div class="title-a">Composición Taxonómica</div>
-            <div class="line"><a href="#ReunaStacked"><span><?php ?> Especies</span> en la base de datos REUNA.</a></div>
+            <div class="line"><a href="#ReunaStacked"><span><?php ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
             <div class="line"><a href="#GbifStacked"><span><?php //sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
-            <div class="endline">Última especie del Genero ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
+            <div class="endline">Última especie del Genero ingresado a <?php echo $REUNA; ?>:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
         </div>
         <div id="left-b-index">
             <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
+            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
             <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
         </div>
     </div>
     <div id="right-index">
         <div id="right-t-index">
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)))?></span> años con registros en la base de datos Reuna</div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-            <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGBIF);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+            <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
+            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos GBIF</div>
+            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></span></div>
+            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
-            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
-        </div>
+            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Instituciones (<?php echo $REUNA; ?>) han contribuido con registros de la Familia <?if (isset($family)) echo $family;?></div>
+            </div>
     </div>
 </div>
 <div class="wraper-container" style="border: thick; border-color: black;">
@@ -62,12 +62,13 @@ Explore los resultados:
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
+        <div class="line"><span></span> Año cero indica años posteriores a 1900.</div>
     </div>
     <div id="containers geografica" class="containers">
         <div class="title-a subtitulo">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
         <div id="mapContainer" class="mapContainer">
-            <div class="mapTitle">REUNA</div>
+            <div class="mapTitle"><?php echo $REUNA; ?></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
             <div class="mapTitle">GBIF</div>
@@ -84,7 +85,7 @@ Explore los resultados:
     <div class="title-a subtitulo">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
     <div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-            style="color: darkgray">Base de Datos REUNA</span></div>
+            style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span></div>
     <div style="width: 45%;float:right"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
             style="color: darkgray">Base de Datos GBIF</span></div>
     <!--<div id="institucionBar" class="institucionBar"></div>-->
@@ -145,15 +146,19 @@ Explore los resultados:
         var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
         var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
         var name = 'Decada';
-        var yearCount =<?php echo json_encode($yearCount); ?>;
+        var yearCountGBIF =<?php echo json_encode($yearCountGbif); ?>;
         var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
         var dataREUNA = tempREUNA[0];
         var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
         var dataGBIF = tempGBIF[0];
-        var monthCount =<?php echo json_encode($monthCount); ?>;
-        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
+        //var monthCount =<?php echo json_encode($monthCount); ?>;
+        //var monthCountGBIF =<?php echo json_encode($someVar); ?>;
         var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
         var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+       // console.log(tempGBIF[0]);
+       // console.log(tempGBIF[1]);
+        //console.log(yearCountGBIF);
+        console.log(stackedGbifData);
 
         $('#institucionPieREUNA').highcharts({
             chart: {
@@ -163,7 +168,7 @@ Explore los resultados:
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,
@@ -201,7 +206,7 @@ Explore los resultados:
                 spacingTop: 0,
                 spacingLeft: 0,
                 marginTop: 0,
-                marginLeft: 0,
+                marginLeft: 0
             },
             title: {
                 text: null,
@@ -244,7 +249,7 @@ Explore los resultados:
             },
             yAxis: {
                 title: {
-                    text: 'Observations REUNA',
+                    text: 'Observaciones <?php echo $REUNA; ?>',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -269,7 +274,7 @@ Explore los resultados:
                     },
                     dataLabels: {
                         enabled: true,
-                        color: colors[0],
+                        color: '#000000',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -350,7 +355,7 @@ Explore los resultados:
                     },
                     dataLabels: {
                         enabled: true,
-                        color: colors[0],
+                        color: '#000000',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -434,7 +439,7 @@ Explore los resultados:
                 renderTo: 'ReunaStacked'
             },
             title: {
-                text: 'Distribución de Ocurrencias por Genero (Base de Datos REUNA)'
+                text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
             },
             xAxis: {
                 categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
@@ -497,10 +502,8 @@ var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(arrayCoordinatesInJS);
-console.log('_');
-console.log(arrayCoordinatesGBIFInJS);
-console.log('_');
+//console.log(arrayCoordinatesInJS);
+
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
@@ -609,19 +612,16 @@ var map = new ol.Map({
     renderer: 'canvas',
     view: mapView
 });
-var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
+
+var largoGBIF = (arrayCoordinatesGBIFInJS.length);
 if (largoGBIF > 0) {
     var featuresGBIF = new Array(largoGBIF);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
+    for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
+        var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
         var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        featuresGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-        j++;
+        featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
-    ;
 }
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
