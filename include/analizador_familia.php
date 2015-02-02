@@ -28,8 +28,11 @@ Explore los resultados:
     <div id="left-index">
         <div id="left-t-index">
             <div class="title-a">Composición Taxonómica</div>
-            <div class="line"><a href="#ReunaStacked"><span><?php ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
+            <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($speciesFound); ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
             <div class="line"><a href="#GbifStacked"><span><?php //sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
+            <div class="line">
+                <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
+            </div>
             <div class="endline">Última especie del Genero ingresado a <?php echo $REUNA; ?>:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
         </div>
         <div id="left-b-index">
@@ -50,15 +53,14 @@ Explore los resultados:
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
             <div class="line"><span><?php echo sizeof($institutionNames)?></span> Instituciones (<?php echo $REUNA; ?>) han contribuido con registros de la Familia <?if (isset($family)) echo $family;?></div>
-            </div>
+            <div class="line"><span><?php echo sizeof($institutionNamesGBIF)?></span> Instituciones (GBIF) han contribuido con registros de la Familia <?if (isset($family)) echo $family;?></div>
+
+        </div>
     </div>
 </div>
 <div class="wraper-container" style="border: thick; border-color: black;">
     <div class="left" id="temporal">
         <div class="title-a subtitulo">Distribución Temporal</div>
-        <div class="texto">
-            <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
-        </div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
@@ -112,7 +114,7 @@ Explore los resultados:
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '1889', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -212,6 +214,7 @@ Explore los resultados:
                 text: null,
                 style: '"fontSize": "14px"'
             },
+
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
             },
@@ -243,6 +246,9 @@ Explore los resultados:
             },
             title: {
                 text: null
+            },
+            credits: {
+                enabled: false
             },
             xAxis: {
                 categories: tempREUNA[1]
@@ -325,6 +331,9 @@ Explore los resultados:
             title: {
                 text: null
             },
+            credits: {
+                enabled: false
+            },
             xAxis: {
                 categories: tempGBIF[1]
             },
@@ -406,6 +415,9 @@ Explore los resultados:
             title: {
                 text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
             },
+            credits: {
+                enabled: false
+            },
             xAxis: {
                 categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
             },
@@ -441,6 +453,9 @@ Explore los resultados:
             title: {
                 text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
             },
+            credits: {
+                enabled: false
+            },
             xAxis: {
                 categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
             },
@@ -474,6 +489,18 @@ function changeFeatures(first, last) {
     var newFeatures = [];
     var j = 0;
     var k = 0;
+    for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
+        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+            var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
+            var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
+            //var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+           newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+
+            j++;
+        }
+        k++;
+    }
+    /*
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
         if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
             var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
@@ -481,18 +508,30 @@ function changeFeatures(first, last) {
             j++;
         }
         k++;
-    }
+    }*/
     var newFeaturesGBIF = [];
     j = 0;
     k = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+
+    for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
+        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
+            var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
+            var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
+            //var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
+            newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+            j++;
+        }
+        k++;
+    }
+
+   /* for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
         if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
             var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
             newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
             j++;
         }
         k++;
-    }
+    }*/
     ;
     console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
@@ -623,6 +662,8 @@ if (largoGBIF > 0) {
         featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
 }
+
+
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
 });

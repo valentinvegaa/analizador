@@ -367,7 +367,7 @@ $categoryYears=array();
 $limit = 10000;
 $tipo = "";
 $results = false;
-
+$REUNA='REUNA';
 $OrganizationKey = '';
 $OrganizationKeyArray = array();
 $autoComEspecies = array();

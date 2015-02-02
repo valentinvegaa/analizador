@@ -364,6 +364,7 @@ function setPieData($graph){
     return $out;
 
 }
+$REUNA='REUNA';
 $dataReuna=array();
 $dataGbif=array();
 $drillDownDataGbif=array();
@@ -515,6 +516,7 @@ if ($search) {
         }
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=1'), true);
         $genusKey = $json['results'][0]['genusKey'];//nubKey o genusKey
+        //if(false)
         if ($search) {//355609060576005
             //$json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $search . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=GENUS&limit=1'), true);
             //$genusKey = $json['results'][0]['key'];

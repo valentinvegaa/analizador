@@ -44,7 +44,7 @@ Explore los resultados:
             <div id="left-index-b">
                 <div class="title-b"><a href="#institucion">Instituciones</a></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesReuna)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (GBIF) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
 
             </div>
         </div>
@@ -67,7 +67,7 @@ Explore los resultados:
     </div>
     <div id="containers" class="containers">
         <div class="title-a subtitulo" id="geografica">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> ocurrencias Georeferenciadas, correspondiente al  <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
         <div id="mapContainer" class="mapContainer">
             <div style="font-weight: bold;text-align: center">Reuna</div>
         </div>
@@ -295,7 +295,7 @@ function changeFeatures(first, last) {
             },
             yAxis: {
                 title: {
-                    text: 'Observations REUNA',
+                    text: 'Observ. REUNA',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -320,7 +320,7 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: colors[0],
+                        color: '#00000',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -377,7 +377,7 @@ function changeFeatures(first, last) {
             },
             yAxis: {
                 title: {
-                    text: 'Observations GBIF',
+                    text: 'Observ. GBIF',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -402,7 +402,7 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: colors[0],
+                        color: '#00000',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -464,7 +464,7 @@ function changeFeatures(first, last) {
             yAxis: {
                 min: 0,
                 title: {
-                    text: '<b>Observations</b>'
+                    text: '<b>Observaciones</b>'
                 }
             },
             tooltip: {
