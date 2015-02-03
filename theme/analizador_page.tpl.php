@@ -1,7 +1,7 @@
 <?php
 $path = drupal_get_path('module', 'analizador_biodiversidad');
-require_once($path . '/include/solrConnection.php');
-require_once($path . '/Apache/Solr/Service.php');
+include($path . '/include/solrConnection.php');
+include($path . '/Apache/Solr/Service.php');
 
 function countMonths($taxonKey)
 {

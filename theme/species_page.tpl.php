@@ -306,15 +306,15 @@ function createDrilldownCategories($var){
 }
 
 function setAccumulatedYears($yearCount){
-
+    $years=$yearCount;
     $result=array();
     $year=date('Y');
     $n=0;
     $last=0;
     $anyo=100;
     for($i=0;$i<=$anyo;$i++){
-        if($yearCount[$year-$anyo+$i]!=0){
-           $n=$yearCount[$year-$anyo+$i];
+        if($years[$year-$anyo+$i]!=0){
+           $n=$years[$year-$anyo+$i];
         }
         else{
             $n=0;
@@ -340,6 +340,14 @@ function setCategoryYears(){
 
     return $result;
 
+}
+function checkPosition($coords){
+    for($i=0;$i<count($coords);$i++){
+        $url='http://nominatim.openstreetmap.org/reverse?format=xml&lat='.$coords[$i][1].'&lon='.$coords[$i][0].'&zoom=18&addressdetails=1';
+        $page=file_get_contents($url);
+        $result=json_decode($page,true);
+        var_dump($result);
+    }
 }
 
 /*--------------------------*/
@@ -432,9 +440,10 @@ if($specie){
     }
     else{
         $query='*:*';
-        $search=explode(' ',$specie);
+        //$search=explode(' ',$specie);
         $additionalParameters = array(
-            'fq' => 'dwc.genus_mt:'.$search[0].' AND dwc.specificEpithet_mt:'.$search[1],
+            //'fq' => 'dwc.genus_mt:'.$search[0].' AND dwc.specificEpithet_mt:'.$search[1],
+            'fq' => 'dwc.scientificName_mt:"'.$specie.'"',
             'fl' => 'dwc.month_s,
                  dwc.year_s,
                  dwc.institutionCode_s,
@@ -553,6 +562,7 @@ if($specie){
                 }
             }
         }
+        //$regionesReuna=checkPosition($coordinatesReuna);
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
@@ -567,10 +577,10 @@ if($specie){
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
+
     }
 }
-//var_dump($coordinatesReuna);
-var_dump($yearCount);
+echo '2';
 ?>
 <?php // page template ?>
 

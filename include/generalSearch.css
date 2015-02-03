@@ -59,3 +59,8 @@ a:link {
 .ui-border-all {
     border-radius: 0px;
 }
+.resultCount{
+    float:right;
+    font-size: 0.8em;
+    font-weight: 100;
+}

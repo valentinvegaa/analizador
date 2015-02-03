@@ -63,6 +63,9 @@ Explore los resultados:
 <div class="wraper-container" style="border: thick; border-color: black;">
     <div class="left" id="temporal">
         <div class="title-a subtitulo">Distribución Temporal</div>
+        <div class="texto">
+            <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
+        </div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
@@ -116,7 +119,7 @@ Explore los resultados:
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '1889', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -216,7 +219,6 @@ Explore los resultados:
                 text: null,
                 style: '"fontSize": "14px"'
             },
-
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
             },
@@ -543,8 +545,7 @@ var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(arrayCoordinatesInJS);
-console.log(arrayCoordinatesGBIFInJS);
+//console.log(arrayCoordinatesInJS);
 
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
@@ -665,8 +666,6 @@ if (largoGBIF > 0) {
         featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
 }
-
-
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
 });

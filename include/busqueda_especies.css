@@ -214,3 +214,23 @@
 .error {
     display: none;
 }
+/*
+Instituciones
+*/
+.izq{
+    float: left;
+    margin-left: 10px;
+}
+.der{
+    float:right;
+    margin-right: 10px;
+
+}
+.mapContainerHorizontal{
+    width:100%;
+    height: 200px;
+}
+#rank{
+    width:100%;
+    height: 300px;
+}

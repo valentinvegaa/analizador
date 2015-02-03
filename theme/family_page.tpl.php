@@ -237,7 +237,6 @@ function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada gen
     }
     return $count;
 }
-
 function suma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
@@ -319,7 +318,6 @@ function createDrilldownCategories($var){
     return $decadas;
 }
 function setCategoryYears(){
-
     $anyo=100;
     $result=array();
     $year=date('Y');

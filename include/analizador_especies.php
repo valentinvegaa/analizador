@@ -736,42 +736,96 @@ var selectClick = new ol.interaction.Select({
     })
 });
 
+var newFeatures = [];
+var j = 0;
+var k = 0;
+for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+    if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+        var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+        newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+        j++;
+    }
+    k++;
+}
+
 var collection = selectClick.getFeatures();
 collection.on('add', function () {
     collection = selectClick.getFeatures();
-    var newFeaturesGBIF=[];
-    var index=0;
     collection.forEach(function (f) {
             var text = f.get('NOMBRE');
-            //console.log(text);
-
-            changeFeatures(-1,3000);
-
-            sourceGBIF.forEachFeature(function (e) {
+            console.log(text);
+            source.forEachFeature(function (e) {
                 if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    //console.log('adentro');
-                    newFeaturesGBIF[index]=e;
-                    index++;
+                    console.log('adentro');
                 }
                 else {
-                    //console.log('afuera');
+                    console.log('afuera');
                 }
             });
         }
     );
-    sourceGBIF.clear();
-    sourceGBIF.addFeatures(newFeaturesGBIF);
 
     //console.log(featuresinBox);
     //featuresSelected.push(e);
 });
 collection.on('remove', function () {
-    changeFeatures(-1,3000);
+    console.log('remove');
 });
+var selectClickGBIF = new ol.interaction.Select({
+    condition: ol.events.condition.click,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(0, 255, 0, 0.2)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 0.5
+        })
+    })
+});
+var collectionGBIF = selectClickGBIF.getFeatures();
+collectionGBIF.on('add', function () {
+    collectionGBIF = selectClickGBIF.getFeatures();
+    collectionGBIF.forEach(function (f) {
+            var text = f.get('NOMBRE');
+            console.log(text);
+            source.forEachFeature(function (e) {
+                if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
+                    console.log('adentro');
+                }
+                else {
+                    console.log('afuera');
+                }
+            });
+        }
+    );
+});
+//collection.on('remove', function(){console.log('remove');});
 var changeInteraction = function () {
-    mapGBIF.addInteraction(selectClick);
-    //mapGBIF.addInteraction(selectClickGBIF);
+    select = selectClick;
+    map.addInteraction(select);
+    mapGBIF.addInteraction(selectClickGBIF);
 };
+var boxControl = new ol.interaction.DragBox({
+    condition: ol.events.condition.shiftKeyOnly,
+    style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+        })
+    })
+});
+map.addInteraction(boxControl);
+boxControl.on('boxend', function () {
+    var featuresinBox = [];
+    source.forEachFeature(function (e) {
+        if (ol.extent.containsCoordinate(boxControl.getGeometry().extent, e.getGeometry().getCoordinates())) {
+            featuresinBox.push(e);
+        }
+    });
+    //document.getElementById("msg").innerHTML = featuresinBox.length;
+    console.log(featuresinBox);
+});
 changeInteraction();
 /***************************************/
 mapGBIF.bindTo('view', map);

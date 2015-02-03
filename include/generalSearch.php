@@ -5,10 +5,26 @@
  * Date: 12-11-2014
  * Time: 0:21
  */
-$path = drupal_get_path('module', 'analizador_biodiversidad');
-include($path . '/include/solrConnection.php');
-include($path . '/Apache/Solr/Service.php');
+
+$additionalParameters = array(
+    'fq' => '',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.institutionCode_s'
+);
+try {
+    $results = $solr->search('*:*', 0, 0, $additionalParameters);
+}catch (Exception $e)
+{
+    die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+}
 ?>
+<div id="start-point"></div>
+<div id="final-point"></div>
+<form class="form-wrapper" accept-charset="utf-8" method="post">
+    <input type="text" id="qw" name="qw" placeholder="Busque aquí" required>
+    <input type="submit" value="Search" id="submit">
+</form>
 <script>
     (function ($) {
         Drupal.behaviors.yourThemeTabs = {
@@ -20,6 +36,21 @@ include($path . '/Apache/Solr/Service.php');
 </script>
 <div>
     <?php
+    function countReunaOccurences($name, $taxa, $solr){
+        $additionalParameters = array(
+            'fq' => $taxa.':"'.$name.'"',
+            'fl' => '',
+            'facet' => 'true',
+            'facet.field' => 'dwc.institutionCode_s'
+        );
+        try {
+            $results = $solr->search('*:*', 0, 0, $additionalParameters);
+        }catch (Exception $e)
+        {
+            die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+        }
+        return $results->response->numFound;
+    }
     function getVernaculars($key){
         $vernaculars = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/vernacularNames'), true);
         $return='';
@@ -108,13 +139,43 @@ include($path . '/Apache/Solr/Service.php');
             print '<span>'.suma($offset,$j).') </span>';
             switch($i['rank']){
                 case 'SPECIES':
-                    print '<a href="http://www.ecoinformatica.cl/site/analizador/species/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a></div>';
+                    $reunaCount=countReunaOccurences($i['canonicalName'],'dwc.scientificName_mt',$solr);
+                    $url='http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['key'].'&isGeoreferenced=true&country=CL';
+                    $count=json_decode(file_get_contents($url),true);
+                    if($count>0 && $reunaCount>0){
+                        print '<a href="http://www.ecoinformatica.cl/site/analizador/species/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a> <div class="resultCount">Reuna: '.$reunaCount.' Gbif: '.$count.'</div></div>';
+                    }
+                    else{
+                        if($count==0&&$reunaCount>0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount"> No hay registros en Chile en Gbif si en Reuna</div></div>';
+                        else if($count>0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna si en Gbif</div></div>';
+                        else if($count==0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna ni registros en Chile en Gbif</div></div>';
+                    }
                     break;
                 case 'GENUS':
-                    print '<a href="http://www.ecoinformatica.cl/site/analizador/genus/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a></div>';
+                    $reunaCount=countReunaOccurences($i['canonicalName'],'dwc.genus_mt',$solr);
+                    $url='http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['key'].'&isGeoreferenced=true&country=CL';
+                    $count=json_decode(file_get_contents($url),true);
+                    if($count>0 && $reunaCount>0){
+                        print '<a href="http://www.ecoinformatica.cl/site/analizador/genus/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a> <div class="resultCount">Reuna: '.$reunaCount.' Gbif: '.$count.'</div></div>';
+                    }
+                    else{
+                        if($count==0&&$reunaCount>0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount"> No hay registros en Chile en Gbif si en Reuna</div></div>';
+                        else if($count>0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna si en Gbif</div></div>';
+                        else if($count==0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna ni registros en Chile en Gbif</div></div>';
+                    }
                     break;
                 case 'FAMILY':
-                    print '<a href="http://www.ecoinformatica.cl/site/analizador/family/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a></div>';
+                    $reunaCount=countReunaOccurences($i['canonicalName'],'dwc.family_mt',$solr);
+                    $url='http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['key'].'&isGeoreferenced=true&country=CL';
+                    $count=json_decode(file_get_contents($url),true);
+                    if($count>0 && $reunaCount>0){
+                        print '<a href="http://www.ecoinformatica.cl/site/analizador/family/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a> <div class="resultCount">Reuna: '.$reunaCount.' Gbif: '.$count.'</div></div>';
+                    }
+                    else{
+                        if($count==0&&$reunaCount>0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount"> No hay registros en Chile en Gbif si en Reuna</div></div>';
+                        else if($count>0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna si en Gbif</div></div>';
+                        else if($count==0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna ni registros en Chile en Gbif</div></div>';
+                    }
                     break;
                 case 'ORDER':
                     print '<a href="http://www.ecoinformatica.cl/site/analizador/order/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a></div>';
@@ -150,16 +211,19 @@ include($path . '/Apache/Solr/Service.php');
     print '</form>';
     print '</div>';
     print '<div id="tabs-2">';
-
-    $searchGenus=array();
-    //count($searchGenus['results'])>0?print '<div class="subtitle">Aquí puede encontrar una lista de las instituciones asociadas a su busqueda ('.$queryFilterWord.')</div>':print '<div class="no-results">No se han encontrado resultados</div>';
-    foreach ($searchGenus as $i) {
-        print '<div class="result">';
-        //print '<div class="scientificName"><a href="http://www.ecoinformatica.cl/site/analizador/genus/' . $i['scientificName'] . '">' . $i['scientificName'] . '</a></div>';
-        print '</div>';
-
-        //dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&highertaxon_key=106605002&rank=GENUS
-        //&rank=SPECIES&highertaxon_key=106605002
+    if ($results) {
+        $totalInstitutions = $results->response->numFound;
+        $j=1;
+        foreach ($results->facet_counts->facet_fields as $doc) {
+            foreach ($doc as $field => $value) {
+                print '<div class="result">';
+                print '<div class="scientificName">';
+                print '<span>'.$j.') </span>';
+                print '<a href="http://www.ecoinformatica.cl/site/analizador/institutions/' .$field. '">' . $field . '</a>';
+                print '</div></div>';
+                $j++;
+            }
+        }
     }
     print '</div>';
     ?>

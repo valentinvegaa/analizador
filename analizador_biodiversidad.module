@@ -57,6 +57,13 @@ function analizador_biodiversidad_menu()
         'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
+    $items['analizador/institutions/%'] = array(
+        'title' => 'Búsqueda por Institución',
+        'page callback' => 'species_callback',
+        'type' => MENU_NORMAL_ITEM,
+        'access callback' => 'user_is_logged_in',
+        'access arguments' => array('access content'),
+    );
     $items['admin/settings/analizador_biodiversidad'] = array(
         'title' => 'Analizador',
         'description' => 'Settings Analizador Biodiversidad',
@@ -167,6 +174,7 @@ function analizador_biodiversidad_block_list_alter(&$blocks)
         || drupal_match_path(current_path(), "analizador/genus/*")
         || drupal_match_path(current_path(), "analizador/family/*")
         || drupal_match_path(current_path(), "analizador/order/*")
+        || drupal_match_path(current_path(), "analizador/institutions/*")
     ) {
         foreach ($blocks as $i => $block) {
             if ('sidebar_first' === $block->region || 'advertise' === $block->region) {
@@ -201,6 +209,10 @@ function analizador_biodiversidad_theme()
             'template' => 'theme/order_page',
             'render element' => 'page',
         ),
+        'institutions_page' => array(
+            'template' => 'theme/institutions_page',
+            'render element' => 'page',
+        ),
     );
 }
 
@@ -220,6 +232,9 @@ function analizador_biodiversidad_preprocess_page(&$variables, $hook)
     }
     if (drupal_match_path(current_path(), "analizador/order/*")) {
         $variables['theme_hook_suggestions'][] = 'order_page';
+    }
+    if (drupal_match_path(current_path(), "analizador/institutions/*")) {
+        $variables['theme_hook_suggestions'][] = 'institutions_page';
     }else {
         return;
     }

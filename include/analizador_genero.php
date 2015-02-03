@@ -203,6 +203,7 @@ function changeFeatures(first, last) {
         var dataREUNA = tempREUNA[0];
         var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
         var dataGBIF = tempGBIF[0];
+        console.log(tempGBIF[0]);
         var categoryYears=<?php echo json_encode($categoryYears); ?>;
         var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
         var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
@@ -502,6 +503,8 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
+        console.log('asd');
+        console.log(dataGBIF);
 
 
         $('#acumuladas').highcharts({
