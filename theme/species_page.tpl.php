@@ -34,11 +34,12 @@ class Especie{
     private $categoryYears;
     private $AccumulatedYearsGbif;
     private $AccumulatedYearsReuna;
+    private $REUNA;
     /**/
 
 
     public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
-    ,$AccumulatedYearsGbif,$AccumulatedYearsReuna){
+    ,$AccumulatedYearsGbif,$AccumulatedYearsReuna,$REUNA){
 
         $this->nombreCientifico=$nombreCientifico;
         $this->posReuna=$posicionReuna;
@@ -61,6 +62,7 @@ class Especie{
         $this->categoryYears=$categoryYears;
         $this->AccumulatedYearsGbif=$AccumulatedYearsGbif;
         $this->AccumulatedYearsReuna=$AccumulatedYearsReuna;
+        $this->REUNA=$REUNA;
         /**/
 
     }
@@ -131,6 +133,9 @@ class Especie{
     }
     public function getAccumulatedYearsReuna(){
         return $this->AccumulatedYearsReuna;
+    }
+    public function getReuna(){
+        return $this->REUNA;
     }
     /**/
 
@@ -414,6 +419,7 @@ if($specie){
         $categoryYears=$results->getCategoryYears();
         $accumulatedYearsGbif=$results->getAccumulatedYearsGbif();
         $accumulatedYearsReuna=$results->getAccumulatedYearsReuna();
+        $REUNA=$results->getReuna();
         /**/
 
         echo 'cache!';
@@ -551,7 +557,7 @@ if($specie){
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
         $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
-                                    ,$accumulatedYearsGbif,$accumulatedYearsReuna);
+                                    ,$accumulatedYearsGbif,$accumulatedYearsReuna,$REUNA);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';

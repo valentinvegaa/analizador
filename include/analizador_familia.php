@@ -255,7 +255,7 @@ Explore los resultados:
             },
             yAxis: {
                 title: {
-                    text: 'Observaciones <?php echo $REUNA; ?>',
+                    text: 'Observ. <?php echo $REUNA; ?>',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -339,7 +339,7 @@ Explore los resultados:
             },
             yAxis: {
                 title: {
-                    text: 'Observaciones GBIF',
+                    text: 'Observ. GBIF',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -541,7 +541,8 @@ var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-//console.log(arrayCoordinatesInJS);
+console.log(arrayCoordinatesInJS);
+console.log(arrayCoordinatesGBIFInJS);
 
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {

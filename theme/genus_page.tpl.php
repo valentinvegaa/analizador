@@ -313,19 +313,28 @@ function setAccumulatedYears($yearCount){
     $n=0;
     $last=0;
     $anyo=100;
+    $j=0;
     for($i=0;$i<=$anyo;$i++){
-        if(array_key_exists($year-$anyo+$i,$yearCount)){
-            if($yearCount[$year-$anyo+$i]!=0){
-                $n=$yearCount[$year-$anyo+$i];
+
+            if (array_key_exists($year - $anyo + $i, $yearCount)) {
+                if ($yearCount[$year - $anyo + $i] != 0) {
+                    $n = $yearCount[$year - $anyo + $i];
+                    $j+=1;
+                }
+            } else {
+                $n = 0;
+                $j+=1;
             }
-        }
-        else{
-            $n=0;
-        }
-        $last+=$n;
-        array_push($result,$last);
+            $last += $n;
+            if($j==5){
+                array_push($result,$last);
+                $j=0;}
+
+
     }
     return $result;
+
+
 
 }
 function setCategoryYears(){
@@ -334,11 +343,18 @@ function setCategoryYears(){
     $result=array();
     $year=date('Y');
     $n=0;
-    for($i=0;$i<=$anyo;$i++){
+    //$n=1900;
+    for($i=0;$i<$anyo;$i++){
         $n=$year-$anyo+$i;
         $ene=strval($n);
         array_push($result,$ene);
     }
+    /*while($n<=$year){
+
+        $ene=strval($n);
+        array_push($result,$ene);
+        $n+=5;
+    }*/
 
     return $result;
 
@@ -533,7 +549,7 @@ if ($search) {
             //echo 'content_'.$content;
             //$json = json_decode($content, true);
             //var_dump($json);
-            echo 'asdasd<br>';
+            //echo 'asdasd<br>';
             $offset = 0;
             //$count = $content;//$json['count'];
             //$totalGBIF = $count;
@@ -591,28 +607,31 @@ if ($search) {
                     }
                 }
             }
-            $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
-            //$yearsGBIFforRange=implode(', ',$tempRange);
-            $drillDownDataGbif=createDrilldown($yearCountGbif);
-            $drillDownDataReuna=createDrilldown($yearCount);
-            $categoryYears=setCategoryYears();
-            $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
-            $accumulatedYearsReuna=setAccumulatedYears($yearCount);
-            $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
-            $dataReuna=setPieData($institutionNames);
-            $dataGbif=setPieData($institutionNamesGBIF);
-            echo('qwe');
-            var_dump($institutionNamesGBIF);
 
-            $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
-                $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
-                    ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif);
-
-            cache_set($search, $genusObject, 'cache', 60*60*30*24); //30 dias
-            echo 'NO cache!';
 
 
         }
+        $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
+        //$yearsGBIFforRange=implode(', ',$tempRange);
+        $drillDownDataGbif=createDrilldown($yearCountGbif);
+        $drillDownDataReuna=createDrilldown($yearCount);
+        $categoryYears=setCategoryYears();
+        $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
+        $accumulatedYearsReuna=setAccumulatedYears($yearCount);
+        $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+        $dataReuna=setPieData($institutionNames);
+        $dataGbif=setPieData($institutionNamesGBIF);
+        echo('qwe');
+        var_dump($institutionNamesGBIF);
+
+        $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
+            $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
+            ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif);
+
+        cache_set($search, $genusObject, 'cache', 60*60*30*24); //30 dias
+        echo 'NO cache!';
+
+
 
 
 

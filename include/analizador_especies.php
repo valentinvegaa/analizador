@@ -23,7 +23,7 @@ echo 'specieskey: ' . $speciesKey;
 </div>-->
 <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
 </div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
 Explore los resultados:
 <div style="margin:20px 0 20px 0;">
     <!--<div class="top-index">
@@ -36,21 +36,21 @@ Explore los resultados:
         <div class="left">
             <div id="left-index-a">
                 <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos Reuna</div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-                <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></div>
+                <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></div>
                 <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
             </div>
             <div id="left-index-b">
                 <div class="title-b"><a href="#institucion">Instituciones</a></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesReuna)?></span> Organismos (REUNA) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesReuna)?></span> Organismos (<?php echo $REUNA; ?>) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (GBIF) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
 
             </div>
         </div>
         <div id="top-rb-index">
             <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
+            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
             <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
             <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
         </div>
@@ -69,7 +69,7 @@ Explore los resultados:
         <div class="title-a subtitulo" id="geografica">Distribución Geográfica</div>
         <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> ocurrencias Georeferenciadas, correspondiente al  <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
         <div id="mapContainer" class="mapContainer">
-            <div style="font-weight: bold;text-align: center">Reuna</div>
+            <div style="font-weight: bold;text-align: center"><?php echo $REUNA; ?></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
             <div style="font-weight: bold;text-align: center">GBIF</div>
@@ -84,7 +84,7 @@ Explore los resultados:
     <div class="title-a subtitulo" id="institucion">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
     <div style="width: 45%;float:left"><b>Contributors</b> to <?php if (isset($specie)) echo $specie; ?> records <span
-            style="color: darkgray">REUNA Database</span></div>
+            style="color: darkgray"><?php echo $REUNA; ?> Database</span></div>
     <div style="width: 45%;float:right"><b>Contributors</b> to <?php if (isset($specie)) echo $specie; ?> records <span
             style="color: darkgray">GBIF Database</span></div>
     <!--<div id="institucionBar" class="institucionBar"></div>-->
@@ -284,7 +284,7 @@ function changeFeatures(first, last) {
 
         chartREUNA = new Highcharts.Chart({
             chart: {
-                renderTo: 'contribucionBarrasREUNA',
+                renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
                 type: 'column'
             },
             title: {
@@ -295,7 +295,7 @@ function changeFeatures(first, last) {
             },
             yAxis: {
                 title: {
-                    text: 'Observ. REUNA',
+                    text: 'Observ. <?php echo $REUNA; ?>',
                     style: {
                         color: '#000000',
                         fontSize: '12px',
@@ -485,7 +485,7 @@ function changeFeatures(first, last) {
                 }
             },
             series: [{
-                name: 'REUNA',
+                name: '<?php echo $REUNA; ?>',
                 data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
             },
                 {
@@ -540,11 +540,11 @@ function changeFeatures(first, last) {
                 }
             },
             series: [{
-                name: 'Observaciones acumuladas Reuna',
+                name: 'Observaciones acumuladas <?php echo $REUNA; ?>',
                 /*Datos de prueba*/
                 data:accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
             },{
-                name:'Observaciones acumuladas Gbif',
+                name:'Observaciones acumuladas GBIF',
                 /*Datos de prueba*/
                 data: accumulatedDataGbif//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
             }]

@@ -22,6 +22,8 @@ echo isset($genusKey) ? $genusKey : '';
 <div class="nombre-completo"><span style="color: darkgray">GÉNERO </span><?php if (isset($search)) echo $search; ?>
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos GBIF</div>
+
 Explore los resultados:
 <div id="index">
     <div id="left-index">
