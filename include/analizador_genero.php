@@ -127,7 +127,7 @@ function changeFeatures(first, last) {
         }
         k++;
     }
-    ;
+
     var newFeaturesGBIF = [];
     var j = 0;
     var k = 0;
@@ -140,7 +140,7 @@ function changeFeatures(first, last) {
         }
         k++;
     }
-    ;
+
     console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
     source.addFeatures(newFeatures);
@@ -150,7 +150,7 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '1899', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -158,7 +158,7 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1889 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1889 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
@@ -206,6 +206,7 @@ function changeFeatures(first, last) {
         var categoryYears=<?php echo json_encode($categoryYears); ?>;
         var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
         var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
+       // console.log(categoryYears);
 
         $('#institucionPieREUNA').highcharts({
             chart: {
@@ -635,14 +636,15 @@ var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesIn
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-//console.log(coordYearsGBIF);
+console.log(coordYearsGBIF);
+console.log(coordYearsReuna);
 var largo = (arrayCoordinatesInJS.length) / 2;
 if (largo > 0) {
     var features = new Array(largo);
     var j = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
         //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]];
+        var coordinate = [parseFloat(arrayCoordinatesInJS[i + 1]), parseFloat(arrayCoordinatesInJS[i])];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
         features[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
@@ -754,7 +756,7 @@ if (largoGBIF > 0) {
     var j = 0;
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
         //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
+        var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i + 1])];
         var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
         featuresGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));

@@ -114,7 +114,8 @@ function changeFeatures(first, last) {
     var k = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
         if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-            var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+            var coordinate = [parseFloat(arrayCoordinatesInJS[i+1]), parseFloat(arrayCoordinatesInJS[i])];
+            var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
             newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
             j++;
         }
@@ -126,7 +127,8 @@ function changeFeatures(first, last) {
     var k = 0;
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
         if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-            var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
+            var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i+1])];
+            var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
             newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
             j++;
         }
@@ -142,7 +144,7 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '1989', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -150,7 +152,7 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1989 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1989 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });

@@ -167,7 +167,7 @@ function countYears($taxonKey, $count)
     $localCount = $count;
     if ($localCount > 300) {
         while ($localCount > 0) {
-            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset), true);
+            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
             foreach ($years['results'] as $i) {
                 if (!array_key_exists($i['year'], $returnVal)) {
                     $returnVal[$i['year']] = 1;
@@ -179,7 +179,7 @@ function countYears($taxonKey, $count)
             $offset += 300;
         }
     } else {
-        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset), true);
+        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
         foreach ($years['results'] as $i) {
             if (!array_key_exists($i['year'], $returnVal)) {
                 $returnVal[$i['year']] = 1;

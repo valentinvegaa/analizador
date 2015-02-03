@@ -23,6 +23,8 @@ echo isset($familyKey) ? $familyKey : '';
 <div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($family)) echo $family; ?>
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos GBIF</div>
+
 Explore los resultados:
 <div id="index">
     <div id="left-index">
@@ -64,7 +66,7 @@ Explore los resultados:
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
-        <div class="line"><span></span> Año cero indica años posteriores a 1900.</div>
+        <div class="line"><span></span> Año cero indica años inferiores a 1900.</div>
     </div>
     <div id="containers geografica" class="containers">
         <div class="title-a subtitulo">Distribución Geográfica</div>
@@ -114,7 +116,7 @@ Explore los resultados:
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '1889', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,

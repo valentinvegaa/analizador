@@ -15,11 +15,11 @@ class Genero{
 
         private $totalReuna;
         private $totalReunaConCoordenadas;
-        private $coordYearsREUNA='';
+        private $coordYearsREUNA;
         private $institutionNames=array();//(reuna)
-        private $accumulatedYearsReuna;
+        private $accumulatedYearsReuna=array();
         private $taxonChildrens=array();
-        private $coordinatesInPHP;
+        private $coordinatesInPHP=array();
         private $dataReuna=array();
         private $yearCount=array();//reuna
         private $drillDownDataReuna=array();
@@ -27,15 +27,15 @@ class Genero{
     /*__Gbif__*/
 
         private $totalGBIF;
-        private $coordYearsGBIF='';
+        private $coordYearsGBIF;
         private $yearCountGbif=array();
         private $institutionNamesGBIF=array();
         private $monthCount=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         private $someVar='';
         private $drillDownDataGbif=array();//grafico Gbif
-        private $accumulatedYearsGbif;
+        private $accumulatedYearsGbif=array();
         private $categoryYears;
-        private $coordinatesGBIFInPHP;
+        private $coordinatesGBIFInPHP=array();
         private $dataGbif=array();
 
 
@@ -97,7 +97,7 @@ class Genero{
         return $this->coordYearsREUNA;
     }
     public  function getCoordYearsGbif(){
-        return $this->coordYearsGbif;
+        return $this->coordYearsGBIF;
     }
     public function getYearCountGbif(){
         return $this->yearCountGbif;
@@ -389,8 +389,8 @@ $limit = 10000;
 $tipo = "";
 $someVar = "";
 $results = false;
-$coordinatesInPHP = "";
-$coordinatesGBIFInPHP = "";
+$coordinatesInPHP = array();
+$coordinatesGBIFInPHP = array();
 $totalGBIF = 0;
 $totalReuna = 0;
 $totalReunaConCoordenadas = 0;
@@ -416,8 +416,8 @@ $genusKey='';
 $yearsGBIFforRange = array();
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $yearCountGbif = array();
-$coordYearsREUNA = '';
-$coordYearsGBIF = '';
+$coordYearsREUNA;
+$coordYearsGBIF;
 $additionalParameters = array();
 $taxonChildrens=array();
 $accumulatedYearsReuna=array();
@@ -555,7 +555,6 @@ if ($search) {
             //$totalGBIF = $count;
             $genusObject=new Genero();
             $count = $totalGBIF;
-            $coordinatesGBIFInPHP = "";
             $yearCountGbif = countYears($genusKey, $count);
             $temporaryArray = array();
             if ($count > 300) {
@@ -621,7 +620,7 @@ if ($search) {
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         $dataReuna=setPieData($institutionNames);
         $dataGbif=setPieData($institutionNamesGBIF);
-        echo('qwe');
+        //echo('qwe');
         var_dump($institutionNamesGBIF);
 
         $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
