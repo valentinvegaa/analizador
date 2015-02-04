@@ -19,7 +19,7 @@ class Genero{
         private $institutionNames=array();//(reuna)
         private $accumulatedYearsReuna=array();
         private $taxonChildrens=array();
-        private $coordinatesInPHP=array();
+        private $coordinatesInPHP;
         private $dataReuna=array();
         private $yearCount=array();//reuna
         private $drillDownDataReuna=array();
@@ -37,6 +37,7 @@ class Genero{
         private $categoryYears;
         private $coordinatesGBIFInPHP=array();
         private $dataGbif=array();
+        private $totalEnGBIF;
 
 
     /*-------------*/
@@ -44,7 +45,7 @@ class Genero{
     public function setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
                                 $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,
                                 $drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears,$coordinatesGBIFInPHP,$coordinatesInPHP
-                            ,$dataReuna,$dataGbif){
+                            ,$dataReuna,$dataGbif,$totalEnGBIF){
 
         //$this->specie=$specie;
         $this->genusKey=$genusKey;
@@ -70,6 +71,7 @@ class Genero{
         $this->coordinatesInPHP=$coordinatesInPHP;
         $this->dataReuna=$dataReuna;
         $this->dataGbif=$dataGbif;
+        $this->totalEnGBIF=$totalEnGBIF;
 
     }
     public function getSpecie(){
@@ -143,6 +145,9 @@ class Genero{
     }
     public function getDataGbif(){
         return $this->dataGbif;
+    }
+    public function getTotalEnGBIF(){
+        return $this->totalEnGBIF;
     }
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
@@ -326,10 +331,10 @@ function setAccumulatedYears($yearCount){
                 $j+=1;
             }
             $last += $n;
-            if($j==5){
+            if($j==1){
                 array_push($result,$last);
                 $j=0;}
-
+//intentar de manera normal arreglando el categoryYears
 
     }
     return $result;
@@ -342,19 +347,20 @@ function setCategoryYears(){
     $anyo=100;
     $result=array();
     $year=date('Y');
-    $n=0;
-    //$n=1900;
-    for($i=0;$i<$anyo;$i++){
+    //$n=0;
+    $n=1915;
+    /*for($i=0;$i<$anyo;$i++){
         $n=$year-$anyo+$i;
         $ene=strval($n);
         array_push($result,$ene);
-    }
-    /*while($n<=$year){
+    }*/
+    while($n<=$year){
 
         $ene=strval($n);
         array_push($result,$ene);
-        $n+=5;
-    }*/
+        //$n+=5;
+        $n++;
+    }
 
     return $result;
 
@@ -389,7 +395,7 @@ $limit = 10000;
 $tipo = "";
 $someVar = "";
 $results = false;
-$coordinatesInPHP = array();
+$coordinatesInPHP;
 $coordinatesGBIFInPHP = array();
 $totalGBIF = 0;
 $totalReuna = 0;
@@ -412,7 +418,7 @@ $institutionNamesGBIF = array();
 $instituionsNamesOcurr = array();
 $yearCount = array();
 $genusKey='';
-
+$totalEnGBIF;
 $yearsGBIFforRange = array();
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $yearCountGbif = array();
@@ -455,6 +461,7 @@ if ($search) {
         $coordinatesInPHP=$results->getCoordinatesInPHP();
         $dataReuna=$results->getDataReuna();
         $dataGbif=$results->getDataGbif();
+        $totalEnGBIF=$results->getTotalEnGBIF();
 
         echo 'cache!';
 
@@ -545,7 +552,9 @@ if ($search) {
             $json = json_decode($content, true);
             $speciesKey = isset($json['genusKey']) ? json_encode($json['genusKey']) : null;*/
             $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL&isGeoreferenced=true';
+            $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$genusKey.'&country=CL';
             $totalGBIF = file_get_contents($url);
+            $totalEnGBIF=file_get_contents($url2);
             //echo 'content_'.$content;
             //$json = json_decode($content, true);
             //var_dump($json);
@@ -625,7 +634,7 @@ if ($search) {
 
         $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
             $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
-            ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif);
+            ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif,$totalEnGBIF);
 
         cache_set($search, $genusObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';

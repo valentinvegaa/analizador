@@ -22,7 +22,7 @@ echo isset($genusKey) ? $genusKey : '';
 <div class="nombre-completo"><span style="color: darkgray">GÉNERO </span><?php if (isset($search)) echo $search; ?>
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos GBIF</div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
 
 Explore los resultados:
 <div id="index">
@@ -45,8 +45,8 @@ Explore los resultados:
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
+            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></span></div>
+            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
@@ -150,15 +150,15 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '1899', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1','1830','1840','1850','1860','1870','1880', '1890', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
-                max: 14,
+                max: 20,
                 step: 1,
-                values: [0, 14],
+                values: [0, 20],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1889 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1889 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1830 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1830 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
@@ -522,9 +522,15 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             xAxis: {
-                categories: categoryYears,
+                allowDecimals: false,
+                //categories: categoryYears,
                 labels: {
-                    rotation: 90
+                    //enabled: false,
+                    rotation: 90,
+                    formatter: function () {
+                        return this.value; // clean, unformatted number for year
+                    }
+
                 }
             },
             yAxis: {
@@ -534,7 +540,7 @@ function changeFeatures(first, last) {
                 }
             },
             tooltip: {
-                headerFormat: '<span style="font-size:8px">{point.key}</span><table>',
+                headerFormat: '<span style="font-size:25px">{point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
                 footerFormat: '</table>',
@@ -543,7 +549,7 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 area: {
-                    //pointStart: 1940,
+                    pointStart: 1915,
                     marker: {
                         enabled: false,
                         symbol: 'circle',
@@ -639,6 +645,8 @@ var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesIn
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
+console.log(arrayCoordinatesInJS);
+console.log(arrayCoordinatesGBIFInJS);
 console.log(coordYearsGBIF);
 console.log(coordYearsReuna);
 var largo = (arrayCoordinatesInJS.length) / 2;
