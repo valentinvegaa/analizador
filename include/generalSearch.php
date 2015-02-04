@@ -146,7 +146,7 @@ try {
                         print '<a href="http://www.ecoinformatica.cl/site/analizador/species/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a> <div class="resultCount">Reuna: '.$reunaCount.' Gbif: '.$count.'</div></div>';
                     }
                     else{
-                        if($count==0&&$reunaCount>0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount"> No hay registros en Chile en Gbif si en Reuna</div></div>';
+                        if($count==0&&$reunaCount>0)print '<a href="http://www.ecoinformatica.cl/site/analizador/species/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a><div class="resultCount"> No hay registros en Chile en Gbif si en Reuna</div></div>';
                         else if($count>0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna si en Gbif</div></div>';
                         else if($count==0&&$reunaCount==0)print '<a href="http://www.gbif.org/species/'.$i['key'].'">' . $i['canonicalName'] . '</a><div class="resultCount">No hay registros en Chile en Reuna ni registros en Chile en Gbif</div></div>';
                     }

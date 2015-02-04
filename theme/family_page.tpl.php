@@ -151,6 +151,24 @@ $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
 
+function getCountyName($coords,$r){
+    $coordsWithCounty=array();
+    foreach($coords as $coord){
+        if(strcmp($r,'reuna')==0){
+            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.floatval($coord[0]).','.floatval($coord[1]);
+            $response=file_get_contents($url);
+            $json=json_decode($response);
+            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
+        }
+        else{
+            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.$coord[1].','.$coord[0];
+            $response=file_get_contents($url);
+            $json=json_decode($response);
+            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
+        }
+    }
+    return $coordsWithCounty;
+}
 function countMonths($taxonKey)
 {
     $returnVal = array();
@@ -610,6 +628,26 @@ if ($family) {
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
+    var_dump(getCountyName($coordinatesReuna,'reuna'));
+    echo '<br>';
+    var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
+    //var_dump($coordinatesGBIFInPHP);
+    /*Regiones de Chile
+    echo getCountyName(-69.550753,-18.679683).'<br>';
+    echo getCountyName(-69.528780,-19.437716).'<br>';
+    echo getCountyName(-69.045382,-22.697275).'<br>';
+    echo getCountyName(-69.656266,-26.492331).'<br>';
+    echo getCountyName(-70.776871,-30.441215).'<br>';
+    echo getCountyName(-70.667008,-32.428311).'<br>';
+    echo getCountyName(-70.194596,-33.607415).'<br>';
+    echo getCountyName(-71.501969,-34.517534).'<br>';
+    echo getCountyName(-71.018570,-35.417818).'<br>';
+    echo getCountyName(-71.589859,-36.881489).'<br>';
+    echo getCountyName(-72.754410,-38.377946).'<br>';
+    echo getCountyName(-72.446793,-39.894672).'<br>';
+    echo getCountyName(-72.875260,-40.782310).'<br>';
+    echo getCountyName(-74.358414,-47.332960).'<br>';
+    echo getCountyName(-70.952652,-53.029405).'<br>';*/
 }
 ?>
 <?php // page template ?>
