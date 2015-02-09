@@ -224,6 +224,7 @@ function getChildrenNames($key){
         }
         //echo 'species '.$i['species'].' count '.$count;
     };
+    asort($result);
     return $result;
 }
 
@@ -317,7 +318,7 @@ function setAccumulatedYears($yearCount){
     $year=date('Y');
     $n=0;
     $last=0;
-    $anyo=100;
+    $anyo=115;
     $j=0;
     for($i=0;$i<=$anyo;$i++){
 
@@ -344,11 +345,11 @@ function setAccumulatedYears($yearCount){
 }
 function setCategoryYears(){
 
-    $anyo=100;
+    $anyo=115;
     $result=array();
     $year=date('Y');
     //$n=0;
-    $n=1915;
+    $n=1900;
     /*for($i=0;$i<$anyo;$i++){
         $n=$year-$anyo+$i;
         $ene=strval($n);
@@ -551,9 +552,12 @@ if ($search) {
             $content = file_get_contents($url_species);
             $json = json_decode($content, true);
             $speciesKey = isset($json['genusKey']) ? json_encode($json['genusKey']) : null;*/
-            $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL&isGeoreferenced=true';
+            //$url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL&isGeoreferenced=true';
+            $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$genusKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true&year=1900,2015';
             $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$genusKey.'&country=CL';
-            $totalGBIF = file_get_contents($url);
+            $res=json_decode(file_get_contents($url),true);
+            $totalGBIF=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
+            //$totalGBIF = file_get_contents($url);
             $totalEnGBIF=file_get_contents($url2);
             //echo 'content_'.$content;
             //$json = json_decode($content, true);
@@ -581,7 +585,14 @@ if ($search) {
                         //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
                         array_push($temporaryArray, $i['decimalLongitude']);
                         array_push($temporaryArray, $i['decimalLatitude']);
-                        $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
+                        //$coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
+                        if (isset($i['year'])) {
+                            if ($i['year'] != '') {
+                                $coordYearsGBIF .= $i['year'] . ',';
+                            } else {
+                                $coordYearsGBIF .= '0000,';
+                            }
+                        }
                         if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                             $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
                         } else {
@@ -630,7 +641,7 @@ if ($search) {
         $dataReuna=setPieData($institutionNames);
         $dataGbif=setPieData($institutionNamesGBIF);
         //echo('qwe');
-        var_dump($institutionNamesGBIF);
+        //var_dump($institutionNamesGBIF);
 
         $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
             $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears

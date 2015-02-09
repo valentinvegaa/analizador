@@ -12,8 +12,8 @@ class Especie{
     private $familia='';
     private $orden='';
 
-    private $posReuna=array();
-    private $posGbif=array();
+    private $coordinatesInPHP;
+    private $coordinatesGBIFInPHP;
     private $anyoGbif=array();
     private $mesGbif=array();
     private $institucionReuna=array();
@@ -25,7 +25,7 @@ class Especie{
     private $DrillDownDataGbif=array();//grafico Gbif
     private $DrillDownDataReuna=array();
     private $yearCount=array();
-    private $coordYearsREUNA='';
+    private $coordYearsREUNA;
     private $speciesKey;
     private $search=array();
     private $totalGbif;
@@ -40,12 +40,12 @@ class Especie{
     /**/
 
 
-    public function setSpecie($nombreCientifico,$posicionReuna,$posicionGbif,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+    public function setSpecie($nombreCientifico,$coordinatesInPHP,$coordinatesGBIFInPHP,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
     ,$AccumulatedYearsGbif,$AccumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF){
 
         $this->nombreCientifico=$nombreCientifico;
-        $this->posReuna=$posicionReuna;
-        $this->posGbif=$posicionGbif;
+        $this->coordinatesInPHP=$coordinatesInPHP;
+        $this->coordinatesGBIFInPHP=$coordinatesGBIFInPHP;
         $this->anyoGbif=$anyo;
         $this->mesGbif=$mesGbif;
         $this->institucionReuna=$institucionReuna;
@@ -83,11 +83,11 @@ class Especie{
     public function getInstitucionGbif(){
         return $this->institucionGbif;
     }
-    public function getPositionGbif(){
-        return $this->posGbif;
+    public function getCoordinatesGBIFInPHP(){
+        return $this->coordinatesGBIFInPHP;
     }
-    public function getReunaPosition(){
-        return $this->posReuna;
+    public function getCoordinatesInPHP(){
+        return $this->coordinatesInPHP;
     }
     /**/
     public function getMonthCountReuna(){
@@ -316,16 +316,21 @@ function setAccumulatedYears($yearCount){
     $year=date('Y');
     $n=0;
     $last=0;
-    $anyo=100;
+    $anyo=115;
+    $j=0;
     for($i=0;$i<=$anyo;$i++){
         if($years[$year-$anyo+$i]!=0){
            $n=$years[$year-$anyo+$i];
+            $j+=1;
         }
         else{
             $n=0;
+            $j+=1;
         }
-        $last+=$n;
-        array_push($result,$last);
+        $last += $n;
+        if($j==1){
+            array_push($result,$last);
+            $j=0;}
     }
     return $result;
 
@@ -336,11 +341,18 @@ function setCategoryYears(){
     $anyo=100;
     $result=array();
     $year=date('Y');
-    $n=0;
-    for($i=0;$i<=$anyo;$i++){
+    $n=1900;
+    /*for($i=0;$i<=$anyo;$i++){
         $n=$year-$anyo+$i;
         $ene=strval($n);
         array_push($result,$ene);
+    }*/
+    while($n<=$year){
+
+        $ene=strval($n);
+        array_push($result,$ene);
+        //$n+=5;
+        $n++;
     }
 
     return $result;
@@ -374,14 +386,14 @@ $accumulatedYearsGbif=array();
 
 /*__Variables Reuna__*/
 
-$coordinatesInPHP;
+$coordinatesInPHP;//
 $totalReuna = 0;
 $totalReunaConCoordenadas = 0;
 $reunaVacios = 0;
 $yearCount = array();
 $monthCountReuna = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $coordYearsREUNA = '';
-$coordinatesReuna;
+$coordinatesReuna=array();
 $institutionNamesReuna = array();
 $DrillDownDataReuna=array();
 $accumulatedYearsReuna=array();
@@ -419,8 +431,8 @@ if($specie){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();
         $categoriesGBIF=$results->getCategoriesGbif();
-        $coordinatesGBIFInPHP=$results->getPositionGbif();
-        $coordinatesReuna=$results->getReunaPosition();
+        $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
+        $coordinatesInPHP=$results->getCoordinatesInPHP();
         $institutionNamesReuna=$results->getInstitucionReuna();
         /*Agregados*/
         $monthCountReuna=$results->getMonthCountReuna();
@@ -472,7 +484,7 @@ if($specie){
                         case 'dwc.latlong_p'://[(a,b),(a,b)
                             //$coord=explode(',',$value);
                             //array_push($coordinatesReuna,$coord);
-                            $coordinatesReuna .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
+                            $coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
                             $totalReunaConCoordenadas++;
                             $i++;
                             break;
@@ -511,9 +523,13 @@ if($specie){
         //se obtiene la llave que identifica a la especie en el repositorio de especies de GBIF
         $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
         //Obtenemos la cantidad de ocurrencias chilenas georeferenciadas usando la llave que encontramos antes
-        $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&isGeoreferenced=true&country=CL';
+       // $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&isGeoreferenced=true&country=CL';
         $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$speciesKey.'&country=CL';
-        $totalGBIF = isset($json['speciesKey']) ? file_get_contents($url) : null;
+        $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true&year=1900,2015';
+        //$url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$genusKey.'&country=CL';
+        $res=json_decode(file_get_contents($url),true);
+        $totalGBIF=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
+        //$totalGBIF = isset($json['speciesKey']) ? file_get_contents($url) : null;
         $totalEnGBIF=isset($json['speciesKey']) ? file_get_contents($url2) : null;
         $offset = 0;
         $count=$totalGBIF;
@@ -535,7 +551,17 @@ if($specie){
                     //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
                     array_push($temporaryArray, $i['decimalLongitude']);
                     array_push($temporaryArray, $i['decimalLatitude']);
-                    $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '-1' . ',';
+                    //$coordYearsGBIF .= isset($i['year']) ? $i['year'] : '-1' . ',';
+                    if (isset($i['year'])) {
+                        if ($i['year'] != '') {
+                            $coordYearsGBIF .= $i['year'] . ',';
+                        } else {
+                            $coordYearsGBIF .= '-1,';
+                        }
+                    }
+                    else {
+                        $coordYearsGBIF .= '-1,';
+                    }
                     if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                         $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
                     } else {
@@ -583,7 +609,7 @@ if($specie){
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
-        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+        $SpeciesObject->setSpecie($specie,$coordinatesInPHP,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
                                     ,$accumulatedYearsGbif,$accumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias

@@ -23,7 +23,7 @@ echo isset($familyKey) ? $familyKey : '';
 <div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($family)) echo $family; ?>
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos GBIF</div>
+<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
 
 Explore los resultados:
 <div id="index">
@@ -31,7 +31,7 @@ Explore los resultados:
         <div id="left-t-index">
             <div class="title-a">Composición Taxonómica</div>
             <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($speciesFound); ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
-            <div class="line"><a href="#GbifStacked"><span><?php //sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
+            <div class="line"><a href="#GbifStacked"><span><?php  //sizeof(FamilyChildrens($familyKey));?> Especies</span> en la base de datos GBIF.</a></div>
             <div class="line">
                 <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
             </div>
@@ -49,8 +49,8 @@ Explore los resultados:
             <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos GBIF</div>
-            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);?></span></div>
-            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);?></span></div>
+            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></span></div>
+            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
@@ -63,13 +63,9 @@ Explore los resultados:
 <div class="wraper-container" style="border: thick; border-color: black;">
     <div class="left" id="temporal">
         <div class="title-a subtitulo">Distribución Temporal</div>
-        <div class="texto">
-            <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
-        </div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
         <div id="contribucionBarrasREUNA"></div>
         <div id="contribucionBarrasGBIF"></div>
-        <div class="line"><span></span> Año cero indica años inferiores a 1900.</div>
     </div>
     <div id="containers geografica" class="containers">
         <div class="title-a subtitulo">Distribución Geográfica</div>

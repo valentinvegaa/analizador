@@ -43,6 +43,7 @@ class Family{
     private $speciesFound=array();
     private $coordYearsGBIF='';
     private $coordYearsReuna='';
+    private $totalEnGBIF;
 
     public function setFamily($nombreFamilia,
                               $generos,
@@ -60,7 +61,7 @@ class Family{
                               $institutionDataGbif,
                               $yearCount,
                               $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF
-                                ,$countSpecies,$speciesFound,$coordYearsGBIF
+                                ,$countSpecies,$speciesFound,$coordYearsGBIF,$totalEnGBIF
     ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
@@ -86,6 +87,7 @@ class Family{
         $this->countSpecies=$countSpecies;
         $this->speciesFound=$speciesFound;
         $this->coordYearsGBIF=$coordYearsGBIF;
+        $this->totalEnGBIF=$totalEnGBIF;
     }
     public function getGeneros(){}
     public function getEspecies(){}
@@ -139,6 +141,9 @@ class Family{
     }
     public function getCoordYearsGBIF(){
         return $this->coordYearsGBIF;
+    }
+    public function getTotalEnGBIF(){
+        return $this->totalEnGBIF;
     }
 
 }
@@ -254,6 +259,43 @@ function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada gen
         }
     }
     return $count;
+}
+function FamilyChildrens($key){
+
+    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
+    $result=array();
+    $genusCount=$children['count'];
+    $offset=0;
+    $genus=array();
+    if($genusCount>300){
+        while($genusCount>0){
+            foreach($children['results'] as $i){
+                array_push($genus,array($i['genus']=>$i['key']));
+            };
+            $genusCount-=300;
+            $offset+=300;
+            $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&offset='.$offset.'&highertaxon_key='.$key), true);
+        }
+    }
+    else{
+        foreach($children['results'] as $i){
+            array_push($genus,array($i['genus'],$i['key']));
+        };
+    }
+    $result=array();
+    foreach($genus as $key=>$value) {
+        $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/' . $value . '/children/?limit=300'), true);//106311492
+
+        foreach ($children['results'] as $i) {
+            $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey=' . $i['nubKey'] . '&country=CL&isGeoreferenced=true'), true);
+            if ($count > 0) {
+                //$result.="{'name':'".$i['species']."','data':[".$count."]},";
+                $result[$i['species']] = $count;
+            }
+            //echo 'species '.$i['species'].' count '.$count;
+        };
+    }
+    return $result;
 }
 function suma($data,$decada){
     $sum=0;
@@ -391,7 +433,7 @@ $speciesFound = array();
 $genusFound = array();
 $institutionNames = array();
 $institutionNamesGBIF = array();
-
+$totalEnGBIF;
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 $coordYearsREUNA = '';
 $coordYearsGBIF = '';
@@ -435,6 +477,7 @@ if ($family) {
         $institutionNamesGBIF=$results->getInstitutionNamesGBIF();
         $countSpecies=$results->getCountSpecies();
         $speciesFound=$results->getSpeciesFound();
+        $totalEnGBIF=$results->getTotalEnGBIF();
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -526,14 +569,17 @@ if ($family) {
             $speciesKey = isset($json['familyKey']) ? json_encode($json['familyKey']) : null;
             //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
             //$url="http://api.gbif.org/v1/occurrence/search?taxonKey=$speciesKey&HAS_COORDINATE=true&country=CL&limit=1";
-            $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&limit='.$count.'&offset='.$offset;
+            //$url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&limit='.$count.'&offset='.$offset;
+            $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true&year=1900,2015';
+
             //$url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&country=CL&isGeoreferenced=true';//*
             $content = isset($json['familyKey']) ? file_get_contents($url) : null;//*
             //$content=file_get_contents($url);*
             //echo 'content_'.$content;
             $json = json_decode($content, true);
             //var_dump($json);
-
+            $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$speciesKey.'&country=CL';
+            $totalEnGBIF=file_get_contents($url2);//total de ocurrencias en chile
             $count = $json['count'];//$content;//
             $totalGBIF = $count;
             //$coordinatesGBIFInPHP = "";
@@ -553,7 +599,14 @@ if ($family) {
                         //array_push($temporaryArray, $i['decimalLongitude']);
                         //array_push($temporaryArray, $i['decimalLatitude']);
                         array_push($coordinatesGBIFInPHP,$localArray );
-                        $coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
+                        //$coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
+                        if (isset($i['year'])) {
+                            if ($i['year'] != '') {
+                                $coordYearsGBIF .= $i['year'] . ',';
+                            } else {
+                                $coordYearsGBIF .= '0000,';
+                            }
+                        }
                         if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                             $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
                         } else {

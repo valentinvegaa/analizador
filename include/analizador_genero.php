@@ -36,7 +36,7 @@ Explore los resultados:
         <div id="left-b-index">
             <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
             <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
             <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
         </div>
     </div>
@@ -150,15 +150,15 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1','1830','1840','1850','1860','1870','1880', '1890', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1','0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
-                max: 20,
+                max: 14,
                 step: 1,
-                values: [0, 20],
+                values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1830 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1830 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
@@ -182,12 +182,24 @@ function changeFeatures(first, last) {
 
 
     function addSeriesStacked(chart,data){
+        var j=0;
         for(var x in data){
-            chart.addSeries({
-                name:x,
-                data:[data[x]]
-            });
+            if(j<10){
+                chart.addSeries({
+                    name:x,
+                    data:[data[x]]
+                });
+                j=j+1;
+            }
+            else{
+
+            }
+
         }
+        chart.addSeries({
+            name:'otros',
+            data:[10]
+        });
     }
 
 
@@ -503,8 +515,8 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        console.log('asd');
-        console.log(dataGBIF);
+        //console.log('asd');
+        //console.log(dataGBIF);
 
 
         $('#acumuladas').highcharts({
@@ -525,7 +537,7 @@ function changeFeatures(first, last) {
                 allowDecimals: false,
                 //categories: categoryYears,
                 labels: {
-                    //enabled: false,
+                   // enabled: false,
                     rotation: 90,
                     formatter: function () {
                         return this.value; // clean, unformatted number for year
@@ -549,7 +561,7 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 area: {
-                    pointStart: 1915,
+                    pointStart: 1900,
                     marker: {
                         enabled: false,
                         symbol: 'circle',

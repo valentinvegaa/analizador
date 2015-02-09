@@ -38,9 +38,9 @@ Explore los resultados:
             <div id="left-index-a">
                 <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
                 <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
+                <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos GBIF</div>
                 <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></div>
-                <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
+                <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
             </div>
             <div id="left-index-b">
                 <div class="title-b"><a href="#institucion">Instituciones</a></div>
@@ -145,7 +145,7 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '1989', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -153,14 +153,14 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 1989 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 1989 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
             $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
         }
     };
-    var chartREUNA, chartAccumulated, colors = Highcharts.getOptions().colors;
+    var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
     var chartGBIF;
     var decadas = [];
 
@@ -206,6 +206,10 @@ function changeFeatures(first, last) {
         var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
         var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
         var categoryYears=<?php echo json_encode($categoryYears)?>;
+
+
+
+
 
         $('#institucionPieREUNA').highcharts({
             chart: {
@@ -285,87 +289,7 @@ function changeFeatures(first, last) {
             }]
         });
 
-        chartREUNA = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
-                type: 'column'
-            },
-            title: {
-                text: null
-            },
-            xAxis: {
-                categories: tempREUNA[1]
-            },
-            yAxis: {
-                title: {
-                    text: 'Observ. <?php echo $REUNA; ?>',
-                    style: {
-                        color: '#000000',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldownREUNA = this.drilldown;
-                                if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
-                                } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
-                                }
-                            }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#00000',
-                        style: {
-                            fontWeight: 'bold'
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click to expand to ' + point.category;
-                    } else {
-                        s += 'Click to return.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataREUNA,
-                color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
+
 
         chartGBIF = new Highcharts.Chart({
             chart: {
@@ -448,7 +372,87 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-
+        chartREUNA = new Highcharts.Chart({
+            chart: {
+                renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
+                type: 'column'
+            },
+            title: {
+                text: null
+            },
+            xAxis: {
+                categories: tempREUNA[1]
+            },
+            yAxis: {
+                title: {
+                    text: 'Observ. <?php echo $REUNA; ?>',
+                    style: {
+                        color: '#000000',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                    }
+                }
+            },
+            plotOptions: {
+                column: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                var drilldownREUNA = this.drilldown;
+                                if (drilldownREUNA) { // drill down
+                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                } else { // restore
+                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        color: '#00000',
+                        style: {
+                            fontWeight: 'bold'
+                        },
+                        formatter: function () {
+                            return this.y != 0 ? this.y : null;
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    var point = this.point,
+                        s = this.x + ':<b>' + this.y + '</b><br/>';
+                    if (point.drilldown) {
+                        s += 'Click to expand to ' + point.category;
+                    } else {
+                        s += 'Click to return.';
+                    }
+                    return s;
+                }
+            },
+            series: [{
+                name: name,
+                data: dataREUNA,
+                color: 'white'
+            }],
+            exporting: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                //layout: 'vertical',
+                //align: 'right',
+                /*floating: true,*/
+                //x:0,
+                //y:-150
+                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                 shadow: true*/
+            }
+        });
 
         $('#reunaGbifBarras').highcharts({
             chart: {
@@ -535,7 +539,7 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 area: {
-                    pointStart: 1915,
+                    pointStart: 1900,
                     marker: {
                         enabled: false,
                         symbol: 'circle',
@@ -561,7 +565,7 @@ function changeFeatures(first, last) {
 
     });
 })(jQuery);
-var arrayCoordinatesInJS =<?php  if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
+var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
 var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
 console.log(arrayCoordinatesGBIFInJS);
 console.log(arrayCoordinatesInJS);
@@ -570,16 +574,20 @@ var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[
 console.log(coordYearsReuna);
 console.log(coordYearsGBIF);
 
-var largo = (arrayCoordinatesInJS.length);
+var largo = (arrayCoordinatesInJS.length) / 2;
 if (largo > 0) {
     var features = new Array(largo);
-    for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
+    var j = 0;
+    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
         //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
+        var coordinate = [arrayCoordinatesInJS[i+1], arrayCoordinatesInJS[i]];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
         //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
+        features[j] = new ol.Feature({'visible': 'true'});
+        features[j].setGeometry(new ol.geom.Point(tempLonlat));
+        j++;
     }
+    ;
 }
 var mapView = new ol.View({
     projection: 'EPSG:3857',
