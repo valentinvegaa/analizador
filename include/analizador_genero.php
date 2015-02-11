@@ -46,7 +46,7 @@ Explore los resultados:
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
             <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></span></div>
-            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
+            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);next($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
@@ -180,36 +180,14 @@ function changeFeatures(first, last) {
         });
     }
 
-
-    function addSeriesStacked(chart,data){
-        var j=0;
-        for(var x in data){
-            if(j<10){
-                chart.addSeries({
-                    name:x,
-                    data:[data[x]]
-                });
-                j=j+1;
-            }
-            else{
-
-            }
-
-        }
-        chart.addSeries({
-            name:'otros',
-            data:[10]
-        });
-    }
-
-
     $(document).ready(function ($) {
 
         var data=<?php echo json_encode($dataReuna); ?>;
         var monthCount =<?php echo json_encode($monthCount); ?>;
         var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedGbifData=<?php echo json_encode(getChildrenNames($genusKey));?>;
-        var stackedReunaData=<?php echo json_encode($taxonChildrens);?>;
+        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+        console.log(stackedGbifData);
+        var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
         var name = 'Década';
         var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
         var dataREUNA = tempREUNA[0];
@@ -219,6 +197,7 @@ function changeFeatures(first, last) {
         var categoryYears=<?php echo json_encode($categoryYears); ?>;
         var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
         var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
+        console.log(accumulatedDataGbif);
        // console.log(categoryYears);
 
         $('#institucionPieREUNA').highcharts({
@@ -389,7 +368,7 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: '#000000',
+                        color: '#53AD25',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -472,7 +451,7 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: '#00000',
+                        color: '#000000',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -538,7 +517,7 @@ function changeFeatures(first, last) {
                 //categories: categoryYears,
                 labels: {
                    // enabled: false,
-                    rotation: 90,
+                    rotation: 0,
                     formatter: function () {
                         return this.value; // clean, unformatted number for year
                     }
@@ -546,15 +525,17 @@ function changeFeatures(first, last) {
                 }
             },
             yAxis: {
+                allowDecimals: false,
                 min: 0,
+                max:null,
                 title: {
                     text: '<b>Observaciones</b>'
                 }
             },
             tooltip: {
-                headerFormat: '<span style="font-size:25px">{point.key}</span><table>',
+                headerFormat: '<span style="font-size:20px">Año:{point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
@@ -572,17 +553,20 @@ function changeFeatures(first, last) {
                             }
                         }
                     }
-                }
+                },
+                series:{lineColor:'#FFFFFF'}
             },
-            series: [{
-                name: 'Observaciones acumuladas <?php echo $REUNA; ?>',
-                data: accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
-
-            },
+            series: [
 
                 {
-                    name: 'Observaciones acumuladas Gbif',
-                    data: accumulatedDataGbif//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
+                    name: 'GBIF',
+                    data: accumulatedDataGbif,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
+                    color:'#53AD25'
+                },
+                {
+                    name: '<?php echo $REUNA; ?>',
+                    data: accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
+                    color: '#000000'
                 }]
         });
 
@@ -630,7 +614,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             xAxis: {
-                categories: ['Composición']
+                categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
             },
             yAxis: {
                 min: 0,
@@ -647,8 +631,30 @@ function changeFeatures(first, last) {
                 }
             }
         });
-        addSeriesStacked(GbifStacked,stackedGbifData);
-        addSeriesStacked(ReunaStacked,stackedReunaData);
+        //addSeriesStacked(GbifStacked,stackedGbifData);
+        //addSeriesStacked(ReunaStacked,stackedReunaData);
+        var j=0;
+        var cont=0;
+        for(var x in stackedGbifData){
+            if(j<15) {
+                GbifStacked.addSeries(stackedGbifData[x]);
+                j=j+1;
+            }
+            else{
+
+            }
+
+        }
+        var k=0;
+        for(var x in stackedReunaData){
+            if(k<15){
+            ReunaStacked.addSeries(stackedReunaData[x]);
+                k=k+1;
+        }
+            else{
+
+            }
+        }
 
 
     });

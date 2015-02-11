@@ -23,6 +23,7 @@ class Genero{
         private $dataReuna=array();
         private $yearCount=array();//reuna
         private $drillDownDataReuna=array();
+        private $stackedChildrensReuna=array();
 
     /*__Gbif__*/
 
@@ -38,6 +39,7 @@ class Genero{
         private $coordinatesGBIFInPHP=array();
         private $dataGbif=array();
         private $totalEnGBIF;
+        private $stackedChildrensGbif=array();
 
 
     /*-------------*/
@@ -45,7 +47,7 @@ class Genero{
     public function setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
                                 $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,
                                 $drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears,$coordinatesGBIFInPHP,$coordinatesInPHP
-                            ,$dataReuna,$dataGbif,$totalEnGBIF){
+                            ,$dataReuna,$dataGbif,$totalEnGBIF,$stackedChildrensReuna,$stackedChildrensGbif){
 
         //$this->specie=$specie;
         $this->genusKey=$genusKey;
@@ -72,6 +74,8 @@ class Genero{
         $this->dataReuna=$dataReuna;
         $this->dataGbif=$dataGbif;
         $this->totalEnGBIF=$totalEnGBIF;
+        $this->stackedChildrensReuna=$stackedChildrensReuna;
+        $this->stackedChildrensGbif=$stackedChildrensGbif;
 
     }
     public function getSpecie(){
@@ -149,6 +153,13 @@ class Genero{
     public function getTotalEnGBIF(){
         return $this->totalEnGBIF;
     }
+    public function getStackedChildrensReuna(){
+        return $this->stackedChildrensReuna;
+    }
+    public function getStackedChildrensGbif(){
+        return $this->stackedChildrensGbif;
+    }
+
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
 $limitGBIF = 20;
@@ -176,7 +187,7 @@ function countYears($taxonKey, $count)
     $localCount = $count;
     if ($localCount > 300) {
         while ($localCount > 0) {
-            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset . '&year=1900,2015'), true);
+            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&country=CL&limit=' . $localCount . '&offset=' . $offset), true);
             foreach ($years['results'] as $i) {
                 if (!array_key_exists($i['year'], $returnVal)) {
                     $returnVal[$i['year']] = 1;
@@ -188,8 +199,9 @@ function countYears($taxonKey, $count)
             $offset += 300;
         }
     } else {
-        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset . '&year=1900,2015'), true);
+        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&country=CL&limit=' . $localCount . '&offset=' . $offset), true);
         foreach ($years['results'] as $i) {
+
             if (!array_key_exists($i['year'], $returnVal)) {
                 $returnVal[$i['year']] = 1;
             } else {
@@ -224,7 +236,7 @@ function getChildrenNames($key){
         }
         //echo 'species '.$i['species'].' count '.$count;
     };
-    asort($result);
+    arsort($result);
     return $result;
 }
 
@@ -279,37 +291,112 @@ function getData($data,$decada){
     return $out;
 }
 
-function createDrilldown($var){//function setYearCountData(yearCount)
+function createDrilldownReuna($var){//function setYearCountData(yearCount)
     $out=array();
     $decadas=array();
     $i=0;
-    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    //$colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
     //for($i=0;$i<sizeof($var);$i++){
     foreach($var as $key=>$valor){
         $dec=substr($key,0,3);//.'0';
         $dec2=$dec.'0';
-        if(!in_array($dec2,$decadas)){
-            array_push($decadas,$dec2);
-            //$algo=substr($key,0,3);//error
-            $out[$i]=array(
-                'y'=>suma($var,$dec),//error
-                'color'=>$colors[$i],
-                'drilldown'=>array(
-                    'name'=>$dec2,
-                    'categories'=>getYears($var,$dec),//error
-                    'data'=>getData($var,$dec),//error
-                    'color'=>$colors[$i]
-                )
-            );//
-            $i+=1;
+        if($dec2==0){
+            if(!in_array($dec2,$decadas)){
+                $dec2='N/A';
+                array_push($decadas,$dec2);
+                //$algo=substr($key,0,3);//error
+                $out[$i]=array(
+                    'y'=>suma($var,$dec),//error
+                    //'color'=>$colors[$i],
+                    'color'=>'#000000',
+                    'drilldown'=>array(
+                        'name'=>'Sin año registrado',
+                        'categories'=>getYears($var,$dec),//error
+                        'data'=>getData($var,$dec),//error
+                        'color'=>'#000000'
+                    )
+                );//
+                $i+=1;
 
+            }
+        }
+        else {
+            if (!in_array($dec2, $decadas)) {
+                array_push($decadas, $dec2);
+                //$algo=substr($key,0,3);//error
+                $out[$i] = array(
+                    'y' => suma($var, $dec),//error
+                    //'color' => $colors[$i],
+                    'color'=>'#000000',
+                    'drilldown' => array(
+                        'name' => $dec2,
+                        'categories' => getYears($var, $dec),//error
+                        'data' => getData($var, $dec),//error
+                        //'color' => $colors[$i]
+                        'color'=>'#000000'
+                    )
+                );//
+                $i += 1;
+
+            }
         }
 
     }
-    //return [$out,$decadas];
-    //var_dump($out);
-    //$ordenado=sort($decadas);
-    return array($out,$decadas);//entrega las decadas pero una no sale en orden.
+    return array($out,$decadas);
+
+}
+function createDrilldownGbif($var){//function setYearCountData(yearCount)
+    $out=array();
+    $decadas=array();
+    $i=0;
+    //$colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
+    //for($i=0;$i<sizeof($var);$i++){
+    foreach($var as $key=>$valor){
+        $dec=substr($key,0,3);//.'0';
+        $dec2=$dec.'0';
+        if($dec2==0){
+            if(!in_array($dec2,$decadas)){
+                $dec2='N/A';
+                array_push($decadas,$dec2);
+                //$algo=substr($key,0,3);//error
+                $out[$i]=array(
+                    'y'=>suma($var,$dec),//error
+                    //'color'=>$colors[$i],
+                    'color'=>'#53AD25',
+                    'drilldown'=>array(
+                        'name'=>'Sin año registrado',
+                        'categories'=>getYears($var,$dec),//error
+                        'data'=>getData($var,$dec),//error
+                        'color'=>'#53AD25'
+                    )
+                );//
+                $i+=1;
+
+            }
+        }
+        else {
+            if (!in_array($dec2, $decadas)) {
+                array_push($decadas, $dec2);
+                //$algo=substr($key,0,3);//error
+                $out[$i] = array(
+                    'y' => suma($var, $dec),//error
+                    //'color' => $colors[$i],
+                    'color'=>'#53AD25',
+                    'drilldown' => array(
+                        'name' => $dec2,
+                        'categories' => getYears($var, $dec),//error
+                        'data' => getData($var, $dec),//error
+                        //'color' => $colors[$i]
+                        'color'=>'#53AD25'
+                    )
+                );//
+                $i += 1;
+
+            }
+        }
+
+    }
+    return array($out,$decadas);
 
 }
 function setAccumulatedYears($yearCount){
@@ -387,6 +474,8 @@ function setPieData($graph){
     return $out;
 
 }
+$stackedChildrensReuna=array();
+$stackedChildrensGbif=array();
 $REUNA='REUNA';
 $dataReuna=array();
 $dataGbif=array();
@@ -463,6 +552,8 @@ if ($search) {
         $dataReuna=$results->getDataReuna();
         $dataGbif=$results->getDataGbif();
         $totalEnGBIF=$results->getTotalEnGBIF();
+        $stackedChildrensReuna=$results->getStackedChildrensReuna();
+        $stackedChildrensGbif=$results->getStackedChildrensGbif();
 
         echo 'cache!';
 
@@ -553,7 +644,7 @@ if ($search) {
             $json = json_decode($content, true);
             $speciesKey = isset($json['genusKey']) ? json_encode($json['genusKey']) : null;*/
             //$url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $genusKey . '&country=CL&isGeoreferenced=true';
-            $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$genusKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true&year=1900,2015';
+            $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$genusKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true';
             $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$genusKey.'&country=CL';
             $res=json_decode(file_get_contents($url),true);
             $totalGBIF=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
@@ -567,7 +658,7 @@ if ($search) {
             //$count = $content;//$json['count'];
             //$totalGBIF = $count;
             $genusObject=new Genero();
-            $count = $totalGBIF;
+            $count = $totalEnGBIF;
             $yearCountGbif = countYears($genusKey, $count);
             $temporaryArray = array();
             if ($count > 300) {
@@ -632,20 +723,28 @@ if ($search) {
         }
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
-        $drillDownDataGbif=createDrilldown($yearCountGbif);
-        $drillDownDataReuna=createDrilldown($yearCount);
+        $drillDownDataGbif=createDrilldownGbif($yearCountGbif);
+        $drillDownDataReuna=createDrilldownReuna($yearCount);
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         $dataReuna=setPieData($institutionNames);
         $dataGbif=setPieData($institutionNamesGBIF);
+        $childrenNames=getChildrenNames($genusKey);
+
+        foreach($childrenNames as $key=>$value){
+            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
+        }
+        foreach($taxonChildrens as $key=>$value){
+            array_push($stackedChildrensReuna,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
+        }
         //echo('qwe');
         //var_dump($institutionNamesGBIF);
 
         $genusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaConCoordenadas,$totalGBIF,$coordYearsREUNA,
             $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
-            ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif,$totalEnGBIF);
+            ,$coordinatesGBIFInPHP,$coordinatesInPHP,$dataReuna,$dataGbif,$totalEnGBIF,$stackedChildrensReuna,$stackedChildrensGbif);
 
         cache_set($search, $genusObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
