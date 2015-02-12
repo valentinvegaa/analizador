@@ -6,9 +6,11 @@
  * Time: 11:23
  */
 $path = drupal_get_path('module', 'analizador_biodiversidad');
+include($path . '/include/obtenerRegion.php');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
+$institucion = substr(current_path(), strripos(current_path(), '/') + 1);
 $parameters = array(
     'fq' => '',
     'fl' => '',
@@ -17,12 +19,16 @@ $parameters = array(
 );
 $categories=array();
 $series=array();
-try {
-    $results = $solr->search('*:*', 0, 0, $parameters);
-}catch (Exception $e)
-{
-    die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+$participacion=array();
+function getResults($parameters,$solr){
+    try {
+        return $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+    }
 }
+$results=getResults($parameters,$solr);
 if ($results) {
     $totalInstitutions = $results->response->numFound;
     foreach ($results->facet_counts->facet_fields as $doc) {
@@ -33,9 +39,138 @@ if ($results) {
     }
     arsort($series);
 }
+$parameters = array(
+    'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.year_s'
+);
+$results=getResults($parameters,$solr);
+if($results){
+    $localTemp=array();
+    foreach ($results->facet_counts->facet_fields as $doc) {
+        foreach ($doc as $field => $value) {
+            if($value>0){
+                $localTemp[$field] = $value;
+            }
+        }
+    }
+    var_dump($localTemp);
+    $data=array();
+    $first=false;
+    $firstYear=0;
+    $categoriasPart=array();
+    for($i=1900;$i<=date('Y');$i++){
+        if(array_key_exists($i,$localTemp)){
+            array_push($data,$localTemp[$i]);
+            $first=true;
+        }
+        else{
+            if($first){
+                array_push($data,0);
+            }
+            else{
+                $firstYear=$i+1;
+            }
+        }
+    }
+    for($i=$firstYear;$i<=date('Y');$i++){
+        array_push($categoriasPart,$i);
+    }
+    $participacion=array('name'=>$institucion,'data'=>$data);
+}
+$parameters = array(
+    'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.stateProvince_s'
+);
+$parametersSpecies = array(
+    'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.order_s'
+);
+$results=getResults($parametersSpecies,$solr);
+$totalEspecies=0;
+$totalObservaciones=0;
+
+if($results){
+    $localTemp='<div class="tableElement"><div class="key">Especie</div><div class="value">Obs.</div></div>';
+    foreach ($results->facet_counts->facet_fields as $doc) {
+        foreach ($doc as $field => $value) {
+            if($value>0){
+                $localTemp.='<div class="tableElement"><div class="key">'.$field.'</div><div class="value">'.$value.'</div></div>';
+                $totalEspecies++;
+                $totalObservaciones+=$value;
+            }
+        }
+    }
+}
+$localTemp.='<div class="totales">Especies: '.$totalEspecies.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Observaciones: '.$totalObservaciones.'</div>';
+$tablaEspecies=$localTemp;
+
+$parametersGenus = array(
+    'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.class_s'
+);
+$results=getResults($parametersGenus,$solr);
+$totalGeneros=0;
+$totalGenerosObservados=0;
+
+if($results){
+    $localTemp='<div class="tableElement"><div class="key">Genero</div><div class="value">Obs.</div></div>';
+    foreach ($results->facet_counts->facet_fields as $doc) {
+        foreach ($doc as $field => $value) {
+            if($value>0){
+                $localTemp.='<div class="tableElement"><div class="key">'.$field.'</div><div class="value">'.$value.'</div></div>';
+                $totalGeneros++;
+                $totalGenerosObservados+=$value;
+            }
+        }
+    }
+}
+$localTemp.='<div class="totales">Generos: '.$totalGeneros.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Observaciones: '.$totalGenerosObservados.'</div>';
+$tablaGeneros=$localTemp;
+
+$results=false;
+
+if($results){
+    $localTemp=array();
+    foreach ($results->facet_counts->facet_fields as $doc) {
+        foreach ($doc as $field => $value) {
+            if($value>0){
+                echo '<br>'.obtenerRegion($field);
+            }
+        }
+    }
+    /*$data=array();
+    $first=false;
+    $firstYear=0;
+    $categoriasPart=array();
+    for($i=1900;$i<=date('Y');$i++){
+        if(array_key_exists($i,$localTemp)){
+            array_push($data,$localTemp[$i]);
+            $first=true;
+        }
+        else{
+            if($first){
+                array_push($data,0);
+            }
+            else{
+                $firstYear=$i+1;
+            }
+        }
+    }
+    for($i=$firstYear;$i<=date('Y');$i++){
+        array_push($categoriasPart,$i);
+    }
+    $participacion=array('name'=>$institucion,'data'=>$data);*/
+}
 ?>
 <?php // page template ?>
-
 <?php if ($page['topbar']): ?>
     <!--start top bar-->
     <div id="topBar" class="outsidecontent">

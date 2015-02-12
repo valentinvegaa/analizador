@@ -64,3 +64,6 @@ a:link {
     font-size: 0.8em;
     font-weight: 100;
 }
+.error {
+    display: none;
+}
