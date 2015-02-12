@@ -474,11 +474,26 @@ Explore los resultados:
                 }
             }
         });
-        for(var x in stackedGbifData){
-            GbifStacked.addSeries(stackedGbifData[x]);
+        var j=0;
+        var sum=0;
+        for(var x in stackedGbifData) {
+            if (j < 15) {
+                GbifStacked.addSeries(stackedGbifData[x]);
+                j=j+1;
+            }
+            else{
+                sum=sum+ stackedGbifData.data[x];
+            }
+
         }
-        for(var x in stackedReunaData){
-            ReunaStacked.addSeries(stackedReunaData[x]);
+        GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
+
+        var k=0;
+        for(var x in stackedReunaData) {
+            if (k < 15) {
+                ReunaStacked.addSeries(stackedReunaData[x]);
+                k=k+1;
+            }
         }
     });
 })(jQuery);

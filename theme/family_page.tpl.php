@@ -44,6 +44,7 @@ class Family{
     private $coordYearsGBIF='';
     private $coordYearsReuna='';
     private $totalEnGBIF;
+    private $familyKey;
 
     public function setFamily($nombreFamilia,
                               $generos,
@@ -61,7 +62,7 @@ class Family{
                               $institutionDataGbif,
                               $yearCount,
                               $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF
-                                ,$countSpecies,$speciesFound,$coordYearsGBIF,$totalEnGBIF
+                                ,$countSpecies,$speciesFound,$coordYearsGBIF,$totalEnGBIF,$familyKey
     ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
@@ -88,6 +89,7 @@ class Family{
         $this->speciesFound=$speciesFound;
         $this->coordYearsGBIF=$coordYearsGBIF;
         $this->totalEnGBIF=$totalEnGBIF;
+        $this->familyKey=$familyKey;
     }
     public function getGeneros(){}
     public function getEspecies(){}
@@ -144,6 +146,9 @@ class Family{
     }
     public function getTotalEnGBIF(){
         return $this->totalEnGBIF;
+    }
+    public function getFamilyKey(){
+        return $this->familyKey;
     }
 
 }
@@ -258,6 +263,7 @@ function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada gen
             }
         }
     }
+    arsort($count);
     return $count;
 }
 function FamilyChildrens($key){
@@ -441,7 +447,7 @@ $additionalParameters = array();
 $taxonChildrens=array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $family = substr(current_path(), strripos(current_path(), '/') + 1);
-
+$familyKey;
 $FamilyObject=new Family();
 $drillDownDataGbif=array();
 $drillDownDataReuna=array();
@@ -478,6 +484,7 @@ if ($family) {
         $countSpecies=$results->getCountSpecies();
         $speciesFound=$results->getSpeciesFound();
         $totalEnGBIF=$results->getTotalEnGBIF();
+        $familyKey=$results->getFamilyKey();
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
