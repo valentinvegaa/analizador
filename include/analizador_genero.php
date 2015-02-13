@@ -191,8 +191,10 @@ function changeFeatures(first, last) {
         var name = 'Década';
         var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
         var dataREUNA = tempREUNA[0];
+        //var decadasREUNA=tempREUNA[1];
         var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
         var dataGBIF = tempGBIF[0];
+        console.log(tempGBIF[1]);
         console.log(tempGBIF[0]);
         var categoryYears=<?php echo json_encode($categoryYears); ?>;
         var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
@@ -324,7 +326,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             series: [{
-                name: data[1],
+                //name: data[1],
                 data: data[2]
             }]
         });
@@ -339,7 +341,15 @@ function changeFeatures(first, last) {
                 text: null
             },
             xAxis: {
-                categories: tempREUNA[1]
+                categories: tempREUNA[1],
+                labels: {
+                    rotation:-45,
+                    style: {
+
+                        color: '#000000'
+                        //font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                }
             },
             yAxis: {
                 title: {
@@ -352,6 +362,9 @@ function changeFeatures(first, last) {
                 }
             },
             plotOptions: {
+                area:{
+                    pointStart: 1900
+                },
                 column: {
                     cursor: 'pointer',
                     point: {
@@ -359,9 +372,9 @@ function changeFeatures(first, last) {
                             click: function () {
                                 var drilldownREUNA = this.drilldown;
                                 if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
                                 } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
                                 }
                             }
                         }
@@ -376,6 +389,9 @@ function changeFeatures(first, last) {
                             return this.y != 0 ? this.y : null;
                         }
                     }
+                },
+                series: {
+                    color: 'rgba(0, 0, 0, 0.8)'
                 }
             },
             tooltip: {
@@ -392,8 +408,8 @@ function changeFeatures(first, last) {
             },
             series: [{
                 name: name,
-                data: dataREUNA,
-                color: 'white'
+                data: dataREUNA
+                //color: 'white'
             }],
             exporting: {
                 enabled: false
@@ -422,7 +438,16 @@ function changeFeatures(first, last) {
                 text: null
             },
             xAxis: {
-                categories: tempGBIF[1]
+                categories: tempGBIF[1],
+                labels: {
+                    rotation:-45,
+                    style: {
+
+                        color: '#000000'
+                        //font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                }
+               // categories:[1900,1910,1920,1930,1940,1950,1960,1970,1980,2000,2010,2020]
             },
             yAxis: {
                 title: {
@@ -442,9 +467,9 @@ function changeFeatures(first, last) {
                             click: function () {
                                 var drilldown = this.drilldown;
                                 if (drilldown) { // drill down
-                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data,'rgba(83, 173, 37, 0.8)');//, drilldown.color);
                                 } else { // restore
-                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
+                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
                                 }
                             }
                         }
@@ -459,6 +484,9 @@ function changeFeatures(first, last) {
                             return this.y != 0 ? this.y : null;
                         }
                     }
+                },
+                series: {
+                    color: 'rgba(83, 173, 37, 0.8)'
                 }
             },
             tooltip: {
@@ -475,8 +503,8 @@ function changeFeatures(first, last) {
             },
             series: [{
                 name: name,
-                data: dataGBIF,
-                color: 'white'
+                data: dataGBIF
+                //color: 'white'
             }],
             exporting: {
                 enabled: false
@@ -641,20 +669,36 @@ function changeFeatures(first, last) {
                 j=j+1;
             }
             else{
-
+                cont+=stackedGbifData[x].index;
             }
 
         }
+        var arr=[cont];
+        GbifStacked.addSeries({
+            name:'Otros',
+            data:arr,
+            index:cont,
+            legendIndex:cont
+        });
+
         var k=0;
+        var conta=0;
         for(var x in stackedReunaData){
             if(k<15){
             ReunaStacked.addSeries(stackedReunaData[x]);
                 k=k+1;
         }
             else{
-
+                conta+=stackedReunaData[x].index;
             }
         }
+        var arre=[conta];
+        ReunaStacked.addSeries({
+            name:'Otros',
+            data:arre,
+            index:conta,
+            legendIndex:conta
+        });
 
 
     });
