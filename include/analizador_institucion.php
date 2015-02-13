@@ -50,22 +50,24 @@ Explore los resultados:
     <div id="rank"></div>
     <div>
         <div>Años en los que participa esta entidad</div>
+        <div id="participacionAnual"></div>
         <div id="anyos">Grafico de barras participacion anual, ultimos 80 años para esta entidad</div>
         <div>Años acumulados en los que participa esta entidad</div>
         <div id="anyos">Grafico de lineas participacion anual acumulada, ultimos 80 años años para esta entidad</div>
     </div>
     <div id="mapContainerHorizontal" class="mapContainerHorizontal"></div>
-    <div><div class="izq">Nombre region</div><div class="der">participacion</div></div>
-    <div>
-        <div>Numero de especies</div>
-        <div>Numero de generos</div>
-        <div>Numero de familias</div>
+    <div style="margin-bottom: 50px"><div class="izq">Nombre region</div><div class="der">participacion</div></div>
+    <div style="">
+        <div id="tabla-especies" style="width:450px;float:left"><?php print $tablaEspecies;?></div>
+        <div id="tabla-generos" style="width:450px;float: right;"><?php print $tablaGeneros;?></div>
     </div>
+    <div><div id="tabla-familias" style="width:380px;float:left">Numero de familias</div></div>
 </div>
 <script>
 (function ($) {
     $(document).ready(function ($) {
-        var categories
+        var categories;
+        var sumaTotal=0;
         var rankChart=new Highcharts.Chart({
             chart: {
                 renderTo: 'rank',
@@ -93,15 +95,16 @@ Explore los resultados:
             },
             tooltip: {
                 formatter: function () {
+                    var pcnt = (this.y / sumaTotal) * 100;
                     return '<div style="font-size: 0.8em">Contribución total</div><br> ' + this.series.name +
-                    ': <b>' + this.y + '</b>';
+                    ': <b>' + this.y +' con el '+ Highcharts.numberFormat(pcnt) + '%' +'</b>';
                 },
                 valueSuffix: ' Observaciones'
             },
             plotOptions: {
                 bar: {
-                    dataLabels: {
-                        enabled: true
+                    dataLabels:{
+                        enabled:true,
                     }
                 }
             },
@@ -121,9 +124,64 @@ Explore los resultados:
             },
             series: []
         });
+        var partChart=new Highcharts.Chart({
+            chart: {
+                renderTo: 'participacionAnual',
+                type: 'areaspline'
+            },
+            title: {
+                text: 'Participacion anual'
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 150,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            xAxis: {
+                categories:<?php echo json_encode($categoriasPart)?>,
+                labels:
+                {
+                    enabled: true,
+                    step: 5,
+                    staggerLines: 1
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Observaciones'
+                }
+            },
+            tooltip: {
+                shared: true,
+                valueSuffix: ' observaciones'
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                areaspline: {
+                    fillOpacity: 0.5
+                },
+                series:{
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            series: []
+        });
+        var participacion=<?php echo json_encode($participacion)?>;
+        console.log(participacion);
+        partChart.addSeries(participacion);
         var series=<?php echo json_encode($series);?>;
         for(var x in series){
             rankChart.addSeries(series[x]);
+            sumaTotal+=parseInt(series[x]['data']);
         }
     });
 })(jQuery);

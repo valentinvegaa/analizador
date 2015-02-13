@@ -215,7 +215,7 @@
     display: none;
 }
 /*
-Instituciones
+Institucionesasd
 */
 .izq{
     float: left;
@@ -232,5 +232,8 @@ Instituciones
 }
 #rank{
     width:100%;
+    height: 300px;
+}
+#participacionAnual{
     height: 300px;
 }
