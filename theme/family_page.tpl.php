@@ -905,7 +905,7 @@ if ($family) {
             $institutionDataGbif,
             $yearCount,
             $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF,$countSpecies,$speciesFound
-            ,$coordYearsGBIF,$categorias
+            ,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
