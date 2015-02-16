@@ -23,6 +23,10 @@ echo isset($genusKey) ? $genusKey : '';
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
+<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGBIF; ?></b></div>
+<div style="font-size: 1.2em;">Observaciones sin fecha registrada en GBIF: <b><?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?></b></div>
+<div style="font-size: 1.2em;">Observaciones no georeferencias en REUNA: <b><?php echo $totalReuna-$totalReunaConCoordenadas; ?></b></div>
+<div style="font-size: 1.2em;">Observaciones sin fecha registrada en REUNA: <b><?php echo ($totalReuna-end($accumulatedYearsReuna)); ?></b></div>
 
 Explore los resultados:
 <div id="index">
@@ -158,11 +162,11 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
-            $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
+            $("#amount").val('Sin fecha' + " - " + steps[$("#slider-range").slider("values", 1)]);
         }
     };
     var chartREUNA, colors = Highcharts.getOptions().colors;

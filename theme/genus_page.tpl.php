@@ -295,18 +295,38 @@ function getData($data,$decada){
     }
     return $out;
 }
-function CalculaEjeX(array $var1,array $var2){
+function CalculaEjeX($var1,$var2){
     $categorias=array();
+    reset($var1);
     $anyo=date('Y');
-        if($var1[0]<=$var2[0]){
-        $ini=substr($var1[0], 0, 3).'0';
+    if(sizeof($var1)==0){
+        $uno=1900;
+    }
+    else{
+        $uno=key($var1);
+    }
+
+    reset($var2);
+    if(sizeof($var2)!==0){
+        next($var2);//Gbif trae registros sin año
+        $dos=key($var2);}
+    else{
+        $dos=1900;
+    }
+
+    var_dump($uno);
+    var_dump($dos);
+
+
+    if($uno<=$dos){
+        $ini=substr($uno, 0, 3).'0';
             $inicio=(int)$ini;
         for($i=$inicio;$i<=$anyo;$i+=10){
             array_push($categorias,$i);
         }
     }
     else{
-        $ini=substr($var2[0], 0, 3).'0';
+        $ini=substr($dos, 0, 3).'0';
         $inicio=(int)$ini;
         for($i=$inicio;$i<=$anyo;$i+=10){
             array_push($categorias,$i);
@@ -317,6 +337,7 @@ function CalculaEjeX(array $var1,array $var2){
 }
 function createDrilldown($var,$categorias){//function setYearCountData(yearCount)
     $out=array();
+
     $decadas=array();
     $decadas2=array();
     $deca=array();
@@ -835,6 +856,7 @@ if ($search) {
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
+        //var_dump($categorias);
         $drillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
         $drillDownDataReuna=createDrilldown($yearCount,$categorias);
         $categoryYears=setCategoryYears();
