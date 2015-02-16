@@ -237,3 +237,13 @@ Institucionesasd
 #participacionAnual{
     height: 300px;
 }
+.sinGrafico{
+    width: 380px;
+    height: 190px;
+    margin: 20px 20px 0 5px;
+    font-size: 2em;
+    display: inline-block;
+}
+.sinGrafico>span{
+    vertical-align: middle;
+}

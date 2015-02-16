@@ -611,6 +611,30 @@ $search = substr(current_path(), strripos(current_path(), '/') + 1);
 
 
 if ($search) {
+    $parameters = array(
+        'fq' => 'dwc.genus_mt:'.$search,
+        'fl' => '',
+        'facet' => 'true',
+        'facet.field' => 'dwc.identifiedBy_s'
+    );
+    try {
+        $results= $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+    }
+    $salida='';
+    $generosPorInvestigador=array();
+    if($results){
+        foreach ($results->facet_counts->facet_fields as $doc) {
+            foreach ($doc as $field => $value) {
+                if($value>0){
+                    $salida.='<div class="tableElement"><div class="key">'.$field.'</div><div class="value">'.$value.'</div></div>';
+                    array_push($familiasPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                }
+            }
+        }
+    }
     if($cached = cache_get($search, 'cache')){
         $results = $cached->data;
         $genusKey=$results->getGenusKey();

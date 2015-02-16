@@ -459,6 +459,30 @@ $yearCount = array();
 $yearCountGBIF = array();
 
 if ($family) {
+    $parameters = array(
+        'fq' => 'dwc.family_mt:'.$family,
+        'fl' => '',
+        'facet' => 'true',
+        'facet.field' => 'dwc.identifiedBy_s'
+    );
+    try {
+        $results= $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+    }
+    $salida='';
+    $familiasPorInvestigador=array();
+    if($results){
+        foreach ($results->facet_counts->facet_fields as $doc) {
+            foreach ($doc as $field => $value) {
+                if($value>0){
+                    $salida.='<div class="tableElement"><div class="key">'.$field.'</div><div class="value">'.$value.'</div></div>';
+                    array_push($familiasPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                }
+            }
+        }
+    }
     if($cached=cache_get($family,'cache')){
         $results = $cached->data;
         $coordinatesReuna=$results->getObservacionesReuna();
@@ -688,9 +712,8 @@ if ($family) {
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
-    var_dump(getCountyName($coordinatesReuna,'reuna'));
-    echo '<br>';
-    var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
+    //var_dump(getCountyName($coordinatesReuna,'reuna'));
+    //var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
     //var_dump($coordinatesGBIFInPHP);
     /*Regiones de Chile
     echo getCountyName(-69.550753,-18.679683).'<br>';

@@ -136,7 +136,7 @@ function constructResult($searchResults,$solr,$number){
                 $cleanResults.= '<div class="result" id="'.($reunaCount+$count).'">';
                 $cleanResults.= '<div class="scientificName">';
                 $cleanResults.= '<span>'.$number.') </span>'; // aqui va el numero de la aparicion
-                $cleanResults.= '<a href="http://www.ecoinformatica.cl/site/analizador/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'] . '</a> <div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
+                $cleanResults.= '<a href="http://www.ecoinformatica.cl/site/analizador/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
                 $cleanResults.= '</div>';//div fin scientificName
                 $cleanResults.= '<div class="moreInfo">
                     <div class="rank">Tipo: '.$rank.'</div>
@@ -169,11 +169,11 @@ if($_POST){
     //Llamar funcion para generar salida
     $result=constructResult($search,$solr,$_POST['total']);
 
-    /*while(strlen($result)==0){
+    while(strlen($result)==0){
         $timesAgain++;
         $result=searchAgain($queryFilterWord,$offset,$solr,$_POST['total']);
         if($timesAgain==5)$result='No se encontraron registros';
-    }*/
+    }
     if(strcmp($result,'fin de los registros')==0)$result='Fin de la busqueda.';
     print $result;
 }

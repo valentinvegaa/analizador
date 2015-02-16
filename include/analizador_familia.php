@@ -64,8 +64,20 @@ Explore los resultados:
     <div class="left" id="temporal">
         <div class="title-a subtitulo">Distribución Temporal</div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
-        <div id="contribucionBarrasREUNA"></div>
-        <div id="contribucionBarrasGBIF"></div>
+        <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
+            <div id="contribucionBarrasREUNA"></div>
+        <?php else:?>
+            <div class="sinGrafico"
+                <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+            </div>
+        <?php endif;?>
+        <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
+            <div id="contribucionBarrasGBIF"></div>
+        <?php else:?>
+            <div class="sinGrafico"
+                <span>No hay datos en GBIF o hay problemas con el indice.</span>
+            </div>
+        <?php endif;?>
     </div>
     <div id="containers geografica" class="containers">
         <div class="title-a subtitulo">Distribución Geográfica</div>
@@ -83,8 +95,20 @@ Explore los resultados:
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
     <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
-    <div id="ReunaStacked"></div>
-    <div id="GbifStacked"></div>
+    <?php if(count($stackedChildrens)>0):?>
+        <div id="ReunaStacked"></div>
+    <?php else:?>
+        <div class="sinGrafico"
+            <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+        </div>
+    <?php endif;?>
+    <?php if(count($stackedChildrensGbif)>0):?>
+        <div id="GbifStacked"></div>
+    <?php else:?>
+        <div class="sinGrafico"
+                <span>No hay datos en GBIF o hay problemas con el indice.</span>
+            </div>
+        <?php endif;?>
     <div class="title-a subtitulo">Instituciones</div>
     <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
     <div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
@@ -160,9 +184,7 @@ Explore los resultados:
         var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
        // console.log(tempGBIF[0]);
        // console.log(tempGBIF[1]);
-        //console.log(yearCountGBIF);
-        console.log(stackedGbifData);
-
+        //console.log(yearCountGBIF)
         $('#institucionPieREUNA').highcharts({
             chart: {
                 plotBackgroundColor: null,
@@ -239,7 +261,7 @@ Explore los resultados:
                 data: dataGbif[0]
             }]
         });
-        chartREUNA = new Highcharts.Chart({
+        if(tempREUNA[1].length>0)chartREUNA = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasREUNA',
                 type: 'column'
@@ -323,7 +345,7 @@ Explore los resultados:
                  shadow: true*/
             }
         });
-        chartGBIF = new Highcharts.Chart({
+        if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
                 type: 'column'
@@ -407,7 +429,7 @@ Explore los resultados:
                  shadow: true*/
             }
         });
-        GbifStacked = new Highcharts.Chart({
+        if(stackedGbifData.length>0)GbifStacked = new Highcharts.Chart({
             chart: {
                 type: 'bar',
                 renderTo: 'GbifStacked'
@@ -476,19 +498,22 @@ Explore los resultados:
         });
         var j=0;
         var sum=0;
-        for(var x in stackedGbifData) {
-            if (j < 15) {
-                GbifStacked.addSeries(stackedGbifData[x]);
-                j=j+1;
-            }
-            else{
-                sum=sum+ stackedGbifData.data[x];
-            }
+        if(stackedGbifData.length>0){
+            for(var x in stackedGbifData) {
+                if (j < 15) {
+                    GbifStacked.addSeries(stackedGbifData[x]);
+                    j=j+1;
+                }
+                else{
+                    sum=sum+ stackedGbifData.data[x];
+                }
 
+            }
+            GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
         }
-        GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
 
         var k=0;
+        if(stackedReunaData.length>0)
         for(var x in stackedReunaData) {
             if (k < 15) {
                 ReunaStacked.addSeries(stackedReunaData[x]);

@@ -5,9 +5,8 @@
  * Date: 12-11-2014
  * Time: 0:21
  */
-$_SESSION['number']=0;
-$queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
 $path = drupal_get_path('module', 'analizador_biodiversidad');
+$queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
 $additionalParameters = array(
     'fq' => '',
     'fl' => '',

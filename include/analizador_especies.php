@@ -1,3 +1,4 @@
+<span >
 <?php
 /**
  * Created by PhpStorm.
@@ -10,101 +11,185 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
-//echo $path . '_path';
-echo 'specieskey: ' . $speciesKey;
+//echo $path . '     _path';
 //var_dump($yearCountGbif);
 //var_dump($categoriesGBIF);
 ?>
+    </span>
+
+</div>
 <!--<div>
     <form  accept-charset="utf-8" method="post">
         <input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
         <input type="submit" value="Search"/>
     </form>
 </div>-->
-<div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
-</div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
-Explore los resultados:
-<div style="margin:20px 0 20px 0;">
-    <!--<div class="top-index">
-        <div class="title-a">Composición Taxonómica</div>
-        <div class="line"><a href="#ReunaStacked"><span><?php //echo sizeof($taxonChildrens);?> Géneros</span> en la base de datos REUNA.</a></div>
-        <div class="line"><a href="#GbifStacked"><span><?php //echo sizeof($familyChildrens);?> Géneros</span> en la base de datos GBIF.</a></div>
-        <div class="endline">Último género de la Familia ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
-    </div>-->
-    <div class="bottom-index">
-        <div class="left">
-            <div id="left-index-a">
-                <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($yearCount);?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos GBIF</div>
-                <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></div>
-                <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
-            </div>
-            <div id="left-index-b">
-                <div class="title-b"><a href="#institucion">Instituciones</a></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesReuna)?></span> Organismos (<?php echo $REUNA; ?>) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
-                <div class="line"><span class="bignumber"><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (GBIF) han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+<p></p>
+<div class="summary1">
+    <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
+        <br>
+        <span class="titspecies"><?php if (isset($specie)) echo $specie; ?> (Lamarck, 1822)</span>
+        <br>
+    <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?>
+        <div class="linea_hor"></div> <!--inao-->
+    </div>
+    <div class="summary-left">
+        <div id="boxleft">
+            <span class="little">Contenido en fuentes de datos: </span> <br/>
+            <b>
+        <span class="Reuna">
+                <span style="font-size: 2.5em;"><?php echo $totalReuna; ?></span>
+                registros en <?php echo $REUNA; ?>
+            </span>
+                &nbsp &nbsp &nbsp
+            <span class="GBIF">
+                <span style="font-size: 2em;"> <?php echo $totalEnGBIF; ?></span>
+                registros en GBIF
+            </span>
+            </b>
+        </div>
+    </div>
+    <div id="summary-right">
+        <div id="acumuladas"></div>
+        <span style="color:gray">*Existen datos sin fecha de registro</span>
+    </div>
 
-            </div>
-        </div>
-        <div id="top-rb-index">
-            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
-            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
-        </div>
-    </div>
 </div>
-<div class="wraper-container">
-    <div class="left" id="temporal">
-        <div class="title-a subtitulo">Distribución Temporal</div>
-        <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
-        <div id="contribucionBarrasREUNA"></div>
-        <div id="contribucionBarrasGBIF"></div>
-        <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div>
-        <div id="reunaGbifBarras"></div>
-    </div>
-    <div id="containers" class="containers">
-        <div class="title-a subtitulo" id="geografica">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> ocurrencias Georeferenciadas, correspondiente al  <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+<p></p>
+
+<div class="boxsec">
+    <div class="heading2" >DistribuciÃ³n GeogrÃ¡fica  &nbsp</div>
+    <!--<span class="species"> <?php if (isset($specie)) echo $specie; ?> en Chile</span>-->
+
+    <div id="geo-left">
         <div id="mapContainer" class="mapContainer">
-            <div style="font-weight: bold;text-align: center"><?php echo $REUNA; ?></div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $REUNA; ?></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
-            <div style="font-weight: bold;text-align: center">GBIF</div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;">GBIF</div>
         </div>
-        <div id="slider-range" style="clear: both; bottom: -30px;"></div>
+
+    </div>
+    <div id="right_geo">
+        <p></p>
+        <div class="heading3">Datos Georeferenciados</div>
+        <span><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>%
+        de los registros en <?php echo $REUNA; ?></span>
+        <span class="suave">(n=<?php echo $totalReunaConCoordenadas; ?>)</span>
+        <br>
+        <span><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>%
+        de los registros en GBIF</span>
+        <span class="suave">(n=<?php echo $totalGBIF; ?>)</span>
+        <p></p>
+        <p></p>
+        <div class="suave">
+            <span class="heading3">DistribuciÃ³n por regiÃ³n:</span> <p></p>
+            XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
+        </div>
+        <br>
+        <strong><span class="suave">Filtro temporal:</span></strong>
+        <div id="slider-range" style="clear: both; bottom: -10px;"></div>
         <input type="text" id="amount" readonly
-               style="border:0; position:relative; bottom: -30px; color:#f6931f; font-weight:bold;">
+               style="border:0; position:relative; bottom: -10px; color:#f6931f; font-weight:bold;">
     </div>
 </div>
-<div id="acumuladas" style="margin-left: 10px;"></div>
-<div class="wraper-container" style="padding-top: 40px;">
-    <div class="title-a subtitulo" id="institucion">Instituciones</div>
-    <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
-    <div style="width: 45%;float:left"><b>Contributors</b> to <?php if (isset($specie)) echo $specie; ?> records <span
-            style="color: darkgray"><?php echo $REUNA; ?> Database</span></div>
-    <div style="width: 45%;float:right"><b>Contributors</b> to <?php if (isset($specie)) echo $specie; ?> records <span
-            style="color: darkgray">GBIF Database</span></div>
-    <!--<div id="institucionBar" class="institucionBar"></div>-->
-    <div id="institucionPieREUNA" class="institucionPie"></div>
 
-    <div id="institucionPieGBIF" class="institucionPie"></div>
-    <div id="REUNATable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
-        foreach($institutionNamesReuna as $elemento){
-            print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
-        }
-        ?></div>
+<p>
+<div id="boxtemp">
+    <div class="heading2" >DistribuciÃ³n Temporal  &nbsp</div>
+    <div>
+        <div id="temp-left">
+
+            <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
+            <span class="heading3">Registros por aÃ±o</span>
+
+            <div id="contribucionBarrasREUNA"></div>
+            <div class="suave" style="margin-top:-5px; position:relative;">
+                <?php echo sizeof($yearCount);?></span> aÃ±os con registros en <?php echo $REUNA; ?>
+                (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?>)
+            </div>
+
+            <div id="contribucionBarrasGBIF"></div>
+            <div class="suave" style="margin-top:-5px; position:relative;">
+                <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> aÃ±os con registros en GBIF
+                (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
+            </div>
+        </div>
+
+
+        <div id="temp-right">
+            <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
+            <span class="heading3">Registros por mes</span>
+            <div id="reunaGbifBarras"></div>
+
+            <div id="GbifBarrasmes"></div>
+        </div>
+    </div>
+    <p></p>&nbsp
+    <div class="suave" style="text-align:center;margin-top:40px;display:block;float:none;"> *Datos sin fecha de registro: [XX] Reuna; [XX] GBIF
+    </div>
+
+</div>
+
+
+<div id="boxinstit">
+
+    <div class="heading2" > Organizaciones contribuyentes  &nbsp</div>
+
+    <!--<div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>-->
+    <div style="font-size: 1.1em;margin:20px 200px 20px 20px;">A continuaciÃ³n se presentan las organizaciones e investigadores que han contribuido a los registros de la especie al Repositorio <?php echo $REUNA; ?>.</div>
+    <p></p>
+    <div style="width: 50%;float:left;text-align:center;margin-top:10px;">
+        <div class="heading3">Organizaciones</div>
+        <div class="suave"><?php echo sizeof($institutionNamesReuna)?>
+            Organizaciones han contribuido con registros en el Repositorio <?php echo $REUNA; ?></div>
+        <p></p>
+        <div id="REUNATable"><?php
+            print '<div class="tableElement">
+            <div style="color: #444444;font-weight: bold;width:85%;float: left">
+            OrganizaciÃ³n</div><div style="color: #444444;font-weight: bold;width:15%;float: right">
+            Registros</div></div>';
+            foreach($institutionNamesReuna as $elemento){
+                print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
+            }
+            ?></div>
+        <div id="institucionPieREUNA" class="institucionPie"></div>
+    </div>
+    <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
+        <div class="heading3">Investigadores</div>
+        <div class="suave"> XX Investigadores han contribuido con registros de la Especie en <?php echo $REUNA; ?> </div> </br>
+        // AQUI Insertar la tabla-grafico de los investigadores forma descendente en funcion del numero de registros</div>
+    <!--<div id="institucionBar" class="institucionBar"></div>-->
+    <p></p>
     <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Institution</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
+        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Investigador</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
         foreach($institutionNamesGBIF as $key=>$value){
             print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
         }
         ?></div>
 </div>
+</div>
+
+
+
+<div style="width: 50%;text-align:center;margin-top:10px;height:100%;">
+    <div class="heading3">GBIF</div>
+    <div class="line"><?php echo sizeof($institutionNamesGBIF)?>
+        Organizaciones han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
+    <!--<div id="institucionBar" class="institucionBar"></div>-->
+    <p></p>
+    <div id="GBIFTable"><?php
+        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">OrganizaciÃ³n</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
+        foreach($institutionNamesGBIF as $key=>$value){
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+        }
+        ?></div>
+
+
+    <div id="institucionPieGBIF" class="institucionPie"></div>
+
+</div>
+
 <script>
 function changeFeatures(first, last) {
     source.clear();
@@ -153,11 +238,11 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin aÃ±o' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin aÃ±o' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
-            $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
+            $("#amount").val('Sin aÃ±o' + " - " + steps[$("#slider-range").slider("values", 1)]);
         }
     };
     var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
@@ -230,7 +315,7 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 pie: {
-                    size: 250,
+                    size: 170,
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
@@ -269,7 +354,7 @@ function changeFeatures(first, last) {
             },
             plotOptions: {
                 pie: {
-                    size: 250,
+                    size: 170,
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
@@ -289,7 +374,7 @@ function changeFeatures(first, last) {
             }]
         });
 
-
+        // GRAFICO TEMPORAL ANUAL GBIF
 
         chartGBIF = new Highcharts.Chart({
             chart: {
@@ -297,16 +382,18 @@ function changeFeatures(first, last) {
                 type: 'column'
             },
             title: {
-                text: null
+                text: 'GBIF',
+                style: {
+                }
             },
             xAxis: {
-                categories: tempGBIF[1]
+                categories: tempGBIF[1] ,
+                lineColor: '#666'
             },
             yAxis: {
                 title: {
-                    text: 'Observ. GBIF',
+                    text: 'Registros',
                     style: {
-                        color: '#000000',
                         fontSize: '12px',
                         fontWeight: 'bold'
                     }
@@ -329,9 +416,11 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: '#00000',
+                        color: '#000000',
                         style: {
-                            fontWeight: 'bold'
+                            fontWeight: 'regular',
+                            fontSize: '9px'
+
                         },
                         formatter: function () {
                             return this.y != 0 ? this.y : null;
@@ -363,6 +452,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             legend: {
+                enabled:false
                 //layout: 'vertical',
                 //align: 'right',
                 /*floating: true,*/
@@ -372,22 +462,27 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-        chartREUNA = new Highcharts.Chart({
+
+        // GRAFICO TEMPORAL ANUAL REUNA
+
+        chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
                 type: 'column'
             },
             title: {
-                text: null
+                text: '<?php echo $REUNA; ?>',
+                style: {
+                }
             },
             xAxis: {
-                categories: tempREUNA[1]
+                categories: tempREUNA[1] ,
+                lineColor: '#666'
             },
             yAxis: {
                 title: {
-                    text: 'Observ. <?php echo $REUNA; ?>',
+                    text: 'Registros',
                     style: {
-                        color: '#000000',
                         fontSize: '12px',
                         fontWeight: 'bold'
                     }
@@ -410,9 +505,11 @@ function changeFeatures(first, last) {
                     },
                     dataLabels: {
                         enabled: true,
-                        color: '#00000',
+                        color: '#FFFFFF',
                         style: {
-                            fontWeight: 'bold'
+                            fontWeight: 'regular',
+                            fontSize: '9px'
+
                         },
                         formatter: function () {
                             return this.y != 0 ? this.y : null;
@@ -444,6 +541,7 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             legend: {
+                enabled:false
                 //layout: 'vertical',
                 //align: 'right',
                 /*floating: true,*/
@@ -454,6 +552,9 @@ function changeFeatures(first, last) {
             }
         });
 
+
+        // GRAFICO TEMPORAL MENSUAL REUNA
+
         $('#reunaGbifBarras').highcharts({
             chart: {
                 type: 'column'
@@ -461,23 +562,78 @@ function changeFeatures(first, last) {
             credits: {
                 enabled: false
             },
+            legend: {
+                enabled: false
+            },
             title: {
-                text: null,
-                style: '"fontSize": "14px"'
+                text: 'REUNA',
             },
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                lineColor: '#666'
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: '<b>Observaciones</b>'
+                    text: '<b>Registros</b>'
                 }
             },
             tooltip: {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                },
+                series: {
+                    pointWidth: 10,
+                    color:'#000000'
+                }
+            },
+            series: [{
+                name: '<?php echo $REUNA; ?>',
+                data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
+            },
+            ]
+
+        });
+
+
+        $('#GbifBarrasmes').highcharts({
+            chart: {
+                type: 'column'
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            title: {
+                text: 'GBIF'
+
+            },
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                lineColor: '#666'
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '<b>Registros</b>'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
@@ -488,18 +644,21 @@ function changeFeatures(first, last) {
                     borderWidth: 0
                 },
                 series: {
-                    pointWidth: 10
+                    pointWidth: 10,
+                    color:'#53AD25'
                 }
             },
             series: [{
-                name: '<?php echo $REUNA; ?>',
-                data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
+                name: 'GBIF',
+                data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
+
             },
-                {
-                    name: 'GBIF',
-                    data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
-                }]
+            ]
         });
+
+
+        // GRAFICO TEMPORAL ACUMULACION
+
         $('#acumuladas').highcharts({
             chart: {
                 type: 'area'
@@ -508,31 +667,31 @@ function changeFeatures(first, last) {
                 enabled: false
             },
             title: {
-                text: 'Observaciones Acumuladas',
+                text: 'AcumulaciÃ³n registros en el tiempo por fuente de datos',
                 style: '"fontSize": "12px"'
             },
             xAxis: {
                 allowDecimals: false,
                 //categories: categoryYears,
                 labels: {
-                //enabled: false,
-                rotation: 90,
+                    //enabled: false,
+                    rotation: 0,
                     formatter: function () {
-                    return this.value; // clean, unformatted number for year
-                }
+                        return this.value; // clean, unformatted number for year
+                    }
 
-            }
+                }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: '<b>Observaciones</b>'
+                    text: '<b></b>' // AQUI LEYENDA EJE Y
                 }
             },
             tooltip: {
-                headerFormat: '<span style="font-size:25px">{point.key}</span><table>',
+                headerFormat: '<span style="font-size:25px">aÃ±o {point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
@@ -550,18 +709,27 @@ function changeFeatures(first, last) {
                             }
                         }
                     }
+                },
+                series :{
+                    lineColor: '#FFFFFF'
                 }
             },
             series: [{
-                name: 'Observaciones acumuladas <?php echo $REUNA; ?>',
+                name:'GBIF',
                 /*Datos de prueba*/
-                data:accumulatedData//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                data: accumulatedDataGbif,//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
+                color:'#53AD25'
             },{
-                name:'Observaciones acumuladas GBIF',
+                name: '<?php echo $REUNA; ?>',
                 /*Datos de prueba*/
-                data: accumulatedDataGbif//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
+                data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                color:'#000000'
             }]
         });
+
+
+        // AQUI SE PUEDE INSERTAR MAS
+
 
     });
 })(jQuery);
