@@ -24,6 +24,8 @@ echo isset($familyKey) ? $familyKey : '';
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
+<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGBIF; ?></b></div>
+<div style="font-size: 1.2em;">Observaciones no georeferencias en REUNA: <b><?php echo $totalReuna-$totalReunaConCoordenadas; ?></b></div>
 
 Explore los resultados:
 <div id="index">
@@ -31,7 +33,7 @@ Explore los resultados:
         <div id="left-t-index">
             <div class="title-a">Composición Taxonómica</div>
             <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($speciesFound); ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
-            <div class="line"><a href="#GbifStacked"><span><?php  //sizeof(FamilyChildrens($familyKey));?> Especies</span> en la base de datos GBIF.</a></div>
+            <!--<div class="line"><a href="#GbifStacked"><span><?php  //sizeof(FamilyChildrens($familyKey));?> Especies</span> en la base de datos GBIF.</a></div>-->
             <div class="line">
                 <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
             </div>
@@ -273,7 +275,15 @@ Explore los resultados:
                 enabled: false
             },
             xAxis: {
-                categories: tempREUNA[1]
+                categories: tempREUNA[1],
+                labels: {
+                    rotation:-45,
+                    style: {
+
+                        color: '#000000'
+                        //font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                }
             },
             yAxis: {
                 title: {
@@ -293,16 +303,16 @@ Explore los resultados:
                             click: function () {
                                 var drilldownREUNA = this.drilldown;
                                 if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
                                 } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
                                 }
                             }
                         }
                     },
                     dataLabels: {
                         enabled: true,
-                        color: '#000000',
+                        color: '#53AD25',
                         style: {
                             fontWeight: 'bold'
                         },
@@ -310,6 +320,9 @@ Explore los resultados:
                             return this.y != 0 ? this.y : null;
                         }
                     }
+                },
+                series: {
+                    color: 'rgba(0, 0, 0, 0.8)'
                 }
             },
             tooltip: {
@@ -326,8 +339,8 @@ Explore los resultados:
             },
             series: [{
                 name: name,
-                data: dataREUNA,
-                color: 'white'
+                data: dataREUNA
+                //color: 'white'
             }],
             exporting: {
                 enabled: false
@@ -357,7 +370,15 @@ Explore los resultados:
                 enabled: false
             },
             xAxis: {
-                categories: tempGBIF[1]
+                categories: tempGBIF[1],
+                labels: {
+                    rotation:-45,
+                    style: {
+
+                        color: '#000000'
+                        //font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                }
             },
             yAxis: {
                 title: {
@@ -377,12 +398,13 @@ Explore los resultados:
                             click: function () {
                                 var drilldown = this.drilldown;
                                 if (drilldown) { // drill down
-                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
                                 } else { // restore
-                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
+                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
                                 }
                             }
                         }
+
                     },
                     dataLabels: {
                         enabled: true,
@@ -394,6 +416,9 @@ Explore los resultados:
                             return this.y != 0 ? this.y : null;
                         }
                     }
+                },
+                series: {
+                    color: 'rgba(83, 173, 37, 0.8)'
                 }
             },
             tooltip: {
@@ -410,8 +435,8 @@ Explore los resultados:
             },
             series: [{
                 name: name,
-                data: dataGBIF,
-                color: 'white'
+                data: dataGBIF
+                //color: 'white'
             }],
             exporting: {
                 enabled: false
@@ -497,29 +522,43 @@ Explore los resultados:
             }
         });
         var j=0;
-        var sum=0;
-        if(stackedGbifData.length>0){
-            for(var x in stackedGbifData) {
-                if (j < 15) {
-                    GbifStacked.addSeries(stackedGbifData[x]);
-                    j=j+1;
-                }
-                else{
-                    sum=sum+ stackedGbifData.data[x];
-                }
-
+        var cont=0;
+        for(var x in stackedGbifData){
+            if(j<15) {
+                GbifStacked.addSeries(stackedGbifData[x]);
+                j=j+1;
             }
-            GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
+            else{
+                cont+=stackedGbifData[x].index;
+            }
+
         }
+        var arr=[cont];
+        GbifStacked.addSeries({
+            name:'Otros',
+            data:arr,
+            index:cont,
+            legendIndex:cont
+        });
 
         var k=0;
-        if(stackedReunaData.length>0)
-        for(var x in stackedReunaData) {
-            if (k < 15) {
+        var conta=0;
+        for(var x in stackedReunaData){
+            if(k<15){
                 ReunaStacked.addSeries(stackedReunaData[x]);
                 k=k+1;
             }
+            else{
+                conta+=stackedReunaData[x].index;
+            }
         }
+        var arre=[conta];
+        ReunaStacked.addSeries({
+            name:'Otros',
+            data:arre,
+            index:conta,
+            legendIndex:conta
+        });
     });
 })(jQuery);
 function changeFeatures(first, last) {
