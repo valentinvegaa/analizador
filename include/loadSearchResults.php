@@ -48,7 +48,7 @@ function makeTaxaHierarchy($i){
         $result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'">'.$family.'</a>';
     }
     if($genus!=''){
-        $result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/genus/"'.$genus.'>'.$genus.'</a>';
+        $result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'">'.$genus.'</a>';
     }
     return $result;
 };
