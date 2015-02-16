@@ -67,14 +67,14 @@ Explore los resultados:
         <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
             <div id="contribucionBarrasREUNA"></div>
         <?php else:?>
-            <div class="sinGrafico"
+            <div class="sinGrafico">
                 <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
             </div>
         <?php endif;?>
         <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
             <div id="contribucionBarrasGBIF"></div>
         <?php else:?>
-            <div class="sinGrafico"
+            <div class="sinGrafico">
                 <span>No hay datos en GBIF o hay problemas con el indice.</span>
             </div>
         <?php endif;?>
@@ -98,14 +98,14 @@ Explore los resultados:
     <?php if(count($stackedChildrens)>0):?>
         <div id="ReunaStacked"></div>
     <?php else:?>
-        <div class="sinGrafico"
+        <div class="sinGrafico">
             <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
         </div>
     <?php endif;?>
     <?php if(count($stackedChildrensGbif)>0):?>
         <div id="GbifStacked"></div>
     <?php else:?>
-        <div class="sinGrafico"
+        <div class="sinGrafico">
                 <span>No hay datos en GBIF o hay problemas con el indice.</span>
             </div>
         <?php endif;?>
@@ -467,7 +467,7 @@ Explore los resultados:
             },
             series: []
         });
-        ReunaStacked = new Highcharts.Chart({
+        if(stackedReunaData.length>0)ReunaStacked = new Highcharts.Chart({
             chart: {
                 type: 'bar',
                 renderTo: 'ReunaStacked'
@@ -507,7 +507,6 @@ Explore los resultados:
                 else{
                     sum=sum+ stackedGbifData.data[x];
                 }
-
             }
             GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
         }
