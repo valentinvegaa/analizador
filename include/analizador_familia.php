@@ -69,30 +69,30 @@ Explore los resultados:
         <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
             <div id="contribucionBarrasREUNA"></div>
         <?php else:?>
-            <div class="sinGrafico"
-                <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-        <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
-            <div id="contribucionBarrasGBIF"></div>
-        <?php else:?>
-            <div class="sinGrafico"
-                <span>No hay datos en GBIF o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
+        <div class="sinGrafico"
+        <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
     </div>
-    <div id="containers geografica" class="containers">
-        <div class="title-a subtitulo">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
-        <div id="mapContainer" class="mapContainer">
-            <div class="mapTitle"><?php echo $REUNA; ?></div>
-        </div>
-        <div id="mapContainerGBIF" class="mapContainerGBIF">
-            <div class="mapTitle">GBIF</div>
-        </div>
-        <div id="slider-range"></div>
-        <input type="text" id="amount" readonly>
+    <?php endif;?>
+    <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
+        <div id="contribucionBarrasGBIF"></div>
+    <?php else:?>
+    <div class="sinGrafico"
+    <span>No hay datos en GBIF o hay problemas con el indice.</span>
+</div>
+<?php endif;?>
+</div>
+<div id="containers geografica" class="containers">
+    <div class="title-a subtitulo">Distribución Geográfica</div>
+    <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+    <div id="mapContainer" class="mapContainer">
+        <div class="mapTitle"><?php echo $REUNA; ?></div>
     </div>
+    <div id="mapContainerGBIF" class="mapContainerGBIF">
+        <div class="mapTitle">GBIF</div>
+    </div>
+    <div id="slider-range"></div>
+    <input type="text" id="amount" readonly>
+</div>
 </div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
@@ -100,39 +100,39 @@ Explore los resultados:
     <?php if(count($stackedChildrens)>0):?>
         <div id="ReunaStacked"></div>
     <?php else:?>
-        <div class="sinGrafico"
-            <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-        </div>
-    <?php endif;?>
-    <?php if(count($stackedChildrensGbif)>0):?>
-        <div id="GbifStacked"></div>
-    <?php else:?>
-        <div class="sinGrafico"
+    <div class="sinGrafico"
+    <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+</div>
+<?php endif;?>
+<?php if(count($stackedChildrensGbif)>0):?>
+    <div id="GbifStacked"></div>
+<?php else:?>
+    <div class="sinGrafico"
                 <span>No hay datos en GBIF o hay problemas con el indice.</span>
             </div>
         <?php endif;?>
-    <div class="title-a subtitulo">Instituciones</div>
-    <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
-    <div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-            style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span></div>
-    <div style="width: 45%;float:right"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-            style="color: darkgray">Base de Datos GBIF</span></div>
-    <!--<div id="institucionBar" class="institucionBar"></div>-->
-    <div id="institucionPieREUNA" class="institucionPie"></div>
+<div class="title-a subtitulo">Instituciones</div>
+<div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
+<div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
+        style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span></div>
+<div style="width: 45%;float:right"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
+        style="color: darkgray">Base de Datos GBIF</span></div>
+<!--<div id="institucionBar" class="institucionBar"></div>-->
+<div id="institucionPieREUNA" class="institucionPie"></div>
 
-    <div id="institucionPieGBIF" class="institucionPie"></div>
-    <div id="REUNATable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionDataReuna[0] as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
-    <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionDataGbif[0] as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
+<div id="institucionPieGBIF" class="institucionPie"></div>
+<div id="REUNATable"><?php
+    print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
+    foreach($institutionDataReuna[0] as $key=>$value){
+        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+    }
+    ?></div>
+<div id="GBIFTable"><?php
+    print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
+    foreach($institutionDataGbif[0] as $key=>$value){
+        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+    }
+    ?></div>
 </div>
 <script>
 
@@ -453,47 +453,47 @@ Explore los resultados:
                      shadow: true*/
                 }
             });
-            console.log(stackedGbifData);
-            if(stackedGbifData.length>0){
+            if(Object.keys(stackedGbifData).length>0){
                 GbifStacked = new Highcharts.Chart({
-                chart: {
-                    type: 'bar',
-                    renderTo: 'GbifStacked'
-                },
-                title: {
-                    text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
-                },
-                credits: {
-                    enabled: false
-                },
-                xAxis: {
-                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
-                },
-                yAxis: {
-                    min: 0,
+                    chart: {
+                        type: 'bar',
+                        renderTo: 'GbifStacked'
+                    },
                     title: {
-                        text: 'Composición Taxonomica Total'
-                    }
-                },
-                legend: {
-                    reversed: true
-                },
-                plotOptions: {
-                    series: {
-                        stacking: 'percent',
-                        showInLegend: true//muestra o esconde la leyenda de los graficos
-                    }
-                },
-                tooltip: {
-                    formatter: function () {
-                        var point = this.point,
-                            s = this.series.name + ':<b>' + this.y + '</b><br/>';
-                        return s;
-                    }
-                },
-                series: []
-            });}
-            ReunaStacked = new Highcharts.Chart({
+                        text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Composición Taxonomica Total'
+                        }
+                    },
+                    legend: {
+                        reversed: true
+                    },
+                    plotOptions: {
+                        series: {
+                            stacking: 'percent',
+                            showInLegend: true//muestra o esconde la leyenda de los graficos
+                        }
+                    },
+                    tooltip: {
+                        formatter: function () {
+                            var point = this.point,
+                                s = this.series.name + ':<b>' + this.y + '</b><br/>';
+                            return s;
+                        }
+                    },
+                    series: []
+                });}
+            if(Object.keys(stackedReunaData).length>0){
+                ReunaStacked = new Highcharts.Chart({
                 chart: {
                     type: 'bar',
                     renderTo: 'ReunaStacked'
@@ -522,19 +522,20 @@ Explore los resultados:
                     }
                 }
             });
+            }
             var j=0;
             var cont=0;
-            if(stackedGbifData.length>0){
+            if(Object.keys(stackedGbifData).length>0){
                 for(var x in stackedGbifData){
-                if(j<15) {
-                    GbifStacked.addSeries(stackedGbifData[x]);
-                    j=j+1;
-                }
-                else{
-                    cont+=stackedGbifData[x].index;
-                }
+                    if(j<15) {
+                        GbifStacked.addSeries(stackedGbifData[x]);
+                        j=j+1;
+                    }
+                    else{
+                        cont+=stackedGbifData[x].index;
+                    }
 
-            }
+                }
                 var arr=[cont];
                 GbifStacked.addSeries({
                     name:'Otros',
@@ -542,26 +543,27 @@ Explore los resultados:
                     index:cont,
                     legendIndex:cont
                 });}
+            console.log('reuna');
 
-            if(stackedReunaData.length>0){
-            var k=0;
-            var conta=0;
-            for(var x in stackedReunaData){
-                if(k<15){
-                    ReunaStacked.addSeries(stackedReunaData[x]);
-                    k=k+1;
+            if(Object.keys(stackedReunaData).length>0){
+                var k=0;
+                var conta=0;
+                for(var x in stackedReunaData){
+                    if(k<15){
+                        ReunaStacked.addSeries(stackedReunaData[x]);
+                        k=k+1;
+                    }
+                    else{
+                        conta+=stackedReunaData[x].index;
+                    }
                 }
-                else{
-                    conta+=stackedReunaData[x].index;
-                }
-            }
-            var arre=[conta];
-            ReunaStacked.addSeries({
-                name:'Otros',
-                data:arre,
-                index:conta,
-                legendIndex:conta
-            });}
+                var arre=[conta];
+                ReunaStacked.addSeries({
+                    name:'Otros',
+                    data:arre,
+                    index:conta,
+                    legendIndex:conta
+                });}
         }
     }
 
@@ -578,21 +580,21 @@ function changeFeatures(first, last) {
             var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
             var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
             //var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
-           newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+            newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
 
             j++;
         }
         k++;
     }
     /*
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-            var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
-            newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-            j++;
-        }
-        k++;
-    }*/
+     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+     if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+     var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+     newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+     j++;
+     }
+     k++;
+     }*/
     var newFeaturesGBIF = [];
     j = 0;
     k = 0;
@@ -608,14 +610,14 @@ function changeFeatures(first, last) {
         k++;
     }
 
-   /* for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-            var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
-            newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-            j++;
-        }
-        k++;
-    }*/
+    /* for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+     if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
+     var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
+     newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+     j++;
+     }
+     k++;
+     }*/
     ;
     console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
