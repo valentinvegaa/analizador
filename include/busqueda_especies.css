@@ -243,6 +243,7 @@ Institucionesasd
     margin: 20px 20px 0 5px;
     font-size: 2em;
     display: inline-block;
+    padding: 0 20% 0 20%;
 }
 .sinGrafico>span{
     vertical-align: middle;
