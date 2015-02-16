@@ -169,357 +169,361 @@ Explore los resultados:
         });
     }
 
-    $(document).ready(function ($) {
-        var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
-        var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
-        var name = 'Decada';
-        var yearCountGBIF =<?php echo json_encode($yearCountGbif); ?>;
-        var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
-        var dataREUNA = tempREUNA[0];
-        var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
-        var dataGBIF = tempGBIF[0];
-        //var monthCount =<?php echo json_encode($monthCount); ?>;
-        //var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
-        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
-       // console.log(tempGBIF[0]);
-       // console.log(tempGBIF[1]);
-        //console.log(yearCountGBIF)
-        $('#institucionPieREUNA').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 250,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: dataReuna[0]
-            }]
-        });
-        $('#institucionPieGBIF').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 250,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: dataGbif[0]
-            }]
-        });
-        if(tempREUNA[1].length>0)chartREUNA = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarrasREUNA',
-                type: 'column'
-            },
-            title: {
-                text: null
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: tempREUNA[1]
-            },
-            yAxis: {
+    Drupal.behaviors.analizador_biodiversidad = {
+        attach: function (context, settings) {
+            var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
+            var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
+            var name = 'Decada';
+            var yearCountGBIF =<?php echo json_encode($yearCountGbif); ?>;
+            var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
+            var dataREUNA = tempREUNA[0];
+            var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
+            var dataGBIF = tempGBIF[0];
+            //var monthCount =<?php echo json_encode($monthCount); ?>;
+            //var monthCountGBIF =<?php echo json_encode($someVar); ?>;
+            var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
+            var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+            // console.log(tempGBIF[0]);
+            // console.log(tempGBIF[1]);
+            //console.log(yearCountGBIF)
+            $('#institucionPieREUNA').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
                 title: {
-                    text: 'Observ. <?php echo $REUNA; ?>',
-                    style: {
-                        color: '#000000',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        size: 250,
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
                     }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldownREUNA = this.drilldown;
-                                if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
-                                } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {},
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: dataReuna[0]
+                }]
+            });
+            $('#institucionPieGBIF').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
+                title: {
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        size: 250,
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {},
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: dataGbif[0]
+                }]
+            });
+            if(tempREUNA[1].length>0)chartREUNA = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'contribucionBarrasREUNA',
+                    type: 'column'
+                },
+                title: {
+                    text: null
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: tempREUNA[1]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Observ. <?php echo $REUNA; ?>',
+                        style: {
+                            color: '#000000',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldownREUNA = this.drilldown;
+                                    if (drilldownREUNA) { // drill down
+                                        setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                    } else { // restore
+                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                    }
                                 }
                             }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            fontWeight: 'bold'
                         },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click to expand to ' + point.category;
-                    } else {
-                        s += 'Click to return.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataREUNA,
-                color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-        if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarrasGBIF',
-                type: 'column'
-            },
-            title: {
-                text: null
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: tempGBIF[1]
-            },
-            yAxis: {
-                title: {
-                    text: 'Observ. GBIF',
-                    style: {
-                        color: '#000000',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldown = this.drilldown;
-                                if (drilldown) { // drill down
-                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
-                                } else { // restore
-                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
-                                }
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            style: {
+                                fontWeight: 'bold'
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
                             }
                         }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataREUNA,
+                    color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    //layout: 'vertical',
+                    //align: 'right',
+                    /*floating: true,*/
+                    //x:0,
+                    //y:-150
+                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                     shadow: true*/
+                }
+            });
+            if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'contribucionBarrasGBIF',
+                    type: 'column'
+                },
+                title: {
+                    text: null
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: tempGBIF[1]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Observ. GBIF',
                         style: {
+                            color: '#000000',
+                            fontSize: '12px',
                             fontWeight: 'bold'
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
                         }
                     }
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click para expandir a ' + point.category;
-                    } else {
-                        s += 'Click para volver atrás.';
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldown = this.drilldown;
+                                    if (drilldown) { // drill down
+                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    } else { // restore
+                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            style: {
+                                fontWeight: 'bold'
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
+                            }
+                        }
                     }
-                    return s;
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click para expandir a ' + point.category;
+                        } else {
+                            s += 'Click para volver atrás.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataGBIF,
+                    color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    //layout: 'vertical',
+                    //align: 'right',
+                    /*floating: true,*/
+                    //x:0,
+                    //y:-150
+                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                     shadow: true*/
                 }
-            },
-            series: [{
-                name: name,
-                data: dataGBIF,
-                color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-        if(stackedGbifData.length>0)GbifStacked = new Highcharts.Chart({
-            chart: {
-                type: 'bar',
-                renderTo: 'GbifStacked'
-            },
-            title: {
-                text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
-            },
-            yAxis: {
-                min: 0,
+            });
+            if(stackedGbifData.length>0)GbifStacked = new Highcharts.Chart({
+                chart: {
+                    type: 'bar',
+                    renderTo: 'GbifStacked'
+                },
                 title: {
-                    text: 'Composición Taxonomica Total'
-                }
-            },
-            legend: {
-                reversed: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent',
-                    showInLegend: true//muestra o esconde la leyenda de los graficos
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.series.name + ':<b>' + this.y + '</b><br/>';
-                    return s;
-                }
-            },
-            series: []
-        });
-        if(stackedReunaData.length>0)ReunaStacked = new Highcharts.Chart({
-            chart: {
-                type: 'bar',
-                renderTo: 'ReunaStacked'
-            },
-            title: {
-                text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
-            },
-            yAxis: {
-                min: 0,
+                    text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Composición Taxonomica Total'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'percent',
+                        showInLegend: true//muestra o esconde la leyenda de los graficos
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.series.name + ':<b>' + this.y + '</b><br/>';
+                        return s;
+                    }
+                },
+                series: []
+            });
+            if(stackedReunaData.length>0)ReunaStacked = new Highcharts.Chart({
+                chart: {
+                    type: 'bar',
+                    renderTo: 'ReunaStacked'
+                },
                 title: {
-                    text: 'Composición Taxonomica Total'
+                    text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Composición Taxonomica Total'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'percent'
+                    }
                 }
-            },
-            legend: {
-                reversed: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent'
+            });
+            var j=0;
+            var sum=0;
+            if(stackedGbifData.length>0){
+                for(var x in stackedGbifData) {
+                    if (j < 15) {
+                        GbifStacked.addSeries(stackedGbifData[x]);
+                        j=j+1;
+                    }
+                    else{
+                        sum=sum+ stackedGbifData.data[x];
+                    }
                 }
+                GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
             }
-        });
-        var j=0;
-        var sum=0;
-        if(stackedGbifData.length>0){
-            for(var x in stackedGbifData) {
-                if (j < 15) {
-                    GbifStacked.addSeries(stackedGbifData[x]);
-                    j=j+1;
-                }
-                else{
-                    sum=sum+ stackedGbifData.data[x];
-                }
-            }
-            GbifStacked.addSeries({name:'Otro',data:sum,index:sum,legendIndex:sum});
-        }
 
-        var k=0;
-        if(stackedReunaData.length>0)
-        for(var x in stackedReunaData) {
-            if (k < 15) {
-                ReunaStacked.addSeries(stackedReunaData[x]);
-                k=k+1;
-            }
+            var k=0;
+            if(stackedReunaData.length>0)
+                for(var x in stackedReunaData) {
+                    if (k < 15) {
+                        ReunaStacked.addSeries(stackedReunaData[x]);
+                        k=k+1;
+                    }
+                }
         }
-    });
+    }
+
+    $(document).ready(function ($) {});
 })(jQuery);
 function changeFeatures(first, last) {
     source.clear();

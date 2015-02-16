@@ -63,7 +63,7 @@ Explore los resultados:
     <div class="left">
         <div class="title-a subtitulo">Distribución Temporal</div>
         <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
-        <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
+        <?php if(count($drillDownDataReuna[1])>0):?>
             <div id="contribucionBarrasREUNA"></div>
         <?php else:?>
             <div class="sinGrafico">
@@ -689,42 +689,46 @@ function changeFeatures(first, last) {
         //addSeriesStacked(ReunaStacked,stackedReunaData);
         var j=0;
         var cont=0;
-        for(var x in stackedGbifData){
-            if(j<15) {
-                GbifStacked.addSeries(stackedGbifData[x]);
-                j=j+1;
-            }
-            else{
-                cont+=stackedGbifData[x].index;
-            }
+        if(stackedGbifData.length>0){
+            for(var x in stackedGbifData){
+                if(j<15) {
+                    GbifStacked.addSeries(stackedGbifData[x]);
+                    j=j+1;
+                }
+                else{
+                    cont+=stackedGbifData[x].index;
+                }
 
+            }
+            var arr=[cont];
+            GbifStacked.addSeries({
+                name:'Otros',
+                data:arr,
+                index:cont,
+                legendIndex:cont
+            });
         }
-        var arr=[cont];
-        GbifStacked.addSeries({
-            name:'Otros',
-            data:arr,
-            index:cont,
-            legendIndex:cont
-        });
 
         var k=0;
         var conta=0;
-        for(var x in stackedReunaData){
-            if(k<15){
-            ReunaStacked.addSeries(stackedReunaData[x]);
-                k=k+1;
-        }
-            else{
-                conta+=stackedReunaData[x].index;
+        if(stackedReunaData.length>0){
+            for(var x in stackedReunaData){
+                if(k<15){
+                ReunaStacked.addSeries(stackedReunaData[x]);
+                    k=k+1;
             }
+                else{
+                    conta+=stackedReunaData[x].index;
+                }
+            }
+            var arre=[conta];
+            ReunaStacked.addSeries({
+                name:'Otros',
+                data:arre,
+                index:conta,
+                legendIndex:conta
+            });
         }
-        var arre=[conta];
-        ReunaStacked.addSeries({
-            name:'Otros',
-            data:arre,
-            index:conta,
-            legendIndex:conta
-        });
 
 
     });
