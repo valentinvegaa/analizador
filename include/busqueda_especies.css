@@ -13,27 +13,42 @@
     height: 100%;
 }
 .containers {
-    float: right;
-    width: 50%;
+    width: 100%;
     height: 100%;
 }
 
 .mapContainer, .mapContainerGBIF {
     height: 600px;
     width: 48%;
+
 }
 
 .mapContainer {
     float: left;
+
 }
 
 .mapContainerGBIF {
     float: right;
+
+}
+
+.heading2 {
+    font-size:2.2em;
+    padding-bottom: 15px;
+
+}
+
+.heading3 {
+    font-size:1.4em;
+    padding-bottom: 5px;
+    font-weight: bold;
+
 }
 
 .nombre-completo {
-    font-weight: bold;
-    font-size: 1.6em;
+    font-size: 1.4em;
+    padding: 0 20px;
 }
 
 .subtitulo {
@@ -43,11 +58,31 @@
 }
 
 #contribucionBarrasREUNA, #contribucionBarrasGBIF {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: -20px;
-    height: 200px;
+    margin: 20px 20px 0px 5px;
+    height: 190px;
+    width: 380px;
 }
+
+#acumuladas{
+    height: 200px;
+    width:370px;
+}
+
+#reunaGbifBarras {
+    margin: 20px 35px 0px 35px;
+    height: 190px;
+    bottom: 0;
+    width:380px;
+
+}
+
+#GbifBarrasmes {
+    margin: 40px 35px 0px 35px;
+    height: 190px;
+    bottom: 0;
+    width:380px;
+}
+
 .bignumber{
     font-size: 1.2em;
 }
@@ -90,17 +125,11 @@
     padding:10px;
     height: 64px;
 }
-#reunaGbifBarras, #acumuladas{
-    margin-left: -20px;
-    height: 200px;
-    bottom: 0;
-}
 
 .parrafo {
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
-    text-align: justify;
     text-justify: auto;
 }
 
@@ -108,15 +137,16 @@
     float: left;
     margin-left: 20px;
     margin-bottom: 20px;
-    width: 47%;
+    width: 90%;
 }
 
-#institucionPieGBIF, #GBIFTable {
+#GBIFTable, #institucionPieGBIF {
     float: right;
     margin-right: 20px;
     margin-bottom: 20px;
-    width: 47%;
+    width: 90%;
 }
+
 .key{
     float:left;
     width: 90%;
@@ -129,7 +159,8 @@
     clear:both;
     margin-bottom: 5px;
     overflow: hidden;
-    border-bottom: 2px solid #a1a1a1;
+    border-bottom: 1px solid #a1a1a1;
+    text-align: left;
 }
 .vernacular{
     margin-top: 5px;
@@ -208,14 +239,19 @@
     background-color: #9fc5e8;
 }
 
-#acumuladas{
-    height: 200px;
+#summary1{
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background-color: #9fc5e8;
 }
+
+
 .error {
     display: none;
 }
 /*
-Institucionesasd
+Instituciones
 */
 .izq{
     float: left;
@@ -234,6 +270,162 @@ Institucionesasd
     width:100%;
     height: 300px;
 }
+
+/*
+Inao new layout
+*/
+.linea_hor{
+    height: 1px;
+    background-color: darkgrey;
+}
+
+.summary1{
+    height: 400px;
+    margin:20px;
+    padding:20px;
+    border: 1px solid #E9E5E3;
+    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border-radius:7px;
+}
+
+.summary-left{
+    padding: 0;
+    margin: 0;
+    float:left;
+    width:54%;
+    font-size:1.2em;
+}
+
+#boxleft{
+    padding: 80px 0 0 40px;
+}
+
+#summary-right{
+    margin: 60px 40px 0 0;
+    float:right;
+    width:40%;
+    text-align: center;
+}
+
+#right_geo{
+    padding: 5px 30px 0px 0px;
+    margin: 0px;
+    float:right;
+    width:35%;
+    height:100%;
+}
+
+#geo-left{
+    padding: 0px;
+    margin: 0 0 0px 0;
+    float:left;
+    width:58%;
+    height:100%;
+    font-size:1.2em;
+}
+
+.GBIF{
+    color:#53AD25;
+}
+
+.Reuna{
+    color:black;
+}
+
+.regular{
+    font-size: 1.2em;
+}
+
+.suave{
+    color:darkgray;
+    font-size:0.9em;
+    line-height:22px;
+}
+
+.highL{
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.species{
+    color:darkgray;
+    font-size:0.8em;
+    display: inline-block;
+}
+
+.species::first-letter {
+    text-transform: uppercase;
+}
+
+.titspecies{
+    color:black;
+    font-size:1.4em;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.titspecies::first-letter {
+    text-transform: uppercase;
+}
+
+.little {
+    font-size: 0.9em;
+}
+
+.boxsec {
+    height:700px;
+    margin:20px;
+    padding:20px;
+    border: 1px solid #E9E5E3;
+    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border-radius:7px;
+}
+
+
+#boxtemp {
+    height:630px;
+    margin:20px;
+    padding:20px;
+    border: 1px solid #E9E5E3;
+    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border-radius:7px;
+}
+
+#boxinstit {
+    height:700px;
+    margin:20px;
+    padding:20px;
+    border: 1px solid #E9E5E3;
+    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border-radius:7px;
+}
+
+.boxinstituc {
+    height:100%;
+    margin:20px;
+    padding:20px;
+    border: 1px solid #E9E5E3;
+    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border-radius:7px;
+}
+
+#temp-right {
+    float:right;
+    padding:15px 0 0 0;
+    width:50%;
+    text-align:center;
+
+}
+
+#temp-left {
+    float:left;
+    padding: 15px 0 0 0;
+    width:50%;
+    text-align:center;
+}
+/*
+otras cosas
+*/
 #participacionAnual{
     height: 300px;
 }

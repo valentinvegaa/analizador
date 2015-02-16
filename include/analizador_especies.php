@@ -15,36 +15,36 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 //var_dump($yearCountGbif);
 //var_dump($categoriesGBIF);
 ?>
-    </span>
+</span>
 
 </div>
 <!--<div>
-    <form  accept-charset="utf-8" method="post">
-        <input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
-        <input type="submit" value="Search"/>
-    </form>
-</div>-->
+     <form  accept-charset="utf-8" method="post">
+<input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
+<input type="submit" value="Search"/>
+</form>
+  </div>-->
 <p></p>
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
         <br>
         <span class="titspecies"><?php if (isset($specie)) echo $specie; ?> (Lamarck, 1822)</span>
         <br>
-    <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?>
-        <div class="linea_hor"></div> <!--inao-->
+                                                                                      <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?>
+                                                                                          <div class="linea_hor"></div> <!--inao-->
     </div>
     <div class="summary-left">
         <div id="boxleft">
             <span class="little">Contenido en fuentes de datos: </span> <br/>
             <b>
-        <span class="Reuna">
-                <span style="font-size: 2.5em;"><?php echo $totalReuna; ?></span>
-                registros en <?php echo $REUNA; ?>
-            </span>
+ <span class="Reuna">
+<span style="font-size: 2.5em;"><?php echo $totalReuna; ?></span>
+                                                            registros en <?php echo $REUNA; ?>
+</span>
                 &nbsp &nbsp &nbsp
             <span class="GBIF">
-                <span style="font-size: 2em;"> <?php echo $totalEnGBIF; ?></span>
-                registros en GBIF
+<span style="font-size: 2em;"> <?php echo $totalEnGBIF; ?></span>
+                                                            registros en GBIF
             </span>
             </b>
         </div>
@@ -58,7 +58,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 <p></p>
 
 <div class="boxsec">
-    <div class="heading2" >DistribuciÃ³n GeogrÃ¡fica  &nbsp</div>
+    <div class="heading2" >Distribución Geográfica  &nbsp</div>
     <!--<span class="species"> <?php if (isset($specie)) echo $specie; ?> en Chile</span>-->
 
     <div id="geo-left">
@@ -73,17 +73,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <div id="right_geo">
         <p></p>
         <div class="heading3">Datos Georeferenciados</div>
-        <span><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>%
-        de los registros en <?php echo $REUNA; ?></span>
+                                                   <span><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>%
+de los registros en <?php echo $REUNA; ?></span>
         <span class="suave">(n=<?php echo $totalReunaConCoordenadas; ?>)</span>
         <br>
-        <span><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>%
-        de los registros en GBIF</span>
+                                                                                                             <span><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>%
+de los registros en GBIF</span>
         <span class="suave">(n=<?php echo $totalGBIF; ?>)</span>
         <p></p>
         <p></p>
         <div class="suave">
-            <span class="heading3">DistribuciÃ³n por regiÃ³n:</span> <p></p>
+            <span class="heading3">Distribución por región:</span> <p></p>
             XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
         </div>
         <br>
@@ -96,22 +96,21 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 
 <p>
 <div id="boxtemp">
-    <div class="heading2" >DistribuciÃ³n Temporal  &nbsp</div>
+    <div class="heading2" >Distribución Temporal  &nbsp</div>
     <div>
         <div id="temp-left">
 
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
-            <span class="heading3">Registros por aÃ±o</span>
-
+            <span class="heading3">Registros por año</span>
             <div id="contribucionBarrasREUNA"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
-                <?php echo sizeof($yearCount);?></span> aÃ±os con registros en <?php echo $REUNA; ?>
+                <?php echo sizeof($yearCount);?></span> años con registros en <?php echo $REUNA; ?>
                 (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?>)
             </div>
 
             <div id="contribucionBarrasGBIF"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
-                <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> aÃ±os con registros en GBIF
+                <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en GBIF
                 (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
             </div>
         </div>
@@ -133,11 +132,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 
 
 <div id="boxinstit">
-
     <div class="heading2" > Organizaciones contribuyentes  &nbsp</div>
-
     <!--<div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>-->
-    <div style="font-size: 1.1em;margin:20px 200px 20px 20px;">A continuaciÃ³n se presentan las organizaciones e investigadores que han contribuido a los registros de la especie al Repositorio <?php echo $REUNA; ?>.</div>
+    <div style="font-size: 1.1em;margin:20px 200px 20px 20px;">A continuación se presentan las organizaciones e investigadores que han contribuido a los registros de la especie al Repositorio <?php echo $REUNA; ?>.
+    </div>
     <p></p>
     <div style="width: 50%;float:left;text-align:center;margin-top:10px;">
         <div class="heading3">Organizaciones</div>
@@ -146,9 +144,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <p></p>
         <div id="REUNATable"><?php
             print '<div class="tableElement">
-            <div style="color: #444444;font-weight: bold;width:85%;float: left">
-            OrganizaciÃ³n</div><div style="color: #444444;font-weight: bold;width:15%;float: right">
-            Registros</div></div>';
+<div style="color: #444444;font-weight: bold;width:85%;float: left">
+Organización</div><div style="color: #444444;font-weight: bold;width:15%;float: right">
+Registros</div></div>';
             foreach($institutionNamesReuna as $elemento){
                 print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
             }
@@ -158,861 +156,870 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
         <div class="heading3">Investigadores</div>
         <div class="suave"> XX Investigadores han contribuido con registros de la Especie en <?php echo $REUNA; ?> </div> </br>
-        // AQUI Insertar la tabla-grafico de los investigadores forma descendente en funcion del numero de registros</div>
+        // AQUI Insertar la tabla-grafico de los investigadores forma descendente en funcion del numero de registros
+    </div>
     <!--<div id="institucionBar" class="institucionBar"></div>-->
     <p></p>
-    <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Investigador</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
-        foreach($institutionNamesGBIF as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
-</div>
 </div>
 
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading3">Organizaciones contribuyentes en GBIF</div>
+            <div style="font-size: 1.1em;margin:20px 200px 20px 20px;"><?php echo sizeof($institutionNamesGBIF)?>
+                Organizaciones han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?>
+            </div>
+            <div style="width: 50%;float:left;text-align:center;margin-top:10px;">
+                <!--<div id="institucionBar" class="institucionBar"></div>-->
+                <p></p>
+                <div id="GBIFTable"><?php
+                    print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">Organización</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
+                    foreach($institutionNamesGBIF as $key=>$value){
+                        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+                    }
+                    ?></div>
+            </div>
+            <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
+                <div id="institucionPieGBIF" class="institucionPie"></div>
+            </div>
+        </td></tr>
+</table>
 
-
-<div style="width: 50%;text-align:center;margin-top:10px;height:100%;">
-    <div class="heading3">GBIF</div>
-    <div class="line"><?php echo sizeof($institutionNamesGBIF)?>
-        Organizaciones han contribuido con registros de la Especie <?if (isset($search[0])) echo $search[0].' '.$search[1];?></div>
-    <!--<div id="institucionBar" class="institucionBar"></div>-->
-    <p></p>
-    <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div style="color: #444444;font-weight: bold;width:85%;float: left">OrganizaciÃ³n</div><div style="color: #444444;font-weight: bold;width:15%;float: right">Registros</div></div>';
-        foreach($institutionNamesGBIF as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
-
-
-    <div id="institucionPieGBIF" class="institucionPie"></div>
-
-</div>
 
 <script>
-function changeFeatures(first, last) {
-    source.clear();
-    sourceGBIF.clear();
+    function changeFeatures(first, last) {
+        source.clear();
+        sourceGBIF.clear();
+
+        var newFeatures = [];
+        var j = 0;
+        var k = 0;
+        for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+            if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+                var coordinate = [parseFloat(arrayCoordinatesInJS[i+1]), parseFloat(arrayCoordinatesInJS[i])];
+                var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
+                newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+                j++;
+            }
+            k++;
+        }
+        ;
+        var newFeaturesGBIF = [];
+        var j = 0;
+        var k = 0;
+        for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+            if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
+                var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i+1])];
+                var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
+                newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+                j++;
+            }
+            k++;
+        }
+        ;
+//console.log(j);
+        sourceGBIF.addFeatures(newFeaturesGBIF);
+        source.addFeatures(newFeatures);
+    }
+    (function ($) {
+        var fecha = new Date();
+        var today = fecha.getFullYear();
+        Drupal.behaviors.yourThemeSlider = {
+            attach: function (context, settings) {
+                var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+                $("#slider-range").slider({
+                    range: true,
+                    min: 0,
+                    max: 14,
+                    step: 1,
+                    values: [0, 14],
+                    slide: function (event, ui) {
+                        $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                        changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
+                    }
+                });
+                $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
+            }
+        };
+        var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
+        var chartGBIF;
+        var decadas = [];
+
+        function setChart(daChart, name, categories, data, color) {
+            daChart.xAxis[0].setCategories(categories);
+            daChart.series[0].remove();
+            daChart.addSeries({
+                name: name,
+                data: data,
+                color: color || 'white'
+            });
+        }
+
+        function setPieData(graph) {
+            var data = graph;
+            var outPie = [];
+            var i = 0;
+            var outBar = [];
+            var categorias = []
+            for (var x in data) {
+                outPie[i] = [x, data[x]];
+                categorias[i] = x;
+                outBar[i] = {y: data[x], color: colors[i]};
+                i++;
+            }
+            var out = [outPie, categorias, outBar];
+            return out;
+        }
+
+        $(document).ready(function ($) {
+            var graph =<?php echo json_encode($institutionNamesReuna); ?>;
+            var name = 'Decada';
+            var yearCount =<?php echo json_encode($yearCount); ?>;
+            var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
+            var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
+            var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
+            var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
+            var dataREUNA = tempREUNA[0];
+            var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+            var catNames=<?php echo json_encode($categoriesGBIF); ?>;
+            var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
+            var dataGBIF = tempGBIF[0];
+            var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
+            var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
+            var categoryYears=<?php echo json_encode($categoryYears)?>;
+
+
+
+
+
+            $('#institucionPieREUNA').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
+                title: {
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        size: 170,
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {},
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: graph//data[0]
+                }]
+            });
+
+            $('#institucionPieGBIF').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
+                title: {
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        size: 170,
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {},
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: instNames
+                }]
+            });
+
+// GRAFICO TEMPORAL ANUAL GBIF
+
+            chartGBIF = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'contribucionBarrasGBIF',
+                    type: 'column'
+                },
+                title: {
+                    text: 'GBIF',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: tempGBIF[1] ,
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Registros',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldown = this.drilldown;
+                                    if (drilldown) { // drill down
+                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                    } else { // restore
+                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            style: {
+                                fontWeight: 'regular',
+                                fontSize: '9px'
+
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataGBIF,
+                    color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled:false
+                    //layout: 'vertical',
+//align: 'right',
+                    /*floating: true,*/
+//x:0,
+//y:-150
+                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                     shadow: true*/
+                }
+            });
+
+// GRAFICO TEMPORAL ANUAL REUNA
+
+            chartGBIF = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
+                    type: 'column'
+                },
+                title: {
+                    text: '<?php echo $REUNA; ?>',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: tempREUNA[1] ,
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Registros',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldownREUNA = this.drilldown;
+                                    if (drilldownREUNA) { // drill down
+                                        setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                    } else { // restore
+                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#FFFFFF',
+                            style: {
+                                fontWeight: 'regular',
+                                fontSize: '9px'
+
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataREUNA,
+                    color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled:false
+                    //layout: 'vertical',
+//align: 'right',
+                    /*floating: true,*/
+//x:0,
+//y:-150
+                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                     shadow: true*/
+                }
+            });
+
+
+// GRAFICO TEMPORAL MENSUAL REUNA
+
+            $('#reunaGbifBarras').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: 'REUNA',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '<b>Registros</b>'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    },
+                    series: {
+                        pointWidth: 10,
+                        color:'#000000'
+                    }
+                },
+                series: [{
+                    name: '<?php echo $REUNA; ?>',
+                    data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
+                },
+                ]
+
+            });
+
+// GRAFICO TEMPORAL MENSUAL GBIF
+
+            $('#GbifBarrasmes').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: 'GBIF',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '<b>Registros</b>'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    },
+                    series: {
+                        pointWidth: 10,
+                        color:'#53AD25'
+                    }
+                },
+                series: [{
+                    name: 'GBIF',
+                    data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
+
+                },
+                ]
+            });
+
+
+// GRAFICO TEMPORAL ACUMULACION
+
+            $('#acumuladas').highcharts({
+                chart: {
+                    type: 'area'
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Acumulación registros en el tiempo por fuente de datos',
+                    style: '"fontSize": "12px"'
+                },
+                xAxis: {
+                    allowDecimals: false,
+//categories: categoryYears,
+                    labels: {
+//enabled: false,
+                        rotation: 0,
+                        formatter: function () {
+                            return this.value; // clean, unformatted number for year
+                        }
+
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '<b></b>' // AQUI LEYENDA EJE Y
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:25px">año {point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    area: {
+                        pointStart: 1900,
+                        marker: {
+                            enabled: false,
+                            symbol: 'circle',
+                            radius: 2,
+                            states: {
+                                hover: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    series :{
+                        lineColor: '#FFFFFF'
+                    }
+                },
+                series: [{
+                    name:'GBIF',
+                    /*Datos de prueba*/
+                    data: accumulatedDataGbif,//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
+                    color:'#53AD25'
+                },{
+                    name: '<?php echo $REUNA; ?>',
+                    /*Datos de prueba*/
+                    data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                    color:'#000000'
+                }]
+            });
+
+
+// AQUI SE PUEDE INSERTAR MAS
+
+
+        });
+    })(jQuery);
+    var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
+    var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+    console.log(arrayCoordinatesGBIFInJS);
+    console.log(arrayCoordinatesInJS);
+    var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
+    var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
+    console.log(coordYearsReuna);
+    console.log(coordYearsGBIF);
+
+    var largo = (arrayCoordinatesInJS.length) / 2;
+    if (largo > 0) {
+        var features = new Array(largo);
+        var j = 0;
+        for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+//alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
+            var coordinate = [arrayCoordinatesInJS[i+1], arrayCoordinatesInJS[i]];
+            var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
+//var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
+            features[j] = new ol.Feature({'visible': 'true'});
+            features[j].setGeometry(new ol.geom.Point(tempLonlat));
+            j++;
+        }
+        ;
+    }
+    var mapView = new ol.View({
+        projection: 'EPSG:3857',
+        center: ol.proj.transform([-72.184306, -36.398612], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 4,
+        minZoom: 2,
+        maxZoom: 18
+    });
+    var source = new ol.source.Vector({
+        features: features
+    });
+
+    var clusterSource = new ol.source.Cluster({
+        distance: 2,
+        source: source
+    });
+    function getColor(index) {
+        var colors = ['#FFFF00', '#FFD700', '#FFA500', '#FF8C00', '#FF4500', '#FF2000'];
+        return colors[index] ? colors[index] : '#FF2000';
+    }
+    var capaOsm = new ol.layer.Tile({source: new ol.source.MapQuest({layer: 'osm'})});
+    var raw = new ol.layer.Vector({source: source});
+    var styleCache = {};
+    var clusters = new ol.layer.Vector({
+        source: clusterSource,
+        style: function (feature, resolution) {
+            var size = feature.get('features').length;
+            var style = styleCache[size];
+            if (!style) {
+                style = [new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 5,
+                        stroke: new ol.style.Stroke({
+                            color: '#434348'
+                        }),
+                        fill: new ol.style.Fill({
+                            color: getColor(size)//'#f7a35c'
+                        })
+                    })
+                })];
+                styleCache[size] = style;
+            }
+            return style;
+        }
+//projection: ol.proj.get('EPSG:4326')
+    });
+
+    var geoJsonSource = new ol.source.GeoJSON({
+        projection: 'EPSG:3857',
+        url: '<?php echo $path;?>/regiones/regiones.json'
+//url: '<?php echo $path;?>/regiones/cuads25k_ll.geojson'
+    });
+    var geoJson = new ol.layer.Vector({
+        title: 'Regiones',
+        source: geoJsonSource,
+        style: function (feature) {
+            var text = feature.get('NOMBRE');
+            if (!styleCache[text] && text == 'Region') {//cambiar Region por nombre para dar estilo particular
+                styleCache[text] = [new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 255, 0, 0.5)'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#319FD3',
+                        width: 1
+                    }),
+                    zIndex: 999
+                })];
+            }
+            else {
+                if (!styleCache[text]) {
+                    styleCache[text] = [new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(0, 0, 255, 0.2)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#FFC54D',
+                            width: 0.5
+                        }),
+                        zIndex: 999
+                    })];
+                }
+            }
+            return styleCache[text];
+        }
+
+        /*style: new ol.style.Style({
+         stroke: new ol.style.Stroke({color: 'blue', width: 0.5
+         }),
+         fill: new ol.style.Fill({
+         color: 'rgba(255, 255, 0, 0.5)'
+         })
+         })*/
+    });
+    var map = new ol.Map({
+        target: 'mapContainer',
+        layers: [capaOsm, geoJson, clusters],
+        renderer: 'canvas',
+        view: mapView
+    });
+    var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
+    if (largoGBIF > 0) {
+        var featuresGBIF = new Array(largoGBIF);
+        var j = 0;
+        for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+//alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
+            var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
+            var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
+//var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
+            featuresGBIF[j] = new ol.Feature({'visible': 'true'});
+            featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
+            j++;
+        }
+        ;
+    }
+    var sourceGBIF = new ol.source.Vector({
+        features: featuresGBIF
+    });
+    var clusterSourceGBIF = new ol.source.Cluster({
+        distance: 2,
+        source: sourceGBIF
+    });
+    var rawGBIF = new ol.layer.Vector({source: sourceGBIF});
+    var styleCacheGBIF = {};
+    var clustersGBIF = new ol.layer.Vector({
+        source: clusterSourceGBIF,
+        style: function (feature, resolution) {
+            var size = feature.get('features').length;
+            var style = styleCacheGBIF[size];
+            if (!style) {
+                style = [new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 5,
+                        stroke: new ol.style.Stroke({
+                            color: '#434348'
+                        }),
+                        fill: new ol.style.Fill({
+                            color: getColor(size)//'#f7a35c'
+                        })
+                    })
+                })];
+                styleCacheGBIF[size] = style;
+            }
+            return style;
+        }
+    });
+    var mapGBIF = new ol.Map({
+        target: 'mapContainerGBIF',
+        layers: [capaOsm, geoJson, clustersGBIF],
+        renderer: 'canvas',
+        view: mapView
+    });
+    /***************************************/
+    var selectClick = new ol.interaction.Select({
+        condition: ol.events.condition.click,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 0, 0, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 0.5
+            })
+        })
+    });
 
     var newFeatures = [];
     var j = 0;
     var k = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
         if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-            var coordinate = [parseFloat(arrayCoordinatesInJS[i+1]), parseFloat(arrayCoordinatesInJS[i])];
-            var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
+            var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
             newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
             j++;
         }
         k++;
     }
-    ;
-    var newFeaturesGBIF = [];
-    var j = 0;
-    var k = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-            var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i+1])];
-            var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
-            newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-            j++;
-        }
-        k++;
-    }
-    ;
-    //console.log(j);
-    sourceGBIF.addFeatures(newFeaturesGBIF);
-    source.addFeatures(newFeatures);
-}
-(function ($) {
-    var fecha = new Date();
-    var today = fecha.getFullYear();
-    Drupal.behaviors.yourThemeSlider = {
-        attach: function (context, settings) {
-            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
-            $("#slider-range").slider({
-                range: true,
-                min: 0,
-                max: 14,
-                step: 1,
-                values: [0, 14],
-                slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin aÃ±o' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin aÃ±o' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
-                    changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
-                }
-            });
-            $("#amount").val('Sin aÃ±o' + " - " + steps[$("#slider-range").slider("values", 1)]);
-        }
+
+    var collection = selectClick.getFeatures();
+    collection.on('add', function () {
+        collection = selectClick.getFeatures();
+        collection.forEach(function (f) {
+                var text = f.get('NOMBRE');
+                console.log(text);
+                source.forEachFeature(function (e) {
+                    if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
+                        console.log('adentro');
+                    }
+                    else {
+                        console.log('afuera');
+                    }
+                });
+            }
+        );
+
+//console.log(featuresinBox);
+//featuresSelected.push(e);
+    });
+    collection.on('remove', function () {
+        console.log('remove');
+    });
+    var selectClickGBIF = new ol.interaction.Select({
+        condition: ol.events.condition.click,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(0, 255, 0, 0.2)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 0.5
+            })
+        })
+    });
+    var collectionGBIF = selectClickGBIF.getFeatures();
+    collectionGBIF.on('add', function () {
+        collectionGBIF = selectClickGBIF.getFeatures();
+        collectionGBIF.forEach(function (f) {
+                var text = f.get('NOMBRE');
+                console.log(text);
+                source.forEachFeature(function (e) {
+                    if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
+                        console.log('adentro');
+                    }
+                    else {
+                        console.log('afuera');
+                    }
+                });
+            }
+        );
+    });
+    //collection.on('remove', function(){console.log('remove');});
+    var changeInteraction = function () {
+        select = selectClick;
+        map.addInteraction(select);
+        mapGBIF.addInteraction(selectClickGBIF);
     };
-    var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
-    var chartGBIF;
-    var decadas = [];
-
-    function setChart(daChart, name, categories, data, color) {
-        daChart.xAxis[0].setCategories(categories);
-        daChart.series[0].remove();
-        daChart.addSeries({
-            name: name,
-            data: data,
-            color: color || 'white'
-        });
-    }
-
-    function setPieData(graph) {
-        var data = graph;
-        var outPie = [];
-        var i = 0;
-        var outBar = [];
-        var categorias = []
-        for (var x in data) {
-            outPie[i] = [x, data[x]];
-            categorias[i] = x;
-            outBar[i] = {y: data[x], color: colors[i]};
-            i++;
-        }
-        var out = [outPie, categorias, outBar];
-        return out;
-    }
-
-    $(document).ready(function ($) {
-        var graph =<?php echo json_encode($institutionNamesReuna); ?>;
-        var name = 'Decada';
-        var yearCount =<?php echo json_encode($yearCount); ?>;
-        var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
-        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
-        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
-        var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
-        var dataREUNA = tempREUNA[0];
-        var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
-        var catNames=<?php echo json_encode($categoriesGBIF); ?>;
-        var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
-        var dataGBIF = tempGBIF[0];
-        var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
-        var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
-        var categoryYears=<?php echo json_encode($categoryYears)?>;
-
-
-
-
-
-        $('#institucionPieREUNA').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 170,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: graph//data[0]
-            }]
-        });
-
-        $('#institucionPieGBIF').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 170,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: instNames
-            }]
-        });
-
-        // GRAFICO TEMPORAL ANUAL GBIF
-
-        chartGBIF = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarrasGBIF',
-                type: 'column'
-            },
-            title: {
-                text: 'GBIF',
-                style: {
-                }
-            },
-            xAxis: {
-                categories: tempGBIF[1] ,
-                lineColor: '#666'
-            },
-            yAxis: {
-                title: {
-                    text: 'Registros',
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldown = this.drilldown;
-                                if (drilldown) { // drill down
-                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
-                                } else { // restore
-                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
-                                }
-                            }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            fontWeight: 'regular',
-                            fontSize: '9px'
-
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click to expand to ' + point.category;
-                    } else {
-                        s += 'Click to return.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataGBIF,
-                color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled:false
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-
-        // GRAFICO TEMPORAL ANUAL REUNA
-
-        chartGBIF = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
-                type: 'column'
-            },
-            title: {
-                text: '<?php echo $REUNA; ?>',
-                style: {
-                }
-            },
-            xAxis: {
-                categories: tempREUNA[1] ,
-                lineColor: '#666'
-            },
-            yAxis: {
-                title: {
-                    text: 'Registros',
-                    style: {
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldownREUNA = this.drilldown;
-                                if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
-                                } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
-                                }
-                            }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#FFFFFF',
-                        style: {
-                            fontWeight: 'regular',
-                            fontSize: '9px'
-
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click to expand to ' + point.category;
-                    } else {
-                        s += 'Click to return.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataREUNA,
-                color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled:false
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-
-
-        // GRAFICO TEMPORAL MENSUAL REUNA
-
-        $('#reunaGbifBarras').highcharts({
-            chart: {
-                type: 'column'
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled: false
-            },
-            title: {
-                text: 'REUNA',
-            },
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                lineColor: '#666'
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: '<b>Registros</b>'
-                }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
-                },
-                series: {
-                    pointWidth: 10,
-                    color:'#000000'
-                }
-            },
-            series: [{
-                name: '<?php echo $REUNA; ?>',
-                data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
-            },
-            ]
-
-        });
-
-
-        $('#GbifBarrasmes').highcharts({
-            chart: {
-                type: 'column'
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled: false
-            },
-            title: {
-                text: 'GBIF'
-
-            },
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                lineColor: '#666'
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: '<b>Registros</b>'
-                }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
-                },
-                series: {
-                    pointWidth: 10,
-                    color:'#53AD25'
-                }
-            },
-            series: [{
-                name: 'GBIF',
-                data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
-
-            },
-            ]
-        });
-
-
-        // GRAFICO TEMPORAL ACUMULACION
-
-        $('#acumuladas').highcharts({
-            chart: {
-                type: 'area'
-            },
-            credits: {
-                enabled: false
-            },
-            title: {
-                text: 'AcumulaciÃ³n registros en el tiempo por fuente de datos',
-                style: '"fontSize": "12px"'
-            },
-            xAxis: {
-                allowDecimals: false,
-                //categories: categoryYears,
-                labels: {
-                    //enabled: false,
-                    rotation: 0,
-                    formatter: function () {
-                        return this.value; // clean, unformatted number for year
-                    }
-
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: '<b></b>' // AQUI LEYENDA EJE Y
-                }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:25px">aÃ±o {point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                area: {
-                    pointStart: 1900,
-                    marker: {
-                        enabled: false,
-                        symbol: 'circle',
-                        radius: 2,
-                        states: {
-                            hover: {
-                                enabled: true
-                            }
-                        }
-                    }
-                },
-                series :{
-                    lineColor: '#FFFFFF'
-                }
-            },
-            series: [{
-                name:'GBIF',
-                /*Datos de prueba*/
-                data: accumulatedDataGbif,//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
-                color:'#53AD25'
-            },{
-                name: '<?php echo $REUNA; ?>',
-                /*Datos de prueba*/
-                data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
-                color:'#000000'
-            }]
-        });
-
-
-        // AQUI SE PUEDE INSERTAR MAS
-
-
+    var boxControl = new ol.interaction.DragBox({
+        condition: ol.events.condition.shiftKeyOnly,
+        style: new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: '#ffcc33',
+                width: 2
+            })
+        })
     });
-})(jQuery);
-var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
-var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
-console.log(arrayCoordinatesGBIFInJS);
-console.log(arrayCoordinatesInJS);
-var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
-var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(coordYearsReuna);
-console.log(coordYearsGBIF);
-
-var largo = (arrayCoordinatesInJS.length) / 2;
-if (largo > 0) {
-    var features = new Array(largo);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [arrayCoordinatesInJS[i+1], arrayCoordinatesInJS[i]];
-        var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
-        //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        features[j] = new ol.Feature({'visible': 'true'});
-        features[j].setGeometry(new ol.geom.Point(tempLonlat));
-        j++;
-    }
-    ;
-}
-var mapView = new ol.View({
-    projection: 'EPSG:3857',
-    center: ol.proj.transform([-72.184306, -36.398612], 'EPSG:4326', 'EPSG:3857'),
-    zoom: 4,
-    minZoom: 2,
-    maxZoom: 18
-});
-var source = new ol.source.Vector({
-    features: features
-});
-
-var clusterSource = new ol.source.Cluster({
-    distance: 2,
-    source: source
-});
-function getColor(index) {
-    var colors = ['#FFFF00', '#FFD700', '#FFA500', '#FF8C00', '#FF4500', '#FF2000'];
-    return colors[index] ? colors[index] : '#FF2000';
-}
-var capaOsm = new ol.layer.Tile({source: new ol.source.MapQuest({layer: 'osm'})});
-var raw = new ol.layer.Vector({source: source});
-var styleCache = {};
-var clusters = new ol.layer.Vector({
-    source: clusterSource,
-    style: function (feature, resolution) {
-        var size = feature.get('features').length;
-        var style = styleCache[size];
-        if (!style) {
-            style = [new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 5,
-                    stroke: new ol.style.Stroke({
-                        color: '#434348'
-                    }),
-                    fill: new ol.style.Fill({
-                        color: getColor(size)//'#f7a35c'
-                    })
-                })
-            })];
-            styleCache[size] = style;
-        }
-        return style;
-    }
-    //projection: ol.proj.get('EPSG:4326')
-});
-
-var geoJsonSource = new ol.source.GeoJSON({
-    projection: 'EPSG:3857',
-    url: '<?php echo $path;?>/regiones/regiones.json'
-    //url: '<?php echo $path;?>/regiones/cuads25k_ll.geojson'
-});
-var geoJson = new ol.layer.Vector({
-    title: 'Regiones',
-    source: geoJsonSource,
-    style: function (feature) {
-        var text = feature.get('NOMBRE');
-        if (!styleCache[text] && text == 'Region') {//cambiar Region por nombre para dar estilo particular
-            styleCache[text] = [new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 0, 0.5)'
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#319FD3',
-                    width: 1
-                }),
-                zIndex: 999
-            })];
-        }
-        else {
-            if (!styleCache[text]) {
-                styleCache[text] = [new ol.style.Style({
-                    fill: new ol.style.Fill({
-                        color: 'rgba(0, 0, 255, 0.2)'
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: '#FFC54D',
-                        width: 0.5
-                    }),
-                    zIndex: 999
-                })];
+    map.addInteraction(boxControl);
+    boxControl.on('boxend', function () {
+        var featuresinBox = [];
+        source.forEachFeature(function (e) {
+            if (ol.extent.containsCoordinate(boxControl.getGeometry().extent, e.getGeometry().getCoordinates())) {
+                featuresinBox.push(e);
             }
-        }
-        return styleCache[text];
-    }
-
-    /*style: new ol.style.Style({
-     stroke: new ol.style.Stroke({color: 'blue', width: 0.5
-     }),
-     fill: new ol.style.Fill({
-     color: 'rgba(255, 255, 0, 0.5)'
-     })
-     })*/
-});
-var map = new ol.Map({
-    target: 'mapContainer',
-    layers: [capaOsm, geoJson, clusters],
-    renderer: 'canvas',
-    view: mapView
-});
-var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
-if (largoGBIF > 0) {
-    var featuresGBIF = new Array(largoGBIF);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
-        var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
-        //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        featuresGBIF[j] = new ol.Feature({'visible': 'true'});
-        featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
-        j++;
-    }
-    ;
-}
-var sourceGBIF = new ol.source.Vector({
-    features: featuresGBIF
-});
-var clusterSourceGBIF = new ol.source.Cluster({
-    distance: 2,
-    source: sourceGBIF
-});
-var rawGBIF = new ol.layer.Vector({source: sourceGBIF});
-var styleCacheGBIF = {};
-var clustersGBIF = new ol.layer.Vector({
-    source: clusterSourceGBIF,
-    style: function (feature, resolution) {
-        var size = feature.get('features').length;
-        var style = styleCacheGBIF[size];
-        if (!style) {
-            style = [new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 5,
-                    stroke: new ol.style.Stroke({
-                        color: '#434348'
-                    }),
-                    fill: new ol.style.Fill({
-                        color: getColor(size)//'#f7a35c'
-                    })
-                })
-            })];
-            styleCacheGBIF[size] = style;
-        }
-        return style;
-    }
-});
-var mapGBIF = new ol.Map({
-    target: 'mapContainerGBIF',
-    layers: [capaOsm, geoJson, clustersGBIF],
-    renderer: 'canvas',
-    view: mapView
-});
-/***************************************/
-var selectClick = new ol.interaction.Select({
-    condition: ol.events.condition.click,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(255, 0, 0, 0.2)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 0.5
-        })
-    })
-});
-
-var newFeatures = [];
-var j = 0;
-var k = 0;
-for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-    if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-        var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
-        newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-        j++;
-    }
-    k++;
-}
-
-var collection = selectClick.getFeatures();
-collection.on('add', function () {
-    collection = selectClick.getFeatures();
-    collection.forEach(function (f) {
-            var text = f.get('NOMBRE');
-            console.log(text);
-            source.forEachFeature(function (e) {
-                if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
-                }
-                else {
-                    console.log('afuera');
-                }
-            });
-        }
-    );
-
-    //console.log(featuresinBox);
-    //featuresSelected.push(e);
-});
-collection.on('remove', function () {
-    console.log('remove');
-});
-var selectClickGBIF = new ol.interaction.Select({
-    condition: ol.events.condition.click,
-    style: new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(0, 255, 0, 0.2)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: '#000000',
-            width: 0.5
-        })
-    })
-});
-var collectionGBIF = selectClickGBIF.getFeatures();
-collectionGBIF.on('add', function () {
-    collectionGBIF = selectClickGBIF.getFeatures();
-    collectionGBIF.forEach(function (f) {
-            var text = f.get('NOMBRE');
-            console.log(text);
-            source.forEachFeature(function (e) {
-                if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
-                }
-                else {
-                    console.log('afuera');
-                }
-            });
-        }
-    );
-});
-//collection.on('remove', function(){console.log('remove');});
-var changeInteraction = function () {
-    select = selectClick;
-    map.addInteraction(select);
-    mapGBIF.addInteraction(selectClickGBIF);
-};
-var boxControl = new ol.interaction.DragBox({
-    condition: ol.events.condition.shiftKeyOnly,
-    style: new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#ffcc33',
-            width: 2
-        })
-    })
-});
-map.addInteraction(boxControl);
-boxControl.on('boxend', function () {
-    var featuresinBox = [];
-    source.forEachFeature(function (e) {
-        if (ol.extent.containsCoordinate(boxControl.getGeometry().extent, e.getGeometry().getCoordinates())) {
-            featuresinBox.push(e);
-        }
+        });
+//document.getElementById("msg").innerHTML = featuresinBox.length;
+        console.log(featuresinBox);
     });
-    //document.getElementById("msg").innerHTML = featuresinBox.length;
-    console.log(featuresinBox);
-});
-changeInteraction();
-/***************************************/
-mapGBIF.bindTo('view', map);
+    changeInteraction();
+    /***************************************/
+    mapGBIF.bindTo('view', map);
 </script>
