@@ -26,11 +26,13 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
   </div>-->
 <p></p>
 <div class="summary1">
-    <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span><?php if (isset($search[0])) echo $search[0].' '.$search[1]; ?>
+    <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span>
         <br>
-        <span class="titspecies"><?php if (isset($specie)) echo $specie; ?> (Lamarck, 1822)</span>
+        <span class="titspecies"><?php if (isset($nombreEspecieAutor)) echo str_replace('"','',$nombreEspecieAutor); ?></span>
         <br>
-        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?>
+        <span style="font-size: 0.7em"> <?php echo str_replace('"','',$jerarquia);?></span>
+            <br>
+        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?></span>
                                                          <div class="linea_hor"></div>
     </div>
     <div class="summary-left">
@@ -133,7 +135,7 @@ de los registros en GBIF</span>
             <div id="GbifBarrasmes"></div>
         </div>
     <p></p>&nbsp
-    <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [XX] Reuna; [XX] GBIF
+    <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-$totalReunaConCoordenadas; ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
     </div>
         </td></tr>
 </table>
@@ -260,11 +262,11 @@ de los registros en GBIF</span>
                     step: 1,
                     values: [0, 14],
                     slide: function (event, ui) {
-                        $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                        $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
                         changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                     }
                 });
-                $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
+                $("#amount").val('Sin fecha' + " - " + steps[$("#slider-range").slider("values", 1)]);
             }
         };
         var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
@@ -302,6 +304,8 @@ de los registros en GBIF</span>
             var name = 'Decada';
             var yearCount =<?php echo json_encode($yearCount); ?>;
             var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
+            console.log(yearCount);
+            console.log(yearCountGbif);
             var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
             var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
             var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
@@ -391,7 +395,7 @@ de los registros en GBIF</span>
                 legend: {
                     itemWidth: 300,
                     itemStyle: {
-                        fontWeight: 'normal',
+                        fontWeight: 'normal'
                     }
                 },
                 series: [{
@@ -417,6 +421,13 @@ de los registros en GBIF</span>
                 },
                 xAxis: {
                     categories: tempGBIF[1] ,
+                    labels: {
+                        rotation:-45,
+                        style: {
+                            color: '#000000',
+                            fontWeight: 'bold'
+                        }
+                    },
                     lineColor: '#666'
                 },
                 yAxis: {
@@ -436,9 +447,9 @@ de los registros en GBIF</span>
                                 click: function () {
                                     var drilldown = this.drilldown;
                                     if (drilldown) { // drill down
-                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
                                     } else { // restore
-                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF);
+                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
                                     }
                                 }
                             }
@@ -455,6 +466,9 @@ de los registros en GBIF</span>
                                 return this.y != 0 ? this.y : null;
                             }
                         }
+                    },
+                    series: {
+                        color: 'rgba(83, 173, 37, 0.8)'
                     }
                 },
                 tooltip: {
@@ -471,8 +485,8 @@ de los registros en GBIF</span>
                 },
                 series: [{
                     name: name,
-                    data: dataGBIF,
-                    color: 'white'
+                    data: dataGBIF
+                    //color: 'white'
                 }],
                 exporting: {
                     enabled: false
@@ -494,7 +508,7 @@ de los registros en GBIF</span>
 
 // GRAFICO TEMPORAL ANUAL REUNA
 
-            chartGBIF = new Highcharts.Chart({
+            chartREUNA = new Highcharts.Chart({
                 chart: {
                     renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
                     type: 'column'
@@ -508,13 +522,22 @@ de los registros en GBIF</span>
                 },
                 xAxis: {
                     categories: tempREUNA[1] ,
+                    labels: {
+                        rotation:-45,
+                        style: {
+
+                            color: '#000000'
+                            //font: '11px Trebuchet MS, Verdana, sans-serif'
+                        }
+                    },
                     lineColor: '#666'
                 },
                 yAxis: {
                     title: {
                         text: 'Registros',
                         style: {
-                            fontSize: '12px',
+                            color: '#000000',
+
                             fontWeight: 'bold'
                         }
                     }
@@ -527,16 +550,16 @@ de los registros en GBIF</span>
                                 click: function () {
                                     var drilldownREUNA = this.drilldown;
                                     if (drilldownREUNA) { // drill down
-                                        setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, drilldownREUNA.color);
+                                        setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
                                     } else { // restore
-                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA);
+                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
                                     }
                                 }
                             }
                         },
                         dataLabels: {
                             enabled: true,
-                            color: '#FFFFFF',
+                            color: '#53AD25',
                             style: {
                                 fontWeight: 'regular',
                                 fontSize: '9px'
@@ -546,6 +569,9 @@ de los registros en GBIF</span>
                                 return this.y != 0 ? this.y : null;
                             }
                         }
+                    },
+                    series: {
+                        color: 'rgba(0, 0, 0, 0.8)'
                     }
                 },
                 tooltip: {
@@ -562,8 +588,8 @@ de los registros en GBIF</span>
                 },
                 series: [{
                     name: name,
-                    data: dataREUNA,
-                    color: 'white'
+                    data: dataREUNA
+                    //color: 'white'
                 }],
                 exporting: {
                     enabled: false
@@ -614,6 +640,7 @@ de los registros en GBIF</span>
                 },
                 yAxis: {
                     min: 0,
+                    fontWeight: 'bold',
                     title: {
                         text: '<b>Registros</b>'
                     }
@@ -634,7 +661,7 @@ de los registros en GBIF</span>
                     },
                     series: {
                         pointWidth: 10,
-                        color:'#000000'
+                        color:'rgba(0, 0, 0, 0.8)'
                     }
                 },
                 series: [{
@@ -675,6 +702,7 @@ de los registros en GBIF</span>
                 },
                 yAxis: {
                     min: 0,
+                    fontWeight: 'bold',
                     title: {
                         text: '<b>Registros</b>'
                     }
@@ -694,7 +722,7 @@ de los registros en GBIF</span>
                     },
                     series: {
                         pointWidth: 10,
-                        color:'#53AD25'
+                        color:'rgba(83, 173, 37, 0.8)'
                     }
                 },
                 series: [{
@@ -733,6 +761,7 @@ de los registros en GBIF</span>
                 },
                 yAxis: {
                     min: 0,
+                    fontWeight: 'bold',
                     title: {
                         text: '<b></b>' // AQUI LEYENDA EJE Y
                     }
@@ -971,7 +1000,7 @@ de los registros en GBIF</span>
         })
     });
 
-    var newFeatures = [];
+    /*var newFeatures = [];
     var j = 0;
     var k = 0;
     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
@@ -981,7 +1010,7 @@ de los registros en GBIF</span>
             j++;
         }
         k++;
-    }
+    }*/
 
     var collection = selectClick.getFeatures();
     collection.on('add', function () {

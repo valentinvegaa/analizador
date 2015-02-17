@@ -27,7 +27,8 @@ $additionalParametersSpecies = array(
     'fq' => '',
     'fl' => '',
     'facet' => 'true',
-    'facet.field' => 'dwc.scientificName_s'//dwc.scientificName_mt
+    'facet.field' => 'dwc.scientificName_s',//dwc.scientificName_mt
+    'facet.limit'=>10000
 );
 
 /*__parametros para Genus__*/
@@ -35,7 +36,8 @@ $additionalParametersGenus = array(
     'fq' => '',
     'fl' => '',
     'facet' => 'true',
-    'facet.field' => 'dwc.genus_s'
+    'facet.field' => 'dwc.genus_s',
+    'facet.limit'=>10000
 );
 /*------------------------*/
 
@@ -45,7 +47,8 @@ $additionalParametersFamily = array(
     'fq' => '',
     'fl' => '',
     'facet' => 'true',
-    'facet.field' => 'dwc.family_s'
+    'facet.field' => 'dwc.family_s',
+    'facet.limit'=>10000
 );
 /*------------------------*/
 

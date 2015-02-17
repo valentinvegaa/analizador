@@ -11,13 +11,15 @@ class Especie{
     private $genero='';
     private $familia='';
     private $orden='';
-
+    private $categorias=array();
     private $coordinatesInPHP;
     private $coordinatesGBIFInPHP;
     private $anyoGbif=array();
     private $mesGbif=array();
     private $institucionReuna=array();
     private $institucionGbif=array();
+    private $nombreEspecieAutor;
+    private $jerarquia='';
     //private $region='';
     //private $categories=array();
     /**/
@@ -41,7 +43,7 @@ class Especie{
 
 
     public function setSpecie($nombreCientifico,$coordinatesInPHP,$coordinatesGBIFInPHP,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
-    ,$AccumulatedYearsGbif,$AccumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF){
+    ,$AccumulatedYearsGbif,$AccumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF,$categorias,$nombreEspecieAutor,$jerarquia){
 
         $this->nombreCientifico=$nombreCientifico;
         $this->coordinatesInPHP=$coordinatesInPHP;
@@ -67,6 +69,9 @@ class Especie{
         $this->REUNA=$REUNA;
         $this->coordYearsGBIF=$coordYearsGBIF;
         $this->totalEnGBIF=$totalEnGBIF;
+        $this->categorias=$categorias;
+        $this->nombreEspecieAutor=$nombreEspecieAutor;
+        $this->jerarquia=$jerarquia;
         /**/
 
     }
@@ -146,6 +151,15 @@ class Especie{
     }
     public function getTotalEnGBIF(){
         return $this->totalEnGBIF;
+    }
+    public function getCategorias(){
+        return $this->categorias;
+    }
+    public function getNombreEspecieAutor(){
+    return $this->nombreEspecieAutor;
+    }
+    public function getJerarquia(){
+        return $this->jerarquia;
     }
     /**/
 
@@ -256,40 +270,121 @@ function getData($data,$decada){
     }
     return $out;
 }
-function createDrilldown($var){//function setYearCountData(yearCount)
+function CalculaEjeX($var1,$var2){
+    $categorias=array();
+    reset($var1);
+    $anyo=date('Y');
+    if(sizeof($var1)==0){
+        //if($var1[0]==0){
+        $uno=1900;
+    }
+    else{
+        $uno=key($var1);
+    }
+
+    reset($var2);
+    if(sizeof($var2)!==0){
+        next($var2);//Gbif trae registros sin año
+        $dos=key($var2);}
+    else{
+        $dos=1900;
+    }
+
+    var_dump($uno);
+    var_dump($dos);
+
+
+    if($uno<=$dos){
+        $ini=substr($uno, 0, 3).'0';
+        $inicio=(int)$ini;
+        for($i=$inicio;$i<=$anyo;$i+=10){
+            array_push($categorias,$i);
+        }
+    }
+    else{
+        $ini=substr($dos, 0, 3).'0';
+        $inicio=(int)$ini;
+        for($i=$inicio;$i<=$anyo;$i+=10){
+            array_push($categorias,$i);
+        }
+    }
+    return $categorias;
+
+}
+function createDrilldown($var,$categorias){//function setYearCountData(yearCount)
     $out=array();
     $decadas=array();
+    $decadas2=array();
+    $deca=array();
+    $decadas2=$categorias;
+    foreach($decadas2 as $value) {
+        $dec2 = substr($value, 0, 3);
+        array_push($deca,$dec2);
+    }
     $i=0;
-    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
-    //for($i=0;$i<sizeof($var);$i++){
-    foreach($var as $key=>$valor){
-        $dec=substr($key,0,3);//.'0';
-        $dec2=$dec.'0';
-        if(!in_array($dec2,$decadas)){
-            array_push($decadas,$dec2);
-            //$algo=substr($key,0,3);//error
-            $out[$i]=array(
-                'y'=>suma($var,$dec),//error
-                'color'=>$colors[$i],
-                'drilldown'=>array(
-                    'name'=>$dec2,
-                    'categories'=>getYears($var,$dec),//error
-                    'data'=>getData($var,$dec),//error
-                    'color'=>$colors[$i]
+    $aux=array();
+    foreach($var as $key=>$value) {
+        $dec2 = substr($key, 0, 3).'0';//$dec . '0';
+        array_push($aux,$dec2);
+    }
+    foreach($decadas2 as $value){
+        if(in_array($value,$aux)){//si existe decada en arreglo que llega
+            if(!in_array($value,$decadas)){//y si no esta agregado
+                array_push($decadas, $value);
+                $out[$i] = array(
+                    'y' => suma($var, $deca[$i]),//error
+                    //'color' => $colors[$i],
+                    //'color'=>'#53AD25',
+                    'drilldown' => array(
+                        'name' => $value,
+                        'categories' => getYears($var, $deca[$i]),//error
+                        'data' => getData($var, $deca[$i]),//error
+                        //'color' => $colors[$i]
+                        //'color'=>'#53AD25'
+                    )
+                );//
+                $i+=1;
+            }
+        }
+        else{//Grafico vacio
+            $out[$i] = array(
+                'y' => suma($var, $deca[$i]),
+                //'color' => $colors[$i],
+                //'color'=>'#53AD25',
+                'drilldown' => array(
+                    'name' => $value,
+                    'categories' => getYears($var, $deca[$i]),
+                    'data' => getData($var, $deca[$i]),
+                    //'color' => $colors[$i]
+                    //'color'=>'#53AD25'
                 )
             );//
-            $i+=1;
-
+            $i += 1;
         }
-
     }
-    //return [$out,$decadas];
-    //var_dump($out);
-    //$ordenado=sort($decadas);
-    return array($out,$decadas);//entrega las decadas pero una no sale en orden.
+    return array($out,$decadas2);
 
-
-
+}
+function makeTaxaHierarchy($i){
+    isset($i['phylum'])?$phylum=json_encode($i['phylum']):$phylum='';
+    isset($i['order'])?$order=json_encode($i['order']):$order='';
+    isset($i['family'])?$family=json_encode($i['family']):$family='';
+    isset($i['genus'])?$genus=json_encode($i['genus']):$genus='';
+    $result='';
+    if($phylum!=''){
+        $result.=''.$phylum.'>';
+    }
+    if($order!=''){
+        //$result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/order/'.$order.'">'.$order.'</a>';
+        $result.=''.$order.'>';
+    }
+    if($family!=''){
+        $result.=''.'<a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'">'.$family.'</a>';
+    }
+    if($genus!=''){
+        $result.='>'.'<a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'">'.$genus.'</a>';
+    }
+    return $result;
 }
 function createDrilldownCategories($var){
     $decadas=array();
@@ -403,7 +498,9 @@ $institutionNamesReuna = array();
 $DrillDownDataReuna=array();
 $accumulatedYearsReuna=array();
 /*-------------------*/
-
+$jerarquia='';
+$nombreEspecieAutor;
+$categorias=array();
 $categoryYears=array();
 $limit = 10000;
 $tipo = "";
@@ -474,6 +571,9 @@ if($specie){
         $REUNA=$results->getReuna();
         $coordYearsGBIF=$results->getCoordYearsGBIF();
         $totalEnGBIF=$results->getTotalEnGBIF();
+        $categorias=$results->getCategorias();
+        $nombreEspecieAutor=$results->getNombreEspecieAutor();
+        $jerarquia=$results->getJerarquia();
         /**/
 
         echo 'cache!';
@@ -541,6 +641,8 @@ if($specie){
         $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $specie);
         $content = file_get_contents($url_species);
         $json = json_decode($content, true);
+        $nombreEspecieAutor=isset($json['scientificName'])?json_encode($json['scientificName']):null;
+        $jerarquia=makeTaxaHierarchy($json);
         //se obtiene la llave que identifica a la especie en el repositorio de especies de GBIF
         $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
         //Obtenemos la cantidad de ocurrencias chilenas georeferenciadas usando la llave que encontramos antes
@@ -625,13 +727,14 @@ if($specie){
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
         //$results = json_decode(file_get_contents($search_url));
-        $DrillDownDataGbif=createDrilldown($yearCountGbif);
-        $DrillDownDataReuna=createDrilldown($yearCount);
+        $categorias=CalculaEjeX($yearCount,$yearCountGbif);
+        $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
+        $DrillDownDataReuna=createDrilldown($yearCount,$categorias);
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
         $SpeciesObject->setSpecie($specie,$coordinatesInPHP,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
-                                    ,$accumulatedYearsGbif,$accumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF);
+                                    ,$accumulatedYearsGbif,$accumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF,$categorias,$nombreEspecieAutor,$jerarquia);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
         echo 'NO cache!';
