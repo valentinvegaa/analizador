@@ -34,16 +34,16 @@
 }
 
 .heading2 {
-    font-size:2.2em;
-    padding-bottom: 15px;
-
+    font-size:2.5em;
+    padding: 5px 0px 15px 10px;
+    color: #333;
 }
 
 .heading3 {
     font-size:1.4em;
     padding-bottom: 5px;
     font-weight: bold;
-
+    color: #168970;
 }
 
 .nombre-completo {
@@ -135,25 +135,25 @@
 
 #institucionPieREUNA,#REUNATable{
     float: left;
-    margin-left: 20px;
-    margin-bottom: 20px;
-    width: 90%;
+    margin: 20px 20px 0px 0px;
+    width: 92%;
 }
 
 #GBIFTable, #institucionPieGBIF {
     float: right;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    width: 90%;
+    margin: 20px 0px 0px 0px;
+    width: 95%;
+    height:auto;
 }
 
 .key{
     float:left;
-    width: 90%;
+    width: 82%;
 }
 .value{
     float:right;
-    width: 10%;
+    width: 15%;
+    text-align:center;
 }
 .tableElement{
     clear:both;
@@ -161,6 +161,9 @@
     overflow: hidden;
     border-bottom: 1px solid #a1a1a1;
     text-align: left;
+    font-weight:bold;
+    font-size:1.1em;
+
 }
 .vernacular{
     margin-top: 5px;
@@ -311,7 +314,7 @@ Inao new layout
     padding: 5px 30px 0px 0px;
     margin: 0px;
     float:right;
-    width:35%;
+    width:33%;
     height:100%;
 }
 
@@ -338,8 +341,8 @@ Inao new layout
 
 .suave{
     color:darkgray;
-    font-size:0.9em;
     line-height:22px;
+    font-size: 1.1em;
 }
 
 .highL{
@@ -348,9 +351,8 @@ Inao new layout
 }
 
 .species{
-    color:darkgray;
-    font-size:0.8em;
     display: inline-block;
+    width: auto;
 }
 
 .species::first-letter {
@@ -381,7 +383,6 @@ Inao new layout
     border-radius:7px;
 }
 
-
 #boxtemp {
     height:630px;
     margin:20px;
@@ -404,9 +405,10 @@ Inao new layout
     height:100%;
     margin:20px;
     padding:20px;
-    border: 1px solid #E9E5E3;
-    box-shadow: 1px 1px 4px 0px #F0F0F0;
+    border: 1px solid #D8DBDA;
+    box-shadow: 1px 1px 4px 0px #DADDDC;
     border-radius:7px;
+
 }
 
 #temp-right {
@@ -414,7 +416,6 @@ Inao new layout
     padding:15px 0 0 0;
     width:50%;
     text-align:center;
-
 }
 
 #temp-left {
@@ -423,6 +424,7 @@ Inao new layout
     width:50%;
     text-align:center;
 }
+
 /*
 otras cosas
 */
