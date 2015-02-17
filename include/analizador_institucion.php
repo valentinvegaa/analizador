@@ -61,7 +61,7 @@ Explore los resultados:
         <div id="tabla-especies" style="width:450px;float:left"><?php print $tablaEspecies;?></div>
         <div id="tabla-generos" style="width:450px;float: right;"><?php print $tablaGeneros;?></div>
     </div>
-    <div><div id="tabla-familias" style="width:380px;float:left">Numero de familias</div></div>
+    <div><div id="tabla-familias" style="width:380px;float:left"><?php print $salidaInvest;?></div></div>
 </div>
 <script>
 (function ($) {

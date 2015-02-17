@@ -854,8 +854,8 @@ de los registros en GBIF</span>
 
     var geoJsonSource = new ol.source.GeoJSON({
         projection: 'EPSG:3857',
-        url: '<?php echo $path;?>/regiones/regiones.json'
-//url: '<?php echo $path;?>/regiones/cuads25k_ll.geojson'
+        //url: '<?php //echo $path;?>/regiones/regiones.json'
+//url: '<?php //echo $path;?>/regiones/cuads25k_ll.geojson'
     });
     var geoJson = new ol.layer.Vector({
         title: 'Regiones',

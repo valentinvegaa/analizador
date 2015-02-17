@@ -20,31 +20,36 @@ function obtenerResumen($s){
         'fq' => '',
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.scientificName_s'
+        'facet.field' => 'dwc.scientificName_s',
+        'facet.limit' => 1000000,
     );
     $parametersGenus = array(
         'fq' => '',
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.genus_s'
+        'facet.field' => 'dwc.genus_s',
+        'facet.limit' => 1000000,
     );
     $parametersFamily = array(
         'fq' => '',
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.family_s'
+        'facet.field' => 'dwc.family_s',
+        'facet.limit' => 1000000,
     );
     $parametersOrder = array(
         'fq' => '',
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.order_s'
+        'facet.field' => 'dwc.order_s',
+        'facet.limit' => 1000000,
     );
     $parametersClass = array(
         'fq' => '',
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.class_s'
+        'facet.field' => 'dwc.class_s',
+        'facet.limit' => 1000000,
     );
     $especies=0;
     $especiesSinNombre=0;

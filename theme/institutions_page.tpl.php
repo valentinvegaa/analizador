@@ -135,6 +135,47 @@ if($results){
 $localTemp.='<div class="totales">Generos: '.$totalGeneros.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Observaciones: '.$totalGenerosObservados.'</div>';
 $tablaGeneros=$localTemp;
 
+$parameters = array(
+    'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
+    'fl' => '',
+    'facet' => 'true',
+    'facet.field' => 'dwc.identifiedBy_s'
+);
+$results=getResults($parameters,$solr);
+$investigadores=array();
+$espPorInvestig=array();
+$salidaInvest='<div class="tableElement"><div class="key">Investigador</div><div class="value">Especies</div></div>';
+if($results){
+    foreach ($results->facet_counts->facet_fields as $doc) {
+        foreach ($doc as $field => $value) {
+            if($value>0){
+                array_push($investigadores,$field);
+            }
+        }
+    }
+    foreach($investigadores as $i){
+        $parameters = array(
+            'fq' => 'dwc.identifiedBy_mt:"'.$i.'" AND dwc.institutionCode_s:"'.$institucion.'"',
+            'fl' => '',
+            'facet' => 'true',
+            'facet.field' => 'dwc.scientificName_s'
+        );
+        foreach ($results->facet_counts->facet_fields as $doc) {
+            foreach ($doc as $field => $value) {
+                if(!array_key_exists($field,$espPorInvestig&&$value>0)){
+                    $espPorInvestig[$field]=$value;
+                }
+            }
+        }
+    }
+    foreach($espPorInvestig as $key=>$value){
+        if($value>0&&strcmp($key,'_empty_')!=0)$salidaInvest.='<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+        elseif(strcmp($key,'_empty_')==0){
+            $localTemp='<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+        }
+    }
+}
+
 $results=false;
 
 if($results){

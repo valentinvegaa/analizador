@@ -687,7 +687,7 @@ var clusters = new ol.layer.Vector({
 
 var geoJsonSource = new ol.source.GeoJSON({
     projection: 'EPSG:3857',
-    url: '<?php echo $path;?>/regiones/regiones.json'
+    //url: '<?php //echo $path;?>/regiones/regiones.json'
 });
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',

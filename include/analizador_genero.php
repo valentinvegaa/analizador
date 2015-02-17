@@ -624,72 +624,81 @@ function changeFeatures(first, last) {
                 }]
         });
 
-
-
-
-        if(stackedGbifData.length>0)GbifStacked = new Highcharts.Chart({
-            chart: {
-                type: 'bar',
-                renderTo: 'GbifStacked'
-            },
-            title: {
-                text: 'Distribución de Ocurrencias por Especie (Base de Datos GBIF)'
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: ['Composición']
-            },
-            yAxis: {
-                min: 0,
+        if(Object.keys(stackedGbifData).length>0){
+            GbifStacked = new Highcharts.Chart({
+                chart: {
+                    type: 'bar',
+                    renderTo: 'GbifStacked'
+                },
                 title: {
-                    text: 'Composición taxonómica total'
-                }
-            },
-            legend: {
-                reversed: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent'
-                }
-            }
-        });
-        if(stackedReunaData.length>0)ReunaStacked = new Highcharts.Chart({
-            chart: {
-                type: 'bar',
-                renderTo: 'ReunaStacked'
-            },
-            title: {
-                text: 'Distribución de Ocurrencias por Especie (Base de datos <?php echo $REUNA; ?>)'
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
-            },
-            yAxis: {
-                min: 0,
+                    text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Composición Taxonomica Total'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'percent',
+                        showInLegend: true//muestra o esconde la leyenda de los graficos
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.series.name + ':<b>' + this.y + '</b><br/>';
+                        return s;
+                    }
+                },
+                series: []
+            });}
+        if(Object.keys(stackedReunaData).length>0){
+            ReunaStacked = new Highcharts.Chart({
+                chart: {
+                    type: 'bar',
+                    renderTo: 'ReunaStacked'
+                },
                 title: {
-                    text: 'Composición taxonómica total'
+                    text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Composición Taxonomica Total'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'percent'
+                    }
                 }
-            },
-            legend: {
-                reversed: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent'
-                }
-            }
-        });
+            });
+        }
         //addSeriesStacked(GbifStacked,stackedGbifData);
         //addSeriesStacked(ReunaStacked,stackedReunaData);
         var j=0;
         var cont=0;
-        if(stackedGbifData.length>0){
+        if(Object.keys(stackedGbifData).length>0){
             for(var x in stackedGbifData){
                 if(j<15) {
                     GbifStacked.addSeries(stackedGbifData[x]);
@@ -711,7 +720,7 @@ function changeFeatures(first, last) {
 
         var k=0;
         var conta=0;
-        if(stackedReunaData.length>0){
+        if(Object.keys(stackedReunaData).length>0){
             for(var x in stackedReunaData){
                 if(k<15){
                 ReunaStacked.addSeries(stackedReunaData[x]);
@@ -803,7 +812,7 @@ var clusters = new ol.layer.Vector({
 
 var geoJsonSource = new ol.source.GeoJSON({
     projection: 'EPSG:3857',
-    url: '<?php echo $path;?>/regiones/regiones.json'
+    //url: '<?php //echo $path;?>/regiones/regiones.json'
 });
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',
