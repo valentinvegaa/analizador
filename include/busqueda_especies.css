@@ -148,12 +148,21 @@
 
 .key{
     float:left;
-    width: 82%;
+    width: 77%;
+}
+.key2{
+    float:left;
+    width: 33%;
 }
 .value{
     float:right;
-    width: 15%;
+    width: 20%;
     text-align:center;
+}
+.tableGraphElement{
+    display: inline-block;
+    height:15px;
+    background-color:#999999;
 }
 .tableElement{
     clear:both;

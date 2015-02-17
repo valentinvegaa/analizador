@@ -171,7 +171,7 @@ de los registros en GBIF</span>
     </div>
     <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
         <div class="heading3">Investigadores</div>
-        <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador);?></b> Investigadores han contribuido con registros de la especie
+        <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador); ?></b> Investigadores han contribuido con registros de la especie
             <span class="species">
                 <span style="font-style:italic;">
                     <?php if (isset($specie)) echo $specie; ?>

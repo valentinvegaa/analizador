@@ -368,6 +368,9 @@ function getResults($p,$s){
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
+function getWidth($a,$b){
+    return $b*44/$a;
+}
 
 /*--------------------------*/
 
@@ -428,16 +431,22 @@ if($specie){
     $results=getResults($parameters,$solr);
     $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
     $especiesPorInvestigador=array();
+    $primero=0;
+    $nulos='';
     if($results){
         foreach ($results->facet_counts->facet_fields as $doc) {
             foreach ($doc as $field => $value) {
-                if($value>0){
-                    $salida.='<div class="tableElement"><div class="key">'.$field.'</div><div style="height:10px;width:30px;background-color:#999999;"></div><div class="value">'.$value.'</div></div>';
-
+                if($value>0&&strcmp($field,'_empty_')!=0){
+                    if($primero==0)$primero=$value;
+                    $salida.='<div class="tableElement"><div class="key2">'.$field.'</div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
                     array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                }
+                elseif(strcmp($field,'_empty_')==0){
+                    $nulos='<div class="tableElement"><div class="key"><b>Registros sin nombre</b></div><div class="value"><b>'.$value.'</b></div></div>';
                 }
             }
         }
+        $salida.=$nulos;
     }
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
