@@ -167,10 +167,6 @@ class Genero{
 
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
-$limitGBIF = 20;
-if ($queryFilterWord) {
-    print "<script type=\"text/javascript\">location.href = 'http://www.ecoinformatica.cl/site/analizador/species/$queryFilterWord';</script>";
-}
 $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
@@ -184,7 +180,6 @@ function countMonths($taxonKey)
     }
     return $returnVal;
 }
-
 function countYears($taxonKey, $count)
 {
     $returnVal = array();
@@ -217,7 +212,6 @@ function countYears($taxonKey, $count)
     ksort($returnVal);
     return $returnVal;
 }
-
 function getOrganizationNames($organizations)
 {
     $result = array();
@@ -229,7 +223,6 @@ function getOrganizationNames($organizations)
     //var_dump($result);
     return $result;
 }
-
 function getChildrenNames($key){
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
     $result=array();
@@ -244,8 +237,6 @@ function getChildrenNames($key){
     arsort($result);
     return $result;
 }
-
-/**/
 function suma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
@@ -255,7 +246,6 @@ function suma($data,$decada){
     }
     return $sum;
 }
-
 function getYears($data,$decada){
 
 
@@ -282,7 +272,6 @@ function getYears($data,$decada){
     return $years;
 
 }
-
 function getData($data,$decada){
 
     $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -558,7 +547,6 @@ function setCategoryYears(){
     return $result;
 
 }
-
 function setPieData($graph){
     $data=$graph;
     $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
@@ -578,6 +566,16 @@ function setPieData($graph){
     $out=array($outPie,$categorias,$outBar);
     return $out;
 
+}
+function getResults($p,$s){
+    $parameters=$p;
+    $solr=$s;
+    try {
+        return $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+    }
 }
 $categorias=array();
 $stackedChildrensReuna=array();
@@ -628,30 +626,23 @@ $categoryYears=array();
 
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $search = substr(current_path(), strripos(current_path(), '/') + 1);
-
-
-
 if ($search) {
     $parameters = array(
         'fq' => 'dwc.genus_mt:'.$search,
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.identifiedBy_s'
+        'facet.field' => 'dwc.identifiedBy_s',
+        'facet.limit' => 1000000
     );
-    try {
-        $results= $solr->search('*:*', 0, 0, $parameters);
-    }catch (Exception $e)
-    {
-        die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
-    }
-    $salida='';
+    $results=getResults($parameters,$solr);
+    $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
     $generosPorInvestigador=array();
     if($results){
         foreach ($results->facet_counts->facet_fields as $doc) {
             foreach ($doc as $field => $value) {
                 if($value>0){
                     $salida.='<div class="tableElement"><div class="key">'.$field.'</div><div class="value">'.$value.'</div></div>';
-                    array_push($familiasPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                    array_push($generosPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
                 }
             }
         }

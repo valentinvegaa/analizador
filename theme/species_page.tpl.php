@@ -150,11 +150,6 @@ class Especie{
     /**/
 
 }
-
-$queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
-if ($queryFilterWord) {
-    print "<script type=\"text/javascript\">location.href = 'http://www.ecoinformatica.cl/site/analizador/species/$queryFilterWord';</script>";
-}
 $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
@@ -261,7 +256,6 @@ function getData($data,$decada){
     }
     return $out;
 }
-
 function createDrilldown($var){//function setYearCountData(yearCount)
     $out=array();
     $decadas=array();
@@ -309,7 +303,6 @@ function createDrilldownCategories($var){
 
 
 }
-
 function setAccumulatedYears($yearCount){
     $years=$yearCount;
     $result=array();
@@ -335,9 +328,8 @@ function setAccumulatedYears($yearCount){
     return $result;
 
 }
-
-function setCategoryYears(){
-
+function setCategoryYears()
+{
     $anyo=100;
     $result=array();
     $year=date('Y');
@@ -364,6 +356,16 @@ function checkPosition($coords){
         $page=file_get_contents($url);
         $result=json_decode($page,true);
         var_dump($result);
+    }
+}
+function getResults($p,$s){
+    $parameters=$p;
+    $solr=$s;
+    try {
+        return $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
 
@@ -406,17 +408,6 @@ $results = false;
 $REUNA='REUNA';
 $OrganizationKey = '';
 $OrganizationKeyArray = array();
-$autoComEspecies = array();
-$autoComGenero = array();
-$autoComFamilia = array();
-$autoComOrden = array();
-$autoComClase = array();
-$autoComPhylum = array();
-$autoComInstitucion = array();
-$autoComInvestigador = array();
-$autocompleteFieldType = array();
-$speciesFound = array();
-
 $instituionsNamesOcurr = array();
 
 
@@ -427,6 +418,27 @@ $specie = substr(current_path(), strripos(current_path(), '/') + 1);
 
 
 if($specie){
+    $parameters = array(
+        'fq' => 'dwc.scientificName_mt:'.$specie,
+        'fl' => '',
+        'facet' => 'true',
+        'facet.field' => 'dwc.identifiedBy_s',
+        'facet.limit' => 1000000
+    );
+    $results=getResults($parameters,$solr);
+    $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
+    $especiesPorInvestigador=array();
+    if($results){
+        foreach ($results->facet_counts->facet_fields as $doc) {
+            foreach ($doc as $field => $value) {
+                if($value>0){
+                    $salida.='<div class="tableElement"><div class="key">'.$field.'</div><div style="height:10px;width:30px;background-color:#999999;"></div><div class="value">'.$value.'</div></div>';
+
+                    array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                }
+            }
+        }
+    }
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();

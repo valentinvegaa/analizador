@@ -122,7 +122,6 @@ Explore los resultados:
             style="color: darkgray">Base de Datos GBIF</span></div>
     <!--<div id="institucionBar" class="institucionBar"></div>-->
     <div id="institucionPieREUNA" class="institucionPie"></div>
-
     <div id="institucionPieGBIF" class="institucionPie"></div>
     <div id="REUNATable"><?php
         print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
@@ -136,6 +135,7 @@ Explore los resultados:
             print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
         }
         ?></div>
+    <div id="registrosPorInvestigador"><?print $salida;?></div>
 </div>
 <script>
 function changeFeatures(first, last) {

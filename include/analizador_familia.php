@@ -69,30 +69,30 @@ Explore los resultados:
         <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
             <div id="contribucionBarrasREUNA"></div>
         <?php else:?>
-        <div class="sinGrafico"
-        <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+            <div class="sinGrafico">
+                <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+            </div>
+        <?php endif;?>
+        <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
+            <div id="contribucionBarrasGBIF"></div>
+        <?php else:?>
+            <div class="sinGrafico">
+                <span>No hay datos en GBIF o hay problemas con el indice.</span>
+            </div>
+        <?php endif;?>
     </div>
-    <?php endif;?>
-    <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
-        <div id="contribucionBarrasGBIF"></div>
-    <?php else:?>
-    <div class="sinGrafico"
-    <span>No hay datos en GBIF o hay problemas con el indice.</span>
-</div>
-<?php endif;?>
-</div>
-<div id="containers geografica" class="containers">
-    <div class="title-a subtitulo">Distribución Geográfica</div>
-    <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
-    <div id="mapContainer" class="mapContainer">
-        <div class="mapTitle"><?php echo $REUNA; ?></div>
+    <div id="containers geografica" class="containers">
+        <div class="title-a subtitulo">Distribución Geográfica</div>
+        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+        <div id="mapContainer" class="mapContainer">
+            <div class="mapTitle"><?php echo $REUNA; ?></div>
+        </div>
+        <div id="mapContainerGBIF" class="mapContainerGBIF">
+            <div class="mapTitle">GBIF</div>
+        </div>
+        <div id="slider-range"></div>
+        <input type="text" id="amount" readonly>
     </div>
-    <div id="mapContainerGBIF" class="mapContainerGBIF">
-        <div class="mapTitle">GBIF</div>
-    </div>
-    <div id="slider-range"></div>
-    <input type="text" id="amount" readonly>
-</div>
 </div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
@@ -100,39 +100,43 @@ Explore los resultados:
     <?php if(count($stackedChildrens)>0):?>
         <div id="ReunaStacked"></div>
     <?php else:?>
-    <div class="sinGrafico"
-    <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-</div>
-<?php endif;?>
-<?php if(count($stackedChildrensGbif)>0):?>
-    <div id="GbifStacked"></div>
-<?php else:?>
-    <div class="sinGrafico"
-                <span>No hay datos en GBIF o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-<div class="title-a subtitulo">Instituciones</div>
-<div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
-<div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-        style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span></div>
-<div style="width: 45%;float:right"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-        style="color: darkgray">Base de Datos GBIF</span></div>
-<!--<div id="institucionBar" class="institucionBar"></div>-->
-<div id="institucionPieREUNA" class="institucionPie"></div>
-
-<div id="institucionPieGBIF" class="institucionPie"></div>
-<div id="REUNATable"><?php
-    print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-    foreach($institutionDataReuna[0] as $key=>$value){
-        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-    }
-    ?></div>
-<div id="GBIFTable"><?php
-    print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-    foreach($institutionDataGbif[0] as $key=>$value){
-        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-    }
-    ?></div>
+        <div class="sinGrafico">
+            <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
+        </div>
+    <?php endif;?>
+    <?php if(count($stackedChildrensGbif)>0):?>
+        <div id="GbifStacked"></div>
+    <?php else:?>
+        <div class="sinGrafico">
+            <span>No hay datos en GBIF o hay problemas con el indice.</span>
+        </div>
+    <?php endif;?>
+    <div class="title-a subtitulo">Instituciones</div>
+    <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
+    <div style="width: 45%;float:left">
+        <b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros
+        <span style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span>
+    </div>
+    <div style="width: 45%;float:right">
+        <b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros
+        <span style="color: darkgray">Base de Datos GBIF</span>
+    </div>
+    <!--<div id="institucionBar" class="institucionBar"></div>-->
+    <div id="institucionPieREUNA" class="institucionPie"></div>
+    <div id="institucionPieGBIF" class="institucionPie"></div>
+    <div id="REUNATable"><?php
+        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
+        foreach($institutionDataReuna[0] as $key=>$value){
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+        }
+        ?></div>
+    <div id="GBIFTable"><?php
+        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
+        foreach($institutionDataGbif[0] as $key=>$value){
+            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
+        }
+        ?></div>
+    <div id="registrosPorInvestigador"><?print $salida;?></div>
 </div>
 <script>
 
@@ -494,34 +498,34 @@ Explore los resultados:
                 });}
             if(Object.keys(stackedReunaData).length>0){
                 ReunaStacked = new Highcharts.Chart({
-                chart: {
-                    type: 'bar',
-                    renderTo: 'ReunaStacked'
-                },
-                title: {
-                    text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
-                },
-                credits: {
-                    enabled: false
-                },
-                xAxis: {
-                    categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
-                },
-                yAxis: {
-                    min: 0,
+                    chart: {
+                        type: 'bar',
+                        renderTo: 'ReunaStacked'
+                    },
                     title: {
-                        text: 'Composición Taxonomica Total'
+                        text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        categories: {formatter:function(){return 'Composición<br>Taxonomica';}}//['Composición Taxonomica']
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Composición Taxonomica Total'
+                        }
+                    },
+                    legend: {
+                        reversed: true
+                    },
+                    plotOptions: {
+                        series: {
+                            stacking: 'percent'
+                        }
                     }
-                },
-                legend: {
-                    reversed: true
-                },
-                plotOptions: {
-                    series: {
-                        stacking: 'percent'
-                    }
-                }
-            });
+                });
             }
             var j=0;
             var cont=0;

@@ -158,10 +158,6 @@ class Family{
 
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
-$limitGBIF = 20;
-if ($queryFilterWord) {
-    print "<script type=\"text/javascript\">location.href = 'http://www.ecoinformatica.cl/site/analizador/species/$queryFilterWord';</script>";
-}
 $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
@@ -540,33 +536,6 @@ function createDrilldown($var,$categorias){//function setYearCountData(yearCount
     return array($out,$decadas2);
 
 }
-/*function createDrilldown($var){//function setYearCountData(yearCount)
-    $out=array();
-    $decadas=array();
-    $i=0;
-    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
-    //for($i=0;$i<sizeof($var);$i++){
-    foreach($var as $key=>$valor){
-        $dec=substr($key,0,3);//.'0';
-        $dec2=$dec.'0';
-        if(!in_array($dec2,$decadas)){
-            array_push($decadas,$dec2);
-            //$algo=substr($key,0,3);//error
-            $out[$i]=array(
-                'y'=>suma($var,$dec),//error
-                'color'=>$colors[$i],
-                'drilldown'=>array(
-                    'name'=>$dec2,
-                    'categories'=>getYears($var,$dec),//error
-                    'data'=>getData($var,$dec),//error
-                    'color'=>$colors[$i]
-                )
-            );//
-            $i+=1;
-        }
-    }
-    return array($out,$decadas);//entrega las decadas pero una no sale en orden.
-}*/
 function createDrilldownCategories($var){
     $decadas=array();
     for($i=0;$i<sizeof($var);$i++){
@@ -617,6 +586,16 @@ function cmp($a,$b){
     }
     return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
 }
+function getResults($p,$s){
+    $parameters=$p;
+    $solr=$s;
+    try {
+        return $solr->search('*:*', 0, 0, $parameters);
+    }catch (Exception $e)
+    {
+        return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+    }
+}
 $categorias=array();
 $REUNA='REUNA';
 $limit = 10000;
@@ -658,15 +637,11 @@ if ($family) {
         'fq' => 'dwc.family_mt:'.$family,
         'fl' => '',
         'facet' => 'true',
-        'facet.field' => 'dwc.identifiedBy_s'
+        'facet.field' => 'dwc.identifiedBy_s',
+        'facet.limit' => 1000000
     );
-    try {
-        $results= $solr->search('*:*', 0, 0, $parameters);
-    }catch (Exception $e)
-    {
-        die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
-    }
-    $salida='';
+    $results=getResults($parameters,$solr);
+    $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
     $familiasPorInvestigador=array();
     if($results){
         foreach ($results->facet_counts->facet_fields as $doc) {
