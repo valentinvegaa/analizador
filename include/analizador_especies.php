@@ -71,6 +71,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <div id="geo-left">
         <div id="mapContainer" class="mapContainer">
             <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $REUNA; ?></div>
+            <div id="legend"></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
             <div style="font-weight: bold;text-align: center;padding-bottom:8px;">GBIF</div>
@@ -848,9 +849,16 @@ de los registros en GBIF</span>
     });
 
     var clusterSource = new ol.source.Cluster({
-        distance: 2,
+        distance: 15,
         source: source
     });
+    function createLegend(){
+        for(var i=5;i>=0;i--){
+            var legend='<div class="legendRow"><div class="colorType" style="background-color:'+getColor(i)+';"></div><div class="qntity">'+(i==5?'Más de 5':i)+'</div></div>';
+            document.getElementById("legend").innerHTML += legend;
+        }
+    }
+    createLegend();
     function getColor(index) {
         var colors = ['#FFFF00', '#FFD700', '#FFA500', '#FF8C00', '#FF4500', '#FF2000'];
         return colors[index] ? colors[index] : '#FF2000';
@@ -954,7 +962,7 @@ de los registros en GBIF</span>
         features: featuresGBIF
     });
     var clusterSourceGBIF = new ol.source.Cluster({
-        distance: 2,
+        distance: 15,
         source: sourceGBIF
     });
     var rawGBIF = new ol.layer.Vector({source: sourceGBIF});

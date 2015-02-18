@@ -37,28 +37,28 @@ function analizador_biodiversidad_menu()
         'access arguments' => array('access content'),
     );
     $items['analizador/genus/%'] = array(
-        'title' => 'Búsqueda por Género',
+        'title' => '',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         //'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/family/%'] = array(
-        'title' => 'Búsqueda por Familia',
+        'title' => '',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/order/%'] = array(
-        'title' => 'Búsqueda por Orden',
+        'title' => '',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
         'access arguments' => array('access content'),
     );
     $items['analizador/institutions/%'] = array(
-        'title' => 'Búsqueda por Institución',
+        'title' => '',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         'access callback' => 'user_is_logged_in',
