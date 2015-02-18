@@ -451,3 +451,18 @@ otras cosas
 .sinGrafico>span{
     vertical-align: middle;
 }
+.miniInst{
+    color: #bababa;
+    font-size: 0.7em;
+    float:right;
+    padding-right: 10px;
+}
+.tableFooter{
+    display: block;
+    float: none;
+    margin: 40px 0 20px;
+    text-align: center;
+    color: darkgray;
+    font-size: 1.1em;
+    line-height: 22px;
+}

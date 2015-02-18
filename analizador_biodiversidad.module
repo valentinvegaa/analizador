@@ -30,7 +30,7 @@ function analizador_biodiversidad_menu()
         'access arguments' => array('access content'),
     );
     $items['analizador/species/%'] = array(
-        'title' => 'Búsqueda por Especie',
+        'title' => '',
         'page callback' => 'species_callback',
         'type' => MENU_NORMAL_ITEM,
         //'access callback' => 'user_is_logged_in',

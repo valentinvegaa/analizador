@@ -28,6 +28,9 @@ function getResults($parameters,$solr){
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
+function getWidth($a,$b){
+    return $b*44/$a;
+}
 $results=getResults($parameters,$solr);
 if ($results) {
     $totalInstitutions = $results->response->numFound;
@@ -96,7 +99,7 @@ $totalEspecies=0;
 $totalObservaciones=0;
 
 if($results){
-    $localTemp='<div class="tableElement"><div class="key">Especie</div><div class="value">Obs.</div></div>';
+    $localTemp='<div class="tableElement"><div class="key">Ordenes</div><div class="value">Obs.</div></div>';
     foreach ($results->facet_counts->facet_fields as $doc) {
         foreach ($doc as $field => $value) {
             if($value>0){
@@ -107,7 +110,7 @@ if($results){
         }
     }
 }
-$localTemp.='<div class="totales">Especies: '.$totalEspecies.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Observaciones: '.$totalObservaciones.'</div>';
+$localTemp.='<div class="totales">Ordenes: '.$totalEspecies.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total Observaciones: '.$totalObservaciones.'</div>';
 $tablaEspecies=$localTemp;
 
 $parametersGenus = array(
@@ -139,12 +142,14 @@ $parameters = array(
     'fq' => 'dwc.institutionCode_s:"'.$institucion.'"',
     'fl' => '',
     'facet' => 'true',
-    'facet.field' => 'dwc.identifiedBy_s'
+    'facet.field' => 'dwc.identifiedBy_s',
+    'facet.limit' => 1000000
 );
 $results=getResults($parameters,$solr);
 $investigadores=array();
-$espPorInvestig=array();
-$salidaInvest='<div class="tableElement"><div class="key">Investigador</div><div class="value">Especies</div></div>';
+$especiesPorInvestigador=array();
+$regPorInvestig=array();
+$salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
 if($results){
     foreach ($results->facet_counts->facet_fields as $doc) {
         foreach ($doc as $field => $value) {
@@ -153,29 +158,51 @@ if($results){
             }
         }
     }
+    $nulos=0;
+    $j=0;
+    $cantidadEspecies=array();
     foreach($investigadores as $i){
         $parameters = array(
             'fq' => 'dwc.identifiedBy_mt:"'.$i.'" AND dwc.institutionCode_s:"'.$institucion.'"',
             'fl' => '',
             'facet' => 'true',
-            'facet.field' => 'dwc.scientificName_s'
+            'facet.field' => 'dwc.scientificName_s',
+            'face.limit' => 1000000
         );
+        $results=getResults($parameters,$solr);
+        $localTemp=0;
+        //Registros por investigador para esta Institucion
         foreach ($results->facet_counts->facet_fields as $doc) {
             foreach ($doc as $field => $value) {
-                if(!array_key_exists($field,$espPorInvestig&&$value>0)){
-                    $espPorInvestig[$field]=$value;
+                if($value>0){
+                    //if(strcmp($field,'González')==0)echo 'entra';
+                    $regPorInvestig[$i]+=$value;
+                    $localTemp++;
+                }
+                if(strcmp($field,'_empty_')==0){
+                    $nulos+=$value;
                 }
             }
         }
+        if($localTemp!=0)array_push($cantidadEspecies,$localTemp);
+        //$regPorInvestig[$i].=' ['.$localTemp.' Esp.]'; //Especies por investigador para esta institución.
     }
-    foreach($espPorInvestig as $key=>$value){
-        if($value>0&&strcmp($key,'_empty_')!=0)$salidaInvest.='<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
-        elseif(strcmp($key,'_empty_')==0){
-            $localTemp='<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
+    $localTemp='';
+    $primero=0;
+    $salida2='';
+    $j=0;
+    foreach($regPorInvestig as $field=>$value){
+        if($value>0){
+            if($primero==0)$primero=$value;
+            $salida.='<div class="tableElement"><div class="key2">'.$field.'</div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.' ['.$cantidadEspecies[$j].' Esp.]</div></div>';
+            $j++;
+            array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
         }
     }
+    $nulos2='<div class="tableElement"><div class="key"><b>Registros sin nombre</b></div><div class="value"><b>'.$nulos.'</b></div></div>';
+    $salida.=$nulos2;
 }
-
+var_dump($cantidadEspecies);
 $results=false;
 
 if($results){

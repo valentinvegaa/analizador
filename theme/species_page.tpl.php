@@ -453,11 +453,11 @@ function checkPosition($coords){
         var_dump($result);
     }
 }
-function getResults($p,$s){
+function getResults($p,$s,$limit){
     $parameters=$p;
     $solr=$s;
     try {
-        return $solr->search('*:*', 0, 0, $parameters);
+        return $solr->search('*:*', 0, $limit, $parameters);
     }catch (Exception $e)
     {
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
@@ -466,7 +466,12 @@ function getResults($p,$s){
 function getWidth($a,$b){
     return $b*44/$a;
 }
-
+function cmp($a,$b){
+    if ($a['data'][0] == $b['data'][0]) {
+        return 0;
+    }
+    return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
+}
 /*--------------------------*/
 
 
@@ -519,27 +524,41 @@ $specie = substr(current_path(), strripos(current_path(), '/') + 1);
 
 if($specie){
     $parameters = array(
-        'fq' => 'dwc.scientificName_mt:'.$specie,
-        'fl' => '',
+        'fq' => 'dwc.scientificName_mt:"'.$specie.'"',
+        'fl' => 'dwc.identifiedBy_s,dwc.institutionCode_s',
         'facet' => 'true',
         'facet.field' => 'dwc.identifiedBy_s',
         'facet.limit' => 1000000
     );
-    $results=getResults($parameters,$solr);
+    $results=getResults($parameters,$solr,10000);
     $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
     $especiesPorInvestigador=array();
     $primero=0;
     $nulos='';
     if($results){
+        $institInvest=array();
+        foreach ($results->response->docs as $doc) {
+            $inst='';
+            foreach ($doc as $field => $value) {
+                switch ($field) {
+                    case 'dwc.institutionCode_s':
+                        $inst=$value;
+                        break;
+                    case 'dwc.identifiedBy_s':
+                        $institInvest[$value]=$inst;
+                        break;
+                }
+            }
+        }
         foreach ($results->facet_counts->facet_fields as $doc) {
             foreach ($doc as $field => $value) {
                 if($value>0&&strcmp($field,'_empty_')!=0){
                     if($primero==0)$primero=$value;
-                    $salida.='<div class="tableElement"><div class="key2">'.$field.'</div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
+                    $salida.='<div class="tableElement"><div class="key2">'.$field.'<div class="miniInst">['.$institInvest[$field].']</div></div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
                     array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
                 }
                 elseif(strcmp($field,'_empty_')==0){
-                    $nulos='<div class="tableElement"><div class="key"><b>Registros sin nombre</b></div><div class="value"><b>'.$value.'</b></div></div>';
+                    $nulos='<div class="tableFooter">*Registros sin investigador asociado ['.$value.']</div>';
                 }
             }
         }
@@ -548,6 +567,7 @@ if($specie){
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();
+        uasort($institutionNamesGBIF,'cmp');
         $categoriesGBIF=$results->getCategoriesGbif();
         $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
         $coordinatesInPHP=$results->getCoordinatesInPHP();
@@ -726,6 +746,7 @@ if($specie){
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+        uasort($institutionNamesGBIF,'cmp');
         //$results = json_decode(file_get_contents($search_url));
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
         $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);

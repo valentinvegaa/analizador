@@ -195,13 +195,14 @@ de los registros en GBIF</span>
                     Organizaciones han contribuido con registros de la especie
                     <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
                 </div>
-        <div id="GBIFTable"><?php print '<div class="tableElement">
+        <div id="GBIFTable">
+            <?php print '<div class="tableElement">
             <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
             <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div></div>';
-    foreach($institutionNamesGBIF as $key=>$value){
-        print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-    }
-    ?></div>
+                foreach($institutionNamesGBIF as $key=>$value){
+                    print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a></div><div class="value">'.$value[1].'</div></div>';
+                }
+            ?></div>
 </div>
       <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
           <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:
