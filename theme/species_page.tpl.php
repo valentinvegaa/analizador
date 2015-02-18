@@ -279,14 +279,18 @@ function CalculaEjeX($var1,$var2){
         $uno=1900;
     }
     else{
-        $uno=key($var1);
+        if(key($var1)==''){
+        $uno=1900;
+        }else{
+        $uno=key($var1);}
     }
 
     reset($var2);
     if(sizeof($var2)!==0){
-        next($var2);//Gbif trae registros sin año
+        next($var2);//Gbif trae registros sin año, ""=>45
         $dos=key($var2);}
     else{
+
         $dos=1900;
     }
 

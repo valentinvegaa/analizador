@@ -97,7 +97,7 @@ de los registros en GBIF</span>
         <strong><span class="suave">Filtro temporal:</span></strong>
         <div id="slider-range" style="clear: both; bottom: -10px;"></div>
         <input type="text" id="amount" readonly
-               style="border:0; position:relative; bottom: -10px; color:#f6931f; font-weight:bold;">
+               style="border:0; position:relative; bottom: -10px; color:#000000; font-weight:bold;">
     </div>
 </div>
 
@@ -135,7 +135,7 @@ de los registros en GBIF</span>
             <div id="GbifBarrasmes"></div>
         </div>
     <p></p>&nbsp
-    <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-$totalReunaConCoordenadas; ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
+    <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
     </div>
         </td></tr>
 </table>
