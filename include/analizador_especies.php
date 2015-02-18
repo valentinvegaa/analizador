@@ -360,7 +360,6 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    adjustChartSize: true
                 },
                 series: [{
                     type: 'pie',
@@ -404,8 +403,7 @@ de los registros en GBIF</span>
                     itemWidth: 300,
                     itemStyle: {
                         fontWeight: 'normal'
-                    },
-                    adjustChartSize: true
+                    }
                 },
                 series: [{
                     type: 'pie',
@@ -504,8 +502,7 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled:false,
-                    adjustChartSize: true
+                    enabled:false
                     //layout: 'vertical',
 //align: 'right',
                     /*floating: true,*/
@@ -608,8 +605,7 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled:false,
-                    adjustChartSize: true
+                    enabled:false
                     //layout: 'vertical',
 //align: 'right',
                     /*floating: true,*/
@@ -631,8 +627,7 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled: false,
-                    adjustChartSize: true
+                    enabled: false
                 },
                 title: {
                     text: 'REUNA',
@@ -694,8 +689,7 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled: false,
-                    adjustChartSize: true
+                    enabled: false
                 },
                 title: {
                     text: 'GBIF',
