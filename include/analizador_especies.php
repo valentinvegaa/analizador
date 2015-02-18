@@ -97,8 +97,10 @@ de los registros en GBIF</span>
         <br>
         <strong><span class="suave">Filtro temporal:</span></strong>
         <div id="slider-range" style="clear: both; bottom: -10px;"></div>
-        <input type="text" id="amount" readonly
-               style="border:0; position:relative; bottom: -10px; color:#000000; font-weight:bold;">
+        <div style="widt:100%">
+            <input type="text"  id="amountL" readonly style="float:left;border:0; position:relative; bottom: -10px; color:#000000;">
+            <input type="text"  id="amountR" readonly style="text-align:right; float:right;border:0; position:relative; bottom: -10px; color:#000000;">
+        </div>
     </div>
 </div>
 
@@ -264,11 +266,13 @@ de los registros en GBIF</span>
                     step: 1,
                     values: [0, 14],
                     slide: function (event, ui) {
-                        $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                        $("#amountL").val(steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]]));
+                        $("#amountR").val(steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]]));
                         changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                     }
                 });
-                $("#amount").val('Sin fecha' + " - " + steps[$("#slider-range").slider("values", 1)]);
+                $("#amountL").val('Sin fecha');
+                $("#amountR").val(steps[$("#slider-range").slider("values", 1)]);
             }
         };
         var chartREUNA,chartAccumulated, colors = Highcharts.getOptions().colors;
@@ -355,7 +359,9 @@ de los registros en GBIF</span>
                 credits: {
                     enabled: false
                 },
-                legend: {},
+                legend: {
+                    adjustChartSize: true
+                },
                 series: [{
                     type: 'pie',
                     name: 'Total',
@@ -398,7 +404,8 @@ de los registros en GBIF</span>
                     itemWidth: 300,
                     itemStyle: {
                         fontWeight: 'normal'
-                    }
+                    },
+                    adjustChartSize: true
                 },
                 series: [{
                     type: 'pie',
@@ -497,7 +504,8 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled:false
+                    enabled:false,
+                    adjustChartSize: true
                     //layout: 'vertical',
 //align: 'right',
                     /*floating: true,*/
@@ -600,7 +608,8 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled:false
+                    enabled:false,
+                    adjustChartSize: true
                     //layout: 'vertical',
 //align: 'right',
                     /*floating: true,*/
@@ -622,7 +631,8 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled: false
+                    enabled: false,
+                    adjustChartSize: true
                 },
                 title: {
                     text: 'REUNA',
@@ -684,7 +694,8 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled: false
+                    enabled: false,
+                    adjustChartSize: true
                 },
                 title: {
                     text: 'GBIF',
@@ -849,7 +860,7 @@ de los registros en GBIF</span>
     });
 
     var clusterSource = new ol.source.Cluster({
-        distance: 15,
+        distance: 8,
         source: source
     });
     function createLegend(){
@@ -962,7 +973,7 @@ de los registros en GBIF</span>
         features: featuresGBIF
     });
     var clusterSourceGBIF = new ol.source.Cluster({
-        distance: 15,
+        distance: 8,
         source: sourceGBIF
     });
     var rawGBIF = new ol.layer.Vector({source: sourceGBIF});
