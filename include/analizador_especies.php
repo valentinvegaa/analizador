@@ -146,7 +146,7 @@ de los registros en GBIF</span>
 
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-    <div class="heading2" > Organizaciones contribuyentes  &nbsp</div>
+    <div class="heading2" > Organizaciones contribuyentes en <?php echo $REUNA; ?></div>
     <p></p>
     <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
         <div class="heading3">Organizaciones</div>
@@ -171,7 +171,7 @@ de los registros en GBIF</span>
             Distribución relativa contribución de registros:
         </div>
         <div id="institucionPieREUNA" class="institucionPie"></div>
-        <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Seleccione para filtrar ]
+        <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
         </div>
     </div>
     <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
@@ -211,7 +211,7 @@ de los registros en GBIF</span>
           <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:
           </div>
           <div id="institucionPieGBIF" class="institucionPie"></div>
-          <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Seleccione para filtrar ]
+          <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
           </div>
 </div>
 </td></tr>
