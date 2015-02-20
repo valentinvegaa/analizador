@@ -663,7 +663,7 @@ if($specie){
                             $coordYearsREUNA .= $value . ',';
                             break;
                         case 'dwc.month_s':
-                            $monthCountReuna[$value - 1]++;
+                            if($value>0)$monthCountReuna[$value - 1]++;
                             break;
                     }
                 }

@@ -453,8 +453,6 @@ function changeFeatures(first, last) {
                  shadow: true*/
             }
         });
-
-
         if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
             chart: {
                 renderTo: 'contribucionBarrasGBIF',
