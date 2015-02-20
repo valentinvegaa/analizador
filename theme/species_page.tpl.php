@@ -284,20 +284,20 @@ function CalculaEjeX($var1,$var2){
         }else{
         $uno=key($var1);}
     }
-
     reset($var2);
-    if(sizeof($var2)!==0){
-        next($var2);//Gbif trae registros sin año, ""=>45
-        $dos=key($var2);}
-    else{
-
+    if(sizeof($var2)==0){
+        //if($var1[0]==0){
         $dos=1900;
     }
-
+    else{
+        if(key($var2)==""){
+            next($var2);
+            $dos=key($var2);
+        }else{
+            $dos=key($var2);}
+    }
     var_dump($uno);
     var_dump($dos);
-
-
     if($uno<=$dos){
         $ini=substr($uno, 0, 3).'0';
         $inicio=(int)$ini;
@@ -586,7 +586,6 @@ if($specie){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();
         uasort($institutionNamesGBIF,'cmpInst');
-        var_dump($institutionNamesGBIF);
         $categoriesGBIF=$results->getCategoriesGbif();
         $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
         $coordinatesInPHP=$results->getCoordinatesInPHP();
@@ -765,7 +764,7 @@ if($specie){
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
-        uasort($institutionNamesGBIF,'cmpInst');
+        uasort($institutionNamesGBIF,'cmp');
         //$results = json_decode(file_get_contents($search_url));
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
         $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
