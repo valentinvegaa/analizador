@@ -370,23 +370,31 @@ function createDrilldown($var,$categorias){//function setYearCountData(yearCount
 
 }
 function makeTaxaHierarchy($i){
+    isset($i['kingdom'])?$kingdom=json_encode($i['kingdom']):$kingdom='';
     isset($i['phylum'])?$phylum=json_encode($i['phylum']):$phylum='';
+    isset($i['class'])?$class=json_encode($i['class']):$class='';
     isset($i['order'])?$order=json_encode($i['order']):$order='';
     isset($i['family'])?$family=json_encode($i['family']):$family='';
     isset($i['genus'])?$genus=json_encode($i['genus']):$genus='';
     $result='';
+    if($kingdom!=''){
+        $result.=''.$kingdom.' > ';
+    }
     if($phylum!=''){
-        $result.=''.$phylum.'>';
+        $result.=''.$phylum.' > ';
+    }
+    if($class!=''){
+        $result.=''.$class.' > ';
     }
     if($order!=''){
         //$result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/order/'.$order.'">'.$order.'</a>';
-        $result.=''.$order.'>';
+        $result.=''.$order.' > ';
     }
     if($family!=''){
-        $result.=''.'<a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'">'.$family.'</a>';
+        $result.=' '.'<a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'" > '.$family.'</a>';
     }
     if($genus!=''){
-        $result.='>'.'<a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'">'.$genus.'</a>';
+        $result.=' >'.'<a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'" > '.$genus.'</a>';
     }
     return $result;
 }
@@ -668,7 +676,7 @@ if($specie){
         $nombreEspecieAutor=isset($json['scientificName'])?json_encode($json['scientificName']):null;
         $jerarquia=makeTaxaHierarchy($json);
         //se obtiene la llave que identifica a la especie en el repositorio de especies de GBIF
-        $speciesKey = isset($json['speciesKey']) ? json_encode($json['speciesKey']) : null;
+        $speciesKey = isset($json['usageKey']) ? json_encode($json['usageKey']) : null;
         //Obtenemos la cantidad de ocurrencias chilenas georeferenciadas usando la llave que encontramos antes
        // $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&isGeoreferenced=true&country=CL';
         $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$speciesKey.'&country=CL';
@@ -677,7 +685,7 @@ if($specie){
         $res=json_decode(file_get_contents($url),true);
         $totalGBIF=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
         //$totalGBIF = isset($json['speciesKey']) ? file_get_contents($url) : null;
-        $totalEnGBIF=isset($json['speciesKey']) ? file_get_contents($url2) : null;
+        $totalEnGBIF=isset($json['usageKey']) ? file_get_contents($url2) : null;
         $offset = 0;
         $count=$totalGBIF;
         //$coordinatesGBIFInPHP = "";

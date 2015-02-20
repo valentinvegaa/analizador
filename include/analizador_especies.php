@@ -28,10 +28,16 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span>
         <br>
-        <span class="titspecies"><?php if (isset($nombreEspecieAutor)) echo str_replace('"','',$nombreEspecieAutor); ?></span>
+        <span class="titspecies"><?php $i=0;if (isset($nombreEspecieAutor)) $editado=str_replace('"','',$nombreEspecieAutor);$editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);$editado4=explode(' ',$editado3);
+           foreach($editado4 as $value){
+               $i+=1;
+               if($i==3){echo '( ';}
+                echo $value.' ';
+
+            }echo ')'; ?></span>
         <br>
-        <span style="font-size: 0.7em"> <?php echo str_replace('"','',$jerarquia);?></span>
-            <br>
+        <div style="color: #168970;width:86%;float:left;font-size:0.9em;"><span> <?php echo str_replace('"','',$jerarquia);?></span>
+            </div><br>
         <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?></span>
                                                          <div class="linea_hor"></div>
     </div>
@@ -81,12 +87,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <div id="right_geo">
         <p></p>
         <div class="heading3">Datos Georeferenciados</div>
-        <span style="font-size:1.1em"><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>%
-de los registros en <?php echo $REUNA; ?></span>
+        <span style="font-size:1.1em"><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de los registros en <?php echo $REUNA; ?></span>
         <span class="suave">(n=<?php echo $totalReunaConCoordenadas; ?>)</span>
         <br>
-        <span style="font-size:1.1em"><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>%
-de los registros en GBIF</span>
+        <span style="font-size:1.1em"><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>% de los registros en GBIF</span>
         <span class="suave">(n=<?php echo $totalGBIF; ?>)</span>
         <p></p>
         <p></p>
@@ -103,8 +107,6 @@ de los registros en GBIF</span>
         </div>
     </div>
 </div>
-
-<p>
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
     <div class="heading2" >Distribución Temporal  &nbsp</div>
@@ -112,42 +114,48 @@ de los registros en GBIF</span>
         la especie <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span>
          en ambas fuentes de datos. Izquierda: la distribución de los registros por año, derecha: por el mes de registro.
     </span>
-
       <div id="temp-left">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
             <span class="heading3">Registros por año</span>
             <div id="contribucionBarrasREUNA"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
                 <?php echo sizeof($yearCount);?></span> años con registros en <?php echo $REUNA; ?>
-                (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?>)
+                (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if($yearCount[0]==0){end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
             </div>
-
             <div id="contribucionBarrasGBIF"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
                 <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en GBIF
                 (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
             </div>
         </div>
-
-
         <div id="temp-right">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
             <span class="heading3">Registros por mes</span>
+            <?php if(count($monthCountReuna)>0):?>
             <div id="reunaGbifBarras"></div>
-
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
+            <?php if(count($mesGbif)>0):?>
             <div id="GbifBarrasmes"></div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
         </div>
     <p></p>&nbsp
     <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
     </div>
         </td></tr>
 </table>
-
-
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
     <div class="heading2" > Organizaciones contribuyentes en <?php echo $REUNA; ?></div>
     <p></p>
+            <?php if(count($institutionNamesReuna)>0):?>
     <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
         <div class="heading3">Organizaciones</div>
         <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $REUNA; ?>,
@@ -155,68 +163,97 @@ de los registros en GBIF</span>
             Organizaciones han contribuido con registros de la especie
             <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
         </div>
-
+        <?php if(count($institutionNamesReuna)>0):?>
+            <div id="REUNATable"><?php print '
+                <div class="tableElement">
+                    <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                    <div style="color: #168970;width:14%;float:right;font-size:0.9em;">Registros</div>
+                </div>';
+                foreach($institutionNamesReuna as $elemento){
+                    print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
+                }
+                ?>
+            </div>
+        <?php else:?>
+            <div class="sinGrafico">
+                <span>No hay datos para mostrar</span>
+            </div>
+        <?php endif;?>
         <p></p>
-        <div id="REUNATable"><?php print '<div class="tableElement">
-                <div style="color: #168970;width:86%;float:left;font-size:0.9em;">
-                    Organización</div>
-                <div style="color: #168970;width:14%;float:right;font-size:0.9em;">
-                Registros</div></div>';
-            foreach($institutionNamesReuna as $elemento){
-                print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
-            }
-            ?></div>
-        <p></p>
-        <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:center;display:inline-block;width:85%;">
+        <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:left;display:inline-block;width:85%;">
             Distribución relativa contribución de registros:
-        </div>
-        <div id="institucionPieREUNA" class="institucionPie"></div>
-        <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
+
+            <?php if(count($institutionNamesReuna)>0):?>
+            <div id="institucionPieREUNA" class="institucionPie"></div>
+            <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
+                <?php else:?>
+                    <div class="sinGrafico">
+                        <span>No hay datos para mostrar</span>
+                    </div>
+                <?php endif;?>
+             </div>
         </div>
     </div>
+
     <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
         <div class="heading3">Investigadores</div>
         <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador); ?></b> Investigadores han contribuido con registros de la especie
             <span class="species">
                 <span style="font-style:italic;">
                     <?php if (isset($specie)) echo $specie; ?>
-                </span> el repositorio <?php echo $REUNA; ?>:</span>
+                </span> en el repositorio <?php echo $REUNA; ?>:</span>
         </div>
-
-</br>
-
+        <br>
         <div id="registrosPorInvestigador"><?print $salida;?></div>
     </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
         </td></tr>
 </table>
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-            <div class="heading3">Organizaciones contribuyentes en GBIF</div>
+            <div class="heading2">Organizaciones contribuyentes en GBIF</div>
+            <?php if(count($institutionNamesGBIF)>0):?>
             <div style="width: 50%;float:left;text-align:left;margin-top:10px;">
                 <div style="font-size: 1.2em;margin:20px;">En GBIF,
                     <b><?php echo sizeof($institutionNamesGBIF)?></b>
                     Organizaciones han contribuido con registros de la especie
                     <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
                 </div>
-        <div id="GBIFTable">
-            <?php print '<div class="tableElement">
-            <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
-            <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div></div>';
-                foreach($institutionNamesGBIF as $key=>$value){
-                    print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a></div><div class="value">'.$value[1].'</div></div>';
-                }
-            ?></div>
-</div>
+
+                <?php if(count($institutionNamesGBIF)>0):?>
+                    <div id="GBIFTable">
+                        <?php print '<div class="tableElement">
+                <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div></div>';
+                        foreach($institutionNamesGBIF as $key=>$value){
+                            print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a></div><div class="value">'.$value[1].'</div></div>';
+                        }
+                        ?></div>    <?php else:?>
+                        <div class="sinGrafico">
+                            <span>No hay datos para mostrar</span>
+                        </div>
+                    <?php endif;?>
+                </div>
       <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
           <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:
           </div>
+
           <div id="institucionPieGBIF" class="institucionPie"></div>
           <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
+
           </div>
-</div>
+        </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
 </td></tr>
 </table>
-
 <script>
 
     function changeFeatures(first, last) {
@@ -311,7 +348,7 @@ de los registros en GBIF</span>
             var yearCount =<?php echo json_encode($yearCount); ?>;
             var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
             console.log(yearCount);
-            console.log(yearCountGbif);
+            //console.log(yearCountGbif);
             var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
             var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
             var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
@@ -322,6 +359,8 @@ de los registros en GBIF</span>
             var dataGBIF = tempGBIF[0];
             var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
             var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
+            console.log(monthCountReuna);
+            console.log(monthCountGBIF);
             var categoryYears=<?php echo json_encode($categoryYears)?>;
 
 
@@ -359,7 +398,8 @@ de los registros en GBIF</span>
                 credits: {
                     enabled: false
                 },
-                legend: {
+                legend:{
+                        adjustChartSize: true
                 },
                 series: [{
                     type: 'pie',
@@ -580,6 +620,7 @@ de los registros en GBIF</span>
                     series: {
                         color: 'rgba(0, 0, 0, 0.8)'
                     }
+
                 },
                 tooltip: {
                     formatter: function () {
@@ -606,6 +647,9 @@ de los registros en GBIF</span>
                 },
                 legend: {
                     enabled:false
+                    //itemWidth: 150
+                    //adjustChartSize: true
+
                     //layout: 'vertical',
 //align: 'right',
                     /*floating: true,*/
@@ -689,7 +733,8 @@ de los registros en GBIF</span>
                     enabled: false
                 },
                 legend: {
-                    enabled: false
+                    enabled: false,
+                    adjustChartSize: true
                 },
                 title: {
                     text: 'GBIF',
@@ -749,6 +794,10 @@ de los registros en GBIF</span>
                 },
                 credits: {
                     enabled: false
+                },
+                legend: {
+                   //itemWidth: 150
+                    adjustChartSize: true
                 },
                 title: {
                     text: 'Acumulación registros en el tiempo por fuente de datos',
