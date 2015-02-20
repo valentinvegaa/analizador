@@ -349,9 +349,9 @@ Inao new layout
 }
 
 .suave{
-    color:#909090;
+    color:darkgray;
     line-height:22px;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 .highL{
@@ -434,9 +434,6 @@ Inao new layout
     text-align:center;
 }
 
-a:link {color: #168970; text-decoration: none; }
-a:hover {color: #168970; text-decoration: underline; }
-
 /*
 otras cosas
 */
@@ -468,4 +465,27 @@ otras cosas
     color: darkgray;
     font-size: 1.1em;
     line-height: 22px;
+}
+.colorType{
+    display: inline-block;
+    height: 10px;
+    width: 30px;
+    float: left;
+}
+.qntity{
+    text-align: center;
+    width: 30px;
+    float: right;
+}
+.legendRow{
+    width: 80px;
+    border-bottom: 1px solid #a1a1a1;
+    clear: both;
+    font-size: 0.6em;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+#legend{
+    position: absolute;
+    z-index: 10000;
 }

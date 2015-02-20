@@ -484,6 +484,12 @@ function cmp($a,$b){
     }
     return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
 }
+function cmpInst($a,$b){
+    if ($a[1] == $b[1]) {
+        return 0;
+    }
+    return ($b[1] < $a[1]) ? -1 : 1;
+}
 /*--------------------------*/
 
 
@@ -579,7 +585,8 @@ if($specie){
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();
-        uasort($institutionNamesGBIF,'cmp');
+        uasort($institutionNamesGBIF,'cmpInst');
+        var_dump($institutionNamesGBIF);
         $categoriesGBIF=$results->getCategoriesGbif();
         $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
         $coordinatesInPHP=$results->getCoordinatesInPHP();
@@ -758,7 +765,7 @@ if($specie){
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
-        uasort($institutionNamesGBIF,'cmp');
+        uasort($institutionNamesGBIF,'cmpInst');
         //$results = json_decode(file_get_contents($search_url));
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
         $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
