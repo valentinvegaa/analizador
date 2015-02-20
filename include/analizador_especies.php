@@ -144,7 +144,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <div id="temp-right">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
             <span class="heading3">Registros por mes</span>
-            <?php var_dump($monthCountReuna);if(count(array_filter($monthCountReuna))>0):?>
+            <?php if(count(array_filter($monthCountReuna))>0):?>
             <div id="reunaGbifBarras"></div>
             <?php else:?>
                 <div class="sinGrafico">
@@ -446,7 +446,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     }]
                 });
                 // GRAFICO TEMPORAL ANUAL GBIF
-                if(dataGBIF.length>0)chartGBIF = new Highcharts.Chart({
+                chartGBIF = new Highcharts.Chart({
                     chart: {
                         renderTo: 'contribucionBarrasGBIF',
                         type: 'column'
@@ -535,7 +535,21 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     legend: {
                         enabled:false
-                    }
+                    },
+                    annotations: [{
+                        title: {
+                            text: '<span style="">drag me anywhere <br> dblclick to remove</span>',
+                            style: {
+                                color: 'red'
+                            }
+                        },
+                        anchorX: "left",
+                        anchorY: "top",
+                        allowDragX: true,
+                        allowDragY: true,
+                        x: 50,
+                        y: 50,
+                    }]
                 });
                 // GRAFICO TEMPORAL ANUAL REUNA
                 if(dataREUNA.length>0)chartREUNA = new Highcharts.Chart({
@@ -861,8 +875,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         source: source
     });
     function createLegend(){
-        for(var i=5;i>=0;i--){
-            var legend='<div class="legendRow"><div class="colorType" style="background-color:'+getColor(i)+';"></div><div class="qntity">'+(i==5?'Más de 5':i)+'</div></div>';
+        var legend='<div class="legendRow"><div class="qntity">Registros</div></div>';
+        document.getElementById("legend").innerHTML = legend;
+        for(var i=6;i>=1;i--){
+            legend='<div class="legendRow"><div class="colorType" style="background-color:'+getColor(i-1)+';"></div><div class="qntity">'+(i==6?'>5':i)+'</div></div>';
             document.getElementById("legend").innerHTML += legend;
         }
     }
@@ -871,7 +887,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         var colors = ['#FFFF00', '#FFD700', '#FFA500', '#FF8C00', '#FF4500', '#FF2000'];
         return colors[index] ? colors[index] : '#FF2000';
     }
-    var capaOsm = new ol.layer.Tile({source: new ol.source.MapQuest({layer: 'osm'})});
+    var capaOsm = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+    //{source: new ol.source.MapQuest({layer: 'osm'})}
     var raw = new ol.layer.Vector({source: source});
     var styleCache = {};
     var clusters = new ol.layer.Vector({

@@ -103,6 +103,9 @@ function species_callback()
         $path.'/export-csv-master/export-csv.js'=>array(
             'type' => 'file',
         ),
+        $path.'/annotations/annotations.js'=>array(
+            'type' => 'file',
+        ),
     );
     return $content;
 }
