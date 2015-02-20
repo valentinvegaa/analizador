@@ -217,8 +217,6 @@ function getOrganizationNames($organizations)
         array_push($result,array($json['title'],$i));
         //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
-    ksort($result);
-    //var_dump($result);sdaasf
     return $result;
 }
 /* Funciones JS a PHP */
@@ -764,7 +762,7 @@ if($specie){
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
-        uasort($institutionNamesGBIF,'cmp');
+        uasort($institutionNamesGBIF,'cmpInst');
         //$results = json_decode(file_get_contents($search_url));
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
         $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);

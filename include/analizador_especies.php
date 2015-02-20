@@ -358,6 +358,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
                 var dataREUNA = tempREUNA[0];
                 var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+                console.log('instNames');
                 console.log(instNames);
                 var catNames=<?php echo json_encode($categoriesGBIF); ?>;
                 var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
