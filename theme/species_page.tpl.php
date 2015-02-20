@@ -214,7 +214,7 @@ function getOrganizationNames($organizations)
     foreach ($organizations as $key => $i) {
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/organization/' . $key), true);
         //$result[$json['title']] = $i;
-        array_push($result,$json['title'],$i);
+        array_push($result,array($json['title'],$i));
         //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
     ksort($result);
