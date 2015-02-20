@@ -214,7 +214,7 @@ function getOrganizationNames($organizations)
     foreach ($organizations as $key => $i) {
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/organization/' . $key), true);
         //$result[$json['title']] = $i;
-        array_push($result,array($json['title'],$i));
+        array_push($result,$json['title'],$i);
         //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
     ksort($result);
@@ -284,20 +284,20 @@ function CalculaEjeX($var1,$var2){
         }else{
         $uno=key($var1);}
     }
-
     reset($var2);
-    if(sizeof($var2)!==0){
-        next($var2);//Gbif trae registros sin año, ""=>45
-        $dos=key($var2);}
-    else{
-
+    if(sizeof($var2)==0){
+        //if($var1[0]==0){
         $dos=1900;
     }
-
+    else{
+        if(key($var2)==""){
+            next($var2);
+            $dos=key($var2);
+        }else{
+            $dos=key($var2);}
+    }
     var_dump($uno);
     var_dump($dos);
-
-
     if($uno<=$dos){
         $ini=substr($uno, 0, 3).'0';
         $inicio=(int)$ini;
@@ -484,6 +484,12 @@ function cmp($a,$b){
     }
     return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
 }
+function cmpInst($a,$b){
+    if ($a[1] == $b[1]) {
+        return 0;
+    }
+    return ($b[1] < $a[1]) ? -1 : 1;
+}
 /*--------------------------*/
 
 
@@ -579,7 +585,7 @@ if($specie){
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
         $institutionNamesGBIF=$results->getInstitucionGbif();
-        uasort($institutionNamesGBIF,'cmp');
+        uasort($institutionNamesGBIF,'cmpInst');
         $categoriesGBIF=$results->getCategoriesGbif();
         $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
         $coordinatesInPHP=$results->getCoordinatesInPHP();
@@ -758,7 +764,7 @@ if($specie){
         $coordinatesGBIFInPHP = implode(', ', $temporaryArray);
         //$yearsGBIFforRange=implode(', ',$tempRange);
         $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
-        uasort($institutionNamesGBIF,'cmp');
+        uasort($institutionNamesGBIF,'cmpInst');
         //$results = json_decode(file_get_contents($search_url));
         $categorias=CalculaEjeX($yearCount,$yearCountGbif);
         $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);

@@ -119,8 +119,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             <span class="heading3">Registros por año</span>
             <div id="contribucionBarrasREUNA"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
-                <?php echo sizeof($yearCount);?></span> años con registros en <?php echo $REUNA; ?>
-                (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if($yearCount[0]==0){end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
+                <?php reset($yearCount);if(key($yearCount)==""){echo sizeof($yearCount)-1;}else {echo sizeof($yearCount);};?></span> años con registros en <?php echo $REUNA; ?>
+                (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if(key($yearCount)==""){next($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
             </div>
             <div id="contribucionBarrasGBIF"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
@@ -224,7 +224,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
                 </div>
 
-                <?php if(count($institutionNamesGBIF)>0):?>
                     <div id="GBIFTable">
                         <?php print '<div class="tableElement">
                 <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
@@ -232,21 +231,13 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         foreach($institutionNamesGBIF as $key=>$value){
                             print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a></div><div class="value">'.$value[1].'</div></div>';
                         }
-                        ?></div>    <?php else:?>
-                        <div class="sinGrafico">
-                            <span>No hay datos para mostrar</span>
-                        </div>
-                    <?php endif;?>
+                        ?></div>
                 </div>
       <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
-          <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:
-          </div>
-
+          <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:</div>
           <div id="institucionPieGBIF" class="institucionPie"></div>
-          <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
-
-          </div>
-        </div>
+          <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]</div>
+      </div>
             <?php else:?>
                 <div class="sinGrafico">
                     <span>No hay datos para mostrar</span>
@@ -348,19 +339,20 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             var yearCount =<?php echo json_encode($yearCount); ?>;
             var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
             console.log(yearCount);
-            //console.log(yearCountGbif);
+            console.log(yearCountGbif);
             var accumulatedData=<?php echo json_encode($accumulatedYearsReuna);?>;
             var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif);?>;
             var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
             var dataREUNA = tempREUNA[0];
             var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+            console.log(instNames);
             var catNames=<?php echo json_encode($categoriesGBIF); ?>;
             var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
             var dataGBIF = tempGBIF[0];
             var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
             var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
-            console.log(monthCountReuna);
-            console.log(monthCountGBIF);
+            //console.log(monthCountReuna);
+            //console.log(monthCountGBIF);
             var categoryYears=<?php echo json_encode($categoryYears)?>;
 
 
@@ -427,7 +419,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 },
                 plotOptions: {
                     pie: {
-                        size: 170,
+                        //size: 170,
                         allowPointSelect: true,
                         cursor: 'pointer',
                         dataLabels: {
@@ -439,11 +431,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 credits: {
                     enabled: false
                 },
-                legend: {
-                    itemWidth: 300,
-                    itemStyle: {
-                        fontWeight: 'normal'
-                    }
+                legend:{
+                    adjustChartSize: true
                 },
                 series: [{
                     type: 'pie',
