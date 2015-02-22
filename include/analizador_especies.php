@@ -96,6 +96,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <p></p>
         <div>
             <span class="heading3">Distribución por región:</span> <p></p>
+            <?var_dump($)?>
             XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
         </div>
         <br>
@@ -836,29 +837,19 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             }
         }
     })(jQuery);
-    var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;//if($coordinatesReuna!="")echo "[".$coordinatesReuna."]";else{echo "[]";}?>;
+    var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
     var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
-    console.log(arrayCoordinatesGBIFInJS);
-    console.log(arrayCoordinatesInJS);
     var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
     var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-    console.log(coordYearsReuna);
-    console.log(coordYearsGBIF);
 
-    var largo = (arrayCoordinatesInJS.length) / 2;
+    var largo = (arrayCoordinatesInJS.length);
     if (largo > 0) {
         var features = new Array(largo);
-        var j = 0;
-        for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-//alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-            var coordinate = [arrayCoordinatesInJS[i+1], arrayCoordinatesInJS[i]];
+        for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
+            var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
             var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
-//var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-            features[j] = new ol.Feature({'visible': 'true'});
-            features[j].setGeometry(new ol.geom.Point(tempLonlat));
-            j++;
+            features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
         }
-        ;
     }
     var mapView = new ol.View({
         projection: 'EPSG:3857',

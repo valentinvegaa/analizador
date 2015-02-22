@@ -12,7 +12,7 @@ class Especie{
     private $familia='';
     private $orden='';
     private $categorias=array();
-    private $coordinatesInPHP;
+    private $coordinatesReuna;
     private $coordinatesGBIFInPHP;
     private $anyoGbif=array();
     private $mesGbif=array();
@@ -42,11 +42,11 @@ class Especie{
     /**/
 
 
-    public function setSpecie($nombreCientifico,$coordinatesInPHP,$coordinatesGBIFInPHP,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+    public function setSpecie($nombreCientifico,$coordinatesReuna,$coordinatesGBIFInPHP,$anyo,$mesGbif,$institucionReuna,$institucionGbif,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGbif,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
     ,$AccumulatedYearsGbif,$AccumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF,$categorias,$nombreEspecieAutor,$jerarquia){
 
         $this->nombreCientifico=$nombreCientifico;
-        $this->coordinatesInPHP=$coordinatesInPHP;
+        $this->coordinatesInPHP=$coordinatesReuna;
         $this->coordinatesGBIFInPHP=$coordinatesGBIFInPHP;
         $this->anyoGbif=$anyo;
         $this->mesGbif=$mesGbif;
@@ -168,6 +168,24 @@ $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
 
+function getCountyName($coords,$r){
+    $coordsWithCounty=array();
+    foreach($coords as $coord){
+        if(strcmp($r,'reuna')==0){
+            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.floatval($coord[0]).','.floatval($coord[1]);
+            $response=file_get_contents($url);
+            $json=json_decode($response);
+            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
+        }
+        else{
+            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.$coord[1].','.$coord[0];
+            $response=file_get_contents($url);
+            $json=json_decode($response);
+            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
+        }
+    }
+    return $coordsWithCounty;
+}
 function countMonths($taxonKey)
 {
     $returnVal = array();
@@ -531,6 +549,9 @@ $OrganizationKey = '';
 $OrganizationKeyArray = array();
 $instituionsNamesOcurr = array();
 
+$regionesCoordenadasReuna=array();
+$regionesCoordenadasGbif=array();
+
 
 $additionalParameters = array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
@@ -586,7 +607,7 @@ if($specie){
         uasort($institutionNamesGBIF,'cmpInst');
         $categoriesGBIF=$results->getCategoriesGbif();
         $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
-        $coordinatesInPHP=$results->getCoordinatesInPHP();
+        $coordinatesReuna=$results->getCoordinatesInPHP();
         $institutionNamesReuna=$results->getInstitucionReuna();
         /*Agregados*/
         $monthCountReuna=$results->getMonthCountReuna();
@@ -639,9 +660,8 @@ if($specie){
                 foreach ($doc as $field => $value) {
                     switch ($field) {
                         case 'dwc.latlong_p'://[(a,b),(a,b)
-                            //$coord=explode(',',$value);
-                            //array_push($coordinatesReuna,$coord);
-                            $coordinatesInPHP .= htmlspecialchars($value, ENT_NOQUOTES, 'utf-8') . ",";
+                            $coord=explode(',',$value);
+                            array_push($coordinatesReuna,$coord);
                             $totalReunaConCoordenadas++;
                             $i++;
                             break;
@@ -666,6 +686,7 @@ if($specie){
                     }
                 }
             }
+            $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReuna,'reuna'));
             $instNamesReuna=array();
             foreach($institutionNamesReuna as $key=>$value){
                 array_push($instNamesReuna,array($key,$value));
@@ -770,7 +791,7 @@ if($specie){
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
-        $SpeciesObject->setSpecie($specie,$coordinatesInPHP,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
+        $SpeciesObject->setSpecie($specie,$coordinatesReuna,$coordinatesGBIFInPHP,$yearCountGbif,$mesGbif,$institutionNamesReuna,$institutionNamesGBIF,$monthCountReuna,$DrillDownDataGbif,$yearCount,$coordYearsREUNA,$speciesKey,$search,$totalGBIF,$totalReunaConCoordenadas,$totalReuna,$DrillDownDataReuna,$categoryYears
                                     ,$accumulatedYearsGbif,$accumulatedYearsReuna,$REUNA,$coordYearsGBIF,$totalEnGBIF,$categorias,$nombreEspecieAutor,$jerarquia);
 
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias

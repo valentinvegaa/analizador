@@ -748,7 +748,6 @@ if (largoGBIF > 0) {
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
         var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
         var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
-        //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
         featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
 }

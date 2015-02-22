@@ -63,7 +63,8 @@ class Family{
                               $institutionDataGbif,
                               $yearCount,
                               $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF
-                                ,$countSpecies,$speciesFound,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias
+                                ,$countSpecies,$speciesFound,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias,
+                              $regionesPresentesReuna,$regionesPresentesGbif
     ){
         $this->nombreFamilia=$nombreFamilia;
         $this->generos=$generos;
@@ -92,6 +93,8 @@ class Family{
         $this->totalEnGBIF=$totalEnGBIF;
         $this->familyKey=$familyKey;
         $this->categorias=$categorias;
+        $this->regionesPresentesReuna=$regionesPresentesReuna;
+        $this->regionesPresentesGbif=$regionesPresentesGbif;
     }
     public function getGeneros(){}
     public function getEspecies(){}
@@ -154,6 +157,9 @@ class Family{
     }
     public function getCategorias(){
         return $this->categorias;
+    }
+    public function getRegionesPresentes($rog){
+        return (strcmp('reuna',$rog))!=0?$this->regionesPresentesReuna:$this->regionesPresentesGbif;
     }
 
 }
@@ -580,6 +586,9 @@ function setPieData($graph){
     return $out;
 
 }
+function getWidth($a,$b){
+    return $b*44/$a;
+}
 function cmp($a,$b){
     if ($a['data'][0] == $b['data'][0]) {
         return 0;
@@ -631,6 +640,9 @@ $institutionDataReuna=array();
 $institutionDataGbif=array();
 $yearCount = array();
 $yearCountGBIF = array();
+
+$regionesCoordenadasReuna=array();
+$regionesCoordenadasGbif=array();
 
 if ($family) {
     $parameters = array(
@@ -687,6 +699,9 @@ if ($family) {
         $totalEnGBIF=$results->getTotalEnGBIF();
         $familyKey=$results->getFamilyKey();
         $categorias=$results->getCategorias();
+
+        $regionesCoordenadasReuna=$results->getRegionesPresentes('reuna');
+        $regionesCoordenadasGbif=$results->getRegionesPresentes('gbif');
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -756,6 +771,7 @@ if ($family) {
                     }
                 }
             }
+            $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReuna,'reuna'));
             ksort($yearCount);
             $reunaVacios = $totalReuna - $i;
         }
@@ -851,6 +867,7 @@ if ($family) {
                         $OrganizationKeyArray[$i['publishingOrgKey']]++;
                     }
                 }
+                $regionesCoordenadasGbif=array_count_values(getCountyName($coordinatesGBIFInPHP,'gbif'));
             }
             //$coordinatesGBIFInPHP = implode(', ', $asdasd);
             //$coordinatesGBIFInPHP = implode(',', $temporaryArray);
@@ -887,7 +904,7 @@ if ($family) {
             $institutionDataGbif,
             $yearCount,
             $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF,$countSpecies,$speciesFound
-            ,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias
+            ,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias,$regionesCoordenadasReuna,$regionesCoordenadasGbif
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
