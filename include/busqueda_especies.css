@@ -153,6 +153,7 @@
 .key2{
     float:left;
     width: 33%;
+    font-size: 0.8em;
 }
 .value{
     float:right;
@@ -453,7 +454,6 @@ otras cosas
 }
 .miniInst{
     color: #bababa;
-    font-size: 0.7em;
     float:right;
     padding-right: 10px;
 }
@@ -499,3 +499,30 @@ otras cosas
     float:left;
     font-size:0.9em;
 }
+/*
+inicio del Tooltip
+*/
+[tooltip]:before {
+    content: attr(tooltip);
+    position: absolute;
+    opacity: 0;
+
+    transition: all 0.15s ease;
+    padding: 10px;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 2px 2px 1px silver;
+}
+
+[tooltip]:hover:before {
+    opacity: 1;
+
+    background: #ffffff;
+    margin-top: -10px;
+    margin-left: -100px;
+    z-index: 200;
+    white-space: pre;
+}
+/*
+Fin tooltip
+*/

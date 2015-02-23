@@ -96,7 +96,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <p></p>
         <div>
             <span class="heading3">Distribución por región:</span> <p></p>
-            <?var_dump($)?>
+            <?var_dump($regionesCoordenadasReuna);?>
             XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
         </div>
         <br>
@@ -238,14 +238,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
                 </div>
 
-                    <div id="GBIFTable">
-                        <?php print '<div class="tableElement">
-                <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
-                <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div></div>';
-                        foreach($institutionNamesGBIF as $key=>$value){
-                            print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a></div><div class="value">'.$value[1].'</div></div>';
-                        }
-                        ?></div>
+                <div id="GBIFTable"><?php
+                    print '
+                        <div class="tableElement">
+                            <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                            <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div>
+                        </div>';
+                    var_dump($institutionInfo);
+                    foreach($institutionDataGbif[0] as $key=>$value){
+                        $tooltip=getOrgArray($institutionInfo,$value[0]);
+                        print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['title'].'">
+                                    <div class="key">
+                                        <a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a>
+                                    </div>
+                                    <div class="value">'.$value[1].'</div>
+                                </div>';
+                    }
+                    ?></div>
                 </div>
       <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
           <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:</div>
@@ -359,8 +368,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 var tempREUNA=<?php echo json_encode($DrillDownDataReuna); ?>;
                 var dataREUNA = tempREUNA[0];
                 var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
-                console.log('instNames');
-                console.log(instNames);
+                var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
                 var catNames=<?php echo json_encode($categoriesGBIF); ?>;
                 var tempGBIF=<?php echo json_encode($DrillDownDataGbif); ?>;
                 var dataGBIF = tempGBIF[0];
@@ -426,7 +434,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     plotOptions: {
                         pie: {
-                            //size: 170,
+                            size: 250,
                             allowPointSelect: true,
                             cursor: 'pointer',
                             dataLabels: {
@@ -438,17 +446,15 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     credits: {
                         enabled: false
                     },
-                    legend:{
-                        adjustChartSize: true
-                    },
+                    legend: {},
                     series: [{
                         type: 'pie',
                         name: 'Total',
-                        data: instNames
+                        data: institutionDataGbif[0]
                     }]
                 });
                 // GRAFICO TEMPORAL ANUAL GBIF
-                chartGBIF = new Highcharts.Chart({
+                var chartGbifOptions={
                     chart: {
                         renderTo: 'contribucionBarrasGBIF',
                         type: 'column'
@@ -540,9 +546,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     annotations: [{
                         title: {
-                            text: '<span style="">drag me anywhere <br> dblclick to remove</span>',
+                            text: '<span style="">No hay datos para mostrar</span>',
                             style: {
-                                color: 'red'
+                                color: 'black'
                             }
                         },
                         anchorX: "left",
@@ -550,9 +556,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         allowDragX: true,
                         allowDragY: true,
                         x: 50,
-                        y: 50,
+                        y: 50
                     }]
-                });
+                };
+                chartGBIF = new Highcharts.Chart(chartGbifOptions);
                 // GRAFICO TEMPORAL ANUAL REUNA
                 if(dataREUNA.length>0)chartREUNA = new Highcharts.Chart({
                     chart: {
@@ -838,7 +845,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         }
     })(jQuery);
     var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
-    var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+    var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
     var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
     var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
 
@@ -962,21 +969,30 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         renderer: 'canvas',
         view: mapView
     });
-    var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
+    var largoGBIF = (arrayCoordinatesGBIFInJS.length);
+    if (largoGBIF > 0) {
+        var featuresGBIF = new Array(largoGBIF);
+        for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
+            var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
+            var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
+            featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
+        }
+    }
+    /*var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
     if (largoGBIF > 0) {
         var featuresGBIF = new Array(largoGBIF);
         var j = 0;
         for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-//alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
+            //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
             var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
             var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
-//var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
+            //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
             featuresGBIF[j] = new ol.Feature({'visible': 'true'});
             featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
             j++;
         }
         ;
-    }
+    }*/
     var sourceGBIF = new ol.source.Vector({
         features: featuresGBIF
     });

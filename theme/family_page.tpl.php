@@ -595,6 +595,12 @@ function cmp($a,$b){
     }
     return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
 }
+function cmpInst($a,$b){
+    if ($a[1] == $b[1]) {
+        return 0;
+    }
+    return ($b[1] < $a[1]) ? -1 : 1;
+}
 function getResults($p,$s){
     $parameters=$p;
     $solr=$s;
@@ -684,7 +690,6 @@ if ($family) {
         $stackedChildrensGbif=$results->getStackedChildrensGbif();
         uasort($stackedChildrensGbif,'cmp');
         uasort($stackedChildrens,'cmp');
-        //var_dump($stackedChildrensGbif);
         $institutionDataReuna=$results->getInstitutionData('reuna');
         $institutionDataGbif=$results->getInstitutionData('gbif');
         $yearCount=$results->getYearCount('reuna');
@@ -694,6 +699,7 @@ if ($family) {
         $totalGBIF=$results->getTotalGBIF();
         $institutionNames=$results->getInstitutionNames();
         $institutionNamesGBIF=$results->getInstitutionNamesGBIF();
+        uasort($institutionNamesGBIF,'cmpInst');
         $countSpecies=$results->getCountSpecies();
         $speciesFound=$results->getSpeciesFound();
         $totalEnGBIF=$results->getTotalEnGBIF();
@@ -771,10 +777,10 @@ if ($family) {
                     }
                 }
             }
-            $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReuna,'reuna'));
             ksort($yearCount);
             $reunaVacios = $totalReuna - $i;
         }
+        $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReuna,'reuna'));
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $family . '&dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=FAMILY&limit=1'), true);
         $familyKey = $json['results'][0]['key'];
         echo('family key:' .$familyKey);
@@ -807,9 +813,7 @@ if ($family) {
             $totalEnGBIF=file_get_contents($url2);//total de ocurrencias en chile
             $count = $json['count'];//$content;//
             $totalGBIF = $count;
-            //$coordinatesGBIFInPHP = "";
             $yearCountGbif = countYears($speciesKey, $count);
-            //$coordinatesGBIFInPHP = array();
             $temporaryArray = array();
             if ($count > 300) {
                 while ($count > 0) {
@@ -819,12 +823,8 @@ if ($family) {
                     isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
                     $someVar = countMonths($speciesKey);
                     foreach ($json['results'] as $i) {
-                        //$coordinatesGBIFInPHP.=$i['decimalLongitude'].",".$i['decimalLatitude'].",";
                         $localArray=array($i['decimalLongitude'],$i['decimalLatitude']);
-                        //array_push($temporaryArray, $i['decimalLongitude']);
-                        //array_push($temporaryArray, $i['decimalLatitude']);
                         array_push($coordinatesGBIFInPHP,$localArray );
-                        //$coordYearsGBIF .= isset($i['year']) ? $i['year'] : '' . ',';
                         if (isset($i['year'])) {
                             if ($i['year'] != '') {
                                 $coordYearsGBIF .= $i['year'] . ',';
@@ -860,18 +860,16 @@ if ($family) {
                             $coordYearsGBIF .= '0000,';
                         }
                     }
-                    //echo '_año_'.$i['year'].'_año';
                     if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                         $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
                     } else {
                         $OrganizationKeyArray[$i['publishingOrgKey']]++;
                     }
                 }
-                $regionesCoordenadasGbif=array_count_values(getCountyName($coordinatesGBIFInPHP,'gbif'));
             }
-            //$coordinatesGBIFInPHP = implode(', ', $asdasd);
-            //$coordinatesGBIFInPHP = implode(',', $temporaryArray);
+            $regionesCoordenadasGbif=array_count_values(getCountyName($coordinatesGBIFInPHP,'gbif'));
             $institutionNamesGBIF = getOrganizationNames($OrganizationKeyArray);
+            uasort($institutionNamesGBIF,'cmpInst');
         }
         $familyChildrens=getFamilyGenus($familyKey);
         foreach($familyChildrens as $key=>$value){
@@ -903,14 +901,25 @@ if ($family) {
             $institutionDataReuna,
             $institutionDataGbif,
             $yearCount,
-            $yearCountGbif,$totalReuna,$totalReunaConCoordenadas,$totalGBIF,$institutionNames,$institutionNamesGBIF,$countSpecies,$speciesFound
-            ,$coordYearsGBIF,$totalEnGBIF,$familyKey,$categorias,$regionesCoordenadasReuna,$regionesCoordenadasGbif
+            $yearCountGbif,
+            $totalReuna,
+            $totalReunaConCoordenadas,
+            $totalGBIF,
+            $institutionNames,
+            $institutionNamesGBIF,
+            $countSpecies,
+            $speciesFound,
+            $coordYearsGBIF,
+            $totalEnGBIF,
+            $familyKey,
+            $categorias,
+            $regionesCoordenadasReuna,
+            $regionesCoordenadasGbif
         );
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
     //var_dump(getCountyName($coordinatesReuna,'reuna'));
-    //var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
-    //var_dump($coordinatesGBIFInPHP);
+    var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
     /*Regiones de Chile
     echo getCountyName(-69.550753,-18.679683).'<br>';
     echo getCountyName(-69.528780,-19.437716).'<br>';

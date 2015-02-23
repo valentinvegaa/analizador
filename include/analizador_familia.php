@@ -183,7 +183,7 @@ Explore los resultados:
             var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
             var dataREUNA = tempREUNA[0];
             var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
-            var dataGBIF = tempGBIF[0];
+            //var dataGBIF = tempGBIF[0];
             //var monthCount =<?php echo json_encode($monthCount); ?>;
             //var monthCountGBIF =<?php echo json_encode($someVar); ?>;
             var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
@@ -404,7 +404,7 @@ Explore los resultados:
                                     if (drilldown) { // drill down
                                         setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
                                     } else { // restore
-                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
+                                        setChart(chartGBIF, name, tempGBIF[1], tempGBIF[0],'rgba(83, 173, 37, 0.8)');
                                     }
                                 }
                             }
@@ -438,7 +438,7 @@ Explore los resultados:
                 },
                 series: [{
                     name: name,
-                    data: dataGBIF
+                    data: tempGBIF[0]
                     //color: 'white
                 }],
                 exporting: {
@@ -547,8 +547,6 @@ Explore los resultados:
                     index:cont,
                     legendIndex:cont
                 });}
-            console.log('reuna');
-
             if(Object.keys(stackedReunaData).length>0){
                 var k=0;
                 var conta=0;
