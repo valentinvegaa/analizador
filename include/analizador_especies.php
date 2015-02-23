@@ -184,7 +184,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     <div style="color: #168970;width:14%;float:right;font-size:0.9em;">Registros</div>
                 </div>';
                 foreach($institutionNamesReuna as $elemento){
-                    print '<div class="tableElement"><div class="key">'.$elemento[0].'</div><div class="value">'.$elemento[1].'</div></div>';
+                    print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$elemento[0]).'" target="_blank">'.$elemento[0].'</a></div><div class="value">'.$elemento[1].'</div></div>';
                 }
                 ?>
             </div>
@@ -244,12 +244,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                             <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
                             <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div>
                         </div>';
-                    var_dump($institutionInfo);
                     foreach($institutionDataGbif[0] as $key=>$value){
                         $tooltip=getOrgArray($institutionInfo,$value[0]);
-                        print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['title'].'">
+                        print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['addr'][0].'&#xa;Contacto: '.$tooltip[0][0]['name'].'&#xa;Correo: '.$tooltip[0][0]['email'][0].'">
                                     <div class="key">
-                                        <a href="http://www.google.cl/search?q='.str_replace(' ','+',$value[0]).'" target="_blank">'.$value[0].'</a>
+                                        <a href="'.$tooltip['page'][0].'" target="_blank">'.$value[0].'</a>
                                     </div>
                                     <div class="value">'.$value[1].'</div>
                                 </div>';

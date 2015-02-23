@@ -40,6 +40,10 @@ class Especie{
     private $institutionNamesGBIF=array();
     private $institutionInfo=array();
 
+    public function setInstitutionInfo($institutionInfo){
+        $this->institutionInfo=$institutionInfo;
+    }
+
 
     public function setSpecie(
         $nombreCientifico,
@@ -72,8 +76,7 @@ class Especie{
         $regionesPresentesGbif,
         $institutionDataReuna,
         $institutionDataGbif,
-        $institutionNamesGBIF,
-        $institutionInfo
+        $institutionNamesGBIF
     ){
 
         $this->nombreCientifico=$nombreCientifico;
@@ -107,8 +110,6 @@ class Especie{
         $this->institutionDataReuna=$institutionDataReuna;
         $this->institutionDataGbif=$institutionDataGbif;
         $this->institutionNamesGBIF=$institutionNamesGBIF;
-        $this->institutionInfo=$institutionInfo;
-
     }
     public function getCategoriesGbif(){
         $categs=array();
@@ -209,6 +210,7 @@ include($path . '/Apache/Solr/Service.php');
 
 function getCountyName($coords,$r){
     $coordsWithCounty=array();
+    if(false)//se arruinó la llave :(
     foreach($coords as $coord){
         if(strcmp($r,'reuna')==0){
             $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.floatval($coord[0]).','.floatval($coord[1]);
@@ -722,7 +724,6 @@ if($specie){
         $institutionDataReuna=$results->getInstitutionData('reuna');
         $institutionDataGbif=$results->getInstitutionData('gbif');
         $institutionInfo=$results->getInstitutionInfo();
-        var_dump($institutionInfo);
     }
     else{
         $query='*:*';
@@ -916,13 +917,12 @@ if($specie){
             $regionesCoordenadasReuna,
             $regionesCoordenadasGbif,
             $institutionDataReuna,
-            $institutionDataGbif,
-            $institutionInfo
+            $institutionDataGbif
         );
 
+        $SpeciesObject->setInstitutionInfo($institutionInfo);
+
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
-        echo '<br>';
-        var_dump($institutionInfo);
     }
     //var_dump(getCountyName($coordinatesReuna,'reuna'));
     //var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
