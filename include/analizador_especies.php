@@ -28,8 +28,13 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span>
         <br>
-        <span class="titspecies"><?php $i=0;if (isset($nombreEspecieAutor)) $editado=str_replace('"','',$nombreEspecieAutor);$editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);$editado4=explode(' ',$editado3);
-           foreach($editado4 as $value){
+        <span class="titspecies">
+            <?php
+            $i=0;
+            if (isset($nombreEspecieAutor)) $editado=str_replace('"','',$nombreEspecieAutor);
+            $editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);
+            $editado4=explode(' ',$editado3);
+            foreach($editado4 as $value){
                $i+=1;
                if($i==3){echo '( ';}
                 echo $value.' ';
@@ -96,7 +101,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <p></p>
         <div>
             <span class="heading3">Distribución por región:</span> <p></p>
-            <?var_dump($regionesCoordenadasReuna);?>
             XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
         </div>
         <br>
@@ -118,47 +122,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
       <div id="temp-left">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
             <span class="heading3">Registros por año</span>
-          <?php if(count($DrillDownDataReuna[1])>0): ?>
             <div id="contribucionBarrasREUNA"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
                 <?php reset($yearCount);if(key($yearCount)==""){echo sizeof($yearCount)-1;}else {echo sizeof($yearCount);};?></span> años con registros en <?php echo $REUNA; ?>
                 (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if(key($yearCount)==""){next($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
             </div>
-          <?else:?>
-              <div class="sinGrafico">
-                  <span>No hay datos para mostrar</span>
-              </div>
-          <?endif;?>
 
-          <?php if(count($DrillDownDataGbif[1])>0): ?>
             <div id="contribucionBarrasGBIF"></div>
             <div class="suave" style="margin-top:-5px; position:relative;">
                 <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en GBIF
                 (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
             </div>
-          <?else:?>
-              <div class="sinGrafico">
-                  <span>No hay datos para mostrar</span>
-              </div>
-          <?endif;?>
         </div>
         <div id="temp-right">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
             <span class="heading3">Registros por mes</span>
-            <?php if(count(array_filter($monthCountReuna))>0):?>
             <div id="reunaGbifBarras"></div>
-            <?php else:?>
-                <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
-                </div>
-            <?php endif;?>
-            <?php if(count(array_filter($mesGbif))>0):?>
             <div id="GbifBarrasmes"></div>
-            <?php else:?>
-                <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
-                </div>
-            <?php endif;?>
         </div>
     <p></p>&nbsp
     <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
@@ -169,7 +149,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <tr><td class="boxinstituc">
     <div class="heading2" > Organizaciones contribuyentes en <?php echo $REUNA; ?></div>
     <p></p>
-            <?php if(count($institutionNamesReuna)>0):?>
     <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
         <div class="heading3">Organizaciones</div>
         <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $REUNA; ?>,
@@ -188,23 +167,13 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 }
                 ?>
             </div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos para mostrar</span>
-            </div>
-        <?php endif;?>
-        <p></p>
+
         <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:left;display:inline-block;width:85%;">
             Distribución relativa contribución de registros:
 
-            <?php if(count($institutionNamesReuna)>0):?>
             <div id="institucionPieREUNA" class="institucionPie"></div>
             <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
-                <?php else:?>
-                    <div class="sinGrafico">
-                        <span>No hay datos para mostrar</span>
-                    </div>
-                <?php endif;?>
+
              </div>
         </div>
     </div>
@@ -374,7 +343,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
                 var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
                 var categoryYears=<?php echo json_encode($categoryYears)?>;
-                $('#institucionPieREUNA').highcharts({
+                var noHayDatos={
+                    title: {
+                        text: '<span style="">No hay datos para mostrar</span>',
+                        style: {
+                            color: 'black'
+                        }
+                    },
+                    anchorX: "left",
+                    anchorY: "top",
+                    allowDragX: true,
+                    allowDragY: true,
+                    x: 125,
+                    y: 75
+                };
+                var y=0;
+
+                var institutionPieReunaOptions={
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: null,
@@ -412,9 +397,14 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         type: 'pie',
                         name: 'Total',
                         data: graph//data[0]
-                    }]
-                });
-                $('#institucionPieGBIF').highcharts({
+                    }],
+                    annotations:[]
+                };
+                console.log()
+                if(graph.length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
+                $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
+
+                var institutionPieGbifOptions={
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: null,
@@ -450,8 +440,12 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         type: 'pie',
                         name: 'Total',
                         data: institutionDataGbif[0]
-                    }]
-                });
+                    }],
+                    annotations:[]
+                };
+                if(institutionDataGbif[0].length==0)institutionPieGbifOptions.annotations.push(noHayDatos);
+                $('#institucionPieGBIF').highcharts(institutionPieGbifOptions);
+
                 // GRAFICO TEMPORAL ANUAL GBIF
                 var chartGbifOptions={
                     chart: {
@@ -543,24 +537,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     legend: {
                         enabled:false
                     },
-                    annotations: [{
-                        title: {
-                            text: '<span style="">No hay datos para mostrar</span>',
-                            style: {
-                                color: 'black'
-                            }
-                        },
-                        anchorX: "left",
-                        anchorY: "top",
-                        allowDragX: true,
-                        allowDragY: true,
-                        x: 50,
-                        y: 50
-                    }]
+                    annotations: []
                 };
+                y=0;
+                for(var i=0;i<dataGBIF.length;i++){
+                    y+=dataGBIF[i]['y'];
+                }
+                if(y==0)chartGbifOptions.annotations.push(noHayDatos);
                 chartGBIF = new Highcharts.Chart(chartGbifOptions);
+
                 // GRAFICO TEMPORAL ANUAL REUNA
-                if(dataREUNA.length>0)chartREUNA = new Highcharts.Chart({
+                var chartReunaOptions={
                     chart: {
                         renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
                         type: 'column'
@@ -650,10 +637,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     legend: {
                         enabled:false
-                    }
-                });
+                    },
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<dataREUNA.length;i++){
+                    y+=dataREUNA[i]['y'];
+                }
+                if(y==0)chartReunaOptions.annotations.push(noHayDatos);
+                chartREUNA = new Highcharts.Chart(chartReunaOptions);
                 // GRAFICO TEMPORAL MENSUAL REUNA
-                $('#reunaGbifBarras').highcharts({
+                var reunaGbifBarrasOptions={
                     chart: {
                         type: 'column'
                     },
@@ -709,10 +703,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         name: '<?php echo $REUNA; ?>',
                         data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
                     },
-                    ]
-                });
+                    ],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<monthCountReuna.length;i++){
+                    y+=monthCountReuna[i];
+                }
+                if(y==0)reunaGbifBarrasOptions.annotations.push(noHayDatos);
+                $('#reunaGbifBarras').highcharts(reunaGbifBarrasOptions);
                 // GRAFICO TEMPORAL MENSUAL GBIF
-                $('#GbifBarrasmes').highcharts({
+                var gbifBarrasMesOptions={
                     chart: {
                         type: 'column'
                     },
@@ -768,10 +769,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         name: 'GBIF',
                         data: monthCountGBIF//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
                     },
-                    ]
-                });
+                    ],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<monthCountGBIF.length;i++){
+                    y+=monthCountGBIF[i];
+                }
+                if(y==0)gbifBarrasMesOptions.annotations.push(noHayDatos);
+                $('#GbifBarrasmes').highcharts(gbifBarrasMesOptions);
                 // GRAFICO TEMPORAL ACUMULACION
-                $('#acumuladas').highcharts({
+                var acumulatedOptions={
                     chart: {
                         type: 'area'
                     },
@@ -838,8 +846,18 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         /*Datos de prueba*/
                         data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
                         color:'#000000'
-                    }]
-                });
+                    }],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<accumulatedDataGbif.length;i++){
+                    y+=accumulatedDataGbif[i];
+                }
+                for(var i=0;i<accumulatedData.length;i++){
+                    y+=accumulatedData[i];
+                }
+                if(y==0)acumulatedOptions.annotations.push(noHayDatos);
+                $('#acumuladas').highcharts(acumulatedOptions);
             }
         }
     })(jQuery);
