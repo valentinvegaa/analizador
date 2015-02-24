@@ -5,146 +5,141 @@
  * Date: 28-10-2014
 * Time: 20:22
 */
-class Especie{
-    private $nombreCientifico='';
-    private $categorias=array();
-    private $coordinatesReuna;
-    private $coordinatesGBIFInPHP;
-    private $anyoGbif=array();
-    private $mesGbif=array();
-    private $institucionReuna=array();
-    private $institucionGbif=array();
-    private $nombreEspecieAutor;
-    private $jerarquia='';
-    private $regionesPresentesReuna=array();
-    private $regionesPresentesGbif=array();
-
-    private $monthCountReuna=array();//reuna
-    private $DrillDownDataGbif=array();//grafico Gbif
-    private $DrillDownDataReuna=array();
-    private $yearCount=array();
-    private $coordYearsREUNA;
+class Especies{
     private $speciesKey;
+    private $scientificName='';
+    private $hierarchy='';
+    private $categories=array();
+    private $nameSpecieAuthor;
     private $search=array();
-    private $totalGbif;
-    private $totalEnGBIF;
-    private $totalReunaConCoordenadas;
-    private $totalReuna;
-    private $categoryYears;
-    private $AccumulatedYearsGbif;
-    private $AccumulatedYearsReuna;
-    private $REUNA;
-    private $coordYearsGBIF;
+    private $reuna;
+    private $institutionInfo=array();
+    private $yearCountGbif=array();
+    private $yearCountReuna=array();
+    private $institutionNamesReuna=array();
+    private $institutionNamesGbif=array();
+    private $regionsPresentsReuna=array();
+    private $regionsPresentsGbif=array();
+    private $monthCountReuna=array();
+    private $monthCountGbif=array();
+    private $drillDownDataGbif=array();//grafico Gbif
+    private $drillDownDataReuna=array();
+    private $accumulatedYearsGbif;
+    private $accumulatedYearsReuna;
     private $institutionDataReuna=array();
     private $institutionDataGbif=array();
-    private $institutionNamesGBIF=array();
-    private $institutionInfo=array();
-
+    private $institutionGbif=array();
+    private $coordYearsREUNA;
+    private $coordYearsGBIF;
+    private $totalInGbif;//total de observaciones en Gbif
+    private $totalReuna;//total de observaciones en Reuna
+    private $totalReunaWithCoordinates;
+    private $totalGbifWithCoordinates;
+    private $coordinatesReunaInPhp;
+    private $coordinatesGbifInPhp;
+    private $categoryYears;//no va
     public function setInstitutionInfo($institutionInfo){
         $this->institutionInfo=$institutionInfo;
     }
-
-
     public function setSpecie(
-        $nombreCientifico,
-        $coordinatesReuna,
-        $coordinatesGBIFInPHP,
+        $scientificName,
+        $coordinatesReunaInPhp,
+        $coordinatesGbifInPhp,
         $anyo,
-        $mesGbif,
-        $institucionReuna,
-        $institucionGbif,
+        $monthCountGbif,
+        $institutionNamesReuna,
+        $institutionNamesGbif,
         $monthCountReuna,
-        $DrillDownDataGbif,
-        $yearCount,
+        $drillDownDataGbif,
+        $yearCountReuna,
         $coordYearsREUNA,
         $speciesKey,
         $search,
-        $totalGbif,
-        $totalReunaConCoordenadas,
+        $totalGbifWithCoordinates,
+        $totalReunaWithCoordinates,
         $totalReuna,
-        $DrillDownDataReuna,
+        $drillDownDataReuna,
         $categoryYears,
-        $AccumulatedYearsGbif,
-        $AccumulatedYearsReuna,
-        $REUNA,
+        $accumulatedYearsGbif,
+        $accumulatedYearsReuna,
+        $reuna,
         $coordYearsGBIF,
-        $totalEnGBIF,
-        $categorias,
-        $nombreEspecieAutor,
-        $jerarquia,
-        $regionesPresentesReuna,
-        $regionesPresentesGbif,
+        $totalInGbif,
+        $categories,
+        $nameSpecieAuthor,
+        $hierarchy,
+        $regionsPresentsReuna,
+        $regionsPresentsGbif,
         $institutionDataReuna,
         $institutionDataGbif,
-        $institutionNamesGBIF
+        $institutionGbif
     ){
 
-        $this->nombreCientifico=$nombreCientifico;
-        $this->coordinatesInPHP=$coordinatesReuna;
-        $this->coordinatesGBIFInPHP=$coordinatesGBIFInPHP;
-        $this->anyoGbif=$anyo;
-        $this->mesGbif=$mesGbif;
-        $this->institucionReuna=$institucionReuna;
-        $this->institucionGbif=$institucionGbif;
+        $this->scientificName=$scientificName;
+        $this->coordinatesReunaInPhp=$coordinatesReunaInPhp;
+        $this->coordinatesGbifInPhp=$coordinatesGbifInPhp;
+        $this->yearCountGbif=$anyo;
+        $this->monthCountGbif=$monthCountGbif;
+        $this->institutionNamesReuna=$institutionNamesReuna;
+        $this->institutionNamesGbif=$institutionNamesGbif;
         $this->monthCountReuna=$monthCountReuna;
-        $this->DrillDownDataGbif=$DrillDownDataGbif;
-        $this->yearCount=$yearCount;
+        $this->drillDownDataGbif=$drillDownDataGbif;
+        $this->yearCountReuna=$yearCountReuna;
         $this->coordYearsREUNA=$coordYearsREUNA;
         $this->speciesKey=$speciesKey;
         $this->search=$search;
-        $this->totalGbif=$totalGbif;
-        $this->totalReunaConCoordenadas=$totalReunaConCoordenadas;
+        $this->totalGbifWithCoordinates=$totalGbifWithCoordinates;
+        $this->totalReunaWithCoordinates=$totalReunaWithCoordinates;
         $this->totalReuna=$totalReuna;
-        $this->DrillDownDataReuna=$DrillDownDataReuna;
+        $this->drillDownDataReuna=$drillDownDataReuna;
         $this->categoryYears=$categoryYears;
-        $this->AccumulatedYearsGbif=$AccumulatedYearsGbif;
-        $this->AccumulatedYearsReuna=$AccumulatedYearsReuna;
-        $this->REUNA=$REUNA;
+        $this->accumulatedYearsGbif=$accumulatedYearsGbif;
+        $this->accumulatedYearsReuna=$accumulatedYearsReuna;
+        $this->reuna=$reuna;
         $this->coordYearsGBIF=$coordYearsGBIF;
-        $this->totalEnGBIF=$totalEnGBIF;
-        $this->categorias=$categorias;
-        $this->nombreEspecieAutor=$nombreEspecieAutor;
-        $this->jerarquia=$jerarquia;
-        $this->regionesPresentesReuna=$regionesPresentesReuna;
-        $this->regionesPresentesGbif=$regionesPresentesGbif;
+        $this->totalInGbif=$totalInGbif;
+        $this->categories=$categories;
+        $this->nameSpecieAuthor=$nameSpecieAuthor;
+        $this->hierarchy=$hierarchy;
+        $this->regionsPresentsReuna=$regionsPresentsReuna;
+        $this->regionsPresentsGbif=$regionsPresentsGbif;
         $this->institutionDataReuna=$institutionDataReuna;
         $this->institutionDataGbif=$institutionDataGbif;
-        $this->institutionNamesGBIF=$institutionNamesGBIF;
+        $this->institutionGbif=$institutionGbif;
     }
     public function getCategoriesGbif(){
         $categs=array();
-        foreach($this->institucionGbif as $key=>$value){
+        foreach($this->$institutionGbif as $key=>$value){
             array_push($categs,$value[0]);
         }
         return $categs;
     }
-    public function getInstitucionReuna(){
-        return $this->institucionReuna;
+    public function getInstitutionNamesReuna(){
+        return $this->institutionNamesReuna;
     }
-    public function getInstitucionGbif(){
-        return $this->institucionGbif;
+    public function getInstitutionNamesGbif(){
+        return $this->institutionNamesGbif;
     }
-    public function getCoordinatesGBIFInPHP(){
-        return $this->coordinatesGBIFInPHP;
+    public function getCoordinatesGbifInPhp(){
+        return $this->coordinatesGbifInPhp;
     }
-    public function getCoordinatesInPHP(){
-        return $this->coordinatesInPHP;
+    public function getCoordinatesReunaInPhp(){
+        return $this->coordinatesReunaInPhp;
     }
     public function getMonthCountReuna(){
         return $this->monthCountReuna;//reuna
-
     }
-    public function getMesGbif(){//gbif
-        return $this->mesGbif;
+    public function getMonthCountGbif(){//gbif
+        return $this->monthCountGbif;
     }
-    public function getAnyoGbif(){
-        return $this->anyoGbif;
+    public function getYearCountGbif(){
+        return $this->yearCountGbif;
     }
-    public function getYearCount(){
-        return $this->yearCount;
+    public function getYearCountReuna(){
+        return $this->yearCountReuna;
     }
     public function getDrillDownDataGbif(){
-        return $this->DrillDownDataGbif;
+        return $this->drillDownDataGbif;
     }
     public function getCoordYearsREUNA(){
         return $this->coordYearsREUNA;
@@ -155,47 +150,47 @@ class Especie{
     public function getSearch(){
         return $this->search;
     }
-    public function getTotalGbif(){
-        return $this->totalGbif;
+    public function getTotalGbifWithCoordinates(){
+        return $this->totalGbifWithCoordinates;
     }
-    public function getTotalReunaConCoordenadas(){
-        return $this->totalReunaConCoordenadas;
+    public function getTotalReunaWithCoordinates(){
+        return $this->totalReunaWithCoordinates;
     }
     public function getTotalReuna(){
         return $this->totalReuna;
     }
     public function getDrillDownDataReuna(){
-        return $this->DrillDownDataReuna;
+        return $this->drillDownDataReuna;
     }
     public function getCategoryYears(){
         return $this->categoryYears;
     }
     public function getAccumulatedYearsGbif(){
-        return $this->AccumulatedYearsGbif;
+        return $this->accumulatedYearsGbif;
     }
     public function getAccumulatedYearsReuna(){
-        return $this->AccumulatedYearsReuna;
+        return $this->accumulatedYearsReuna;
     }
     public function getReuna(){
-        return $this->REUNA;
+        return $this->reuna;
     }
     public function getCoordYearsGBIF(){
         return $this->coordYearsGBIF;
     }
-    public function getTotalEnGBIF(){
-        return $this->totalEnGBIF;
+    public function getTotalInGbif(){
+        return $this->totalInGbif;
     }
-    public function getCategorias(){
-        return $this->categorias;
+    public function getCategories(){
+        return $this->categories;
     }
-    public function getNombreEspecieAutor(){
-    return $this->nombreEspecieAutor;
+    public function getNameSpecieAuthor(){
+    return $this->nameSpecieAuthor;
     }
-    public function getJerarquia(){
-        return $this->jerarquia;
+    public function getHierarchy(){
+        return $this->hierarchy;
     }
-    public function getRegionesPresentes($rog){
-        return (strcmp('reuna',$rog))!=0?$this->regionesPresentesReuna:$this->regionesPresentesGbif;
+    public function getRegionsPresents($rog){
+        return (strcmp('reuna',$rog))!=0?$this->regionsPresentsReuna:$this->regionsPresentsGbif;
     }
     public function getInstitutionData($rog){//Reuna Or Gbif
         return (strcmp('reuna',$rog))!=0?$this->institutionDataGbif:$this->institutionDataReuna;
@@ -203,11 +198,13 @@ class Especie{
     public function getInstitutionInfo(){
         return $this->institutionInfo;
     }
+    public function getInstitutionGbif(){
+    return $this->institutionGbif;
+}
 }
 $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
-
 function getCountyName($coords,$r){
     $coordsWithCounty=array();
     if(false)//se arruinó la llave :(
@@ -227,7 +224,7 @@ function getCountyName($coords,$r){
     }
     return $coordsWithCounty;
 }
-function countMonths($taxonKey)
+function getCountMonths($taxonKey)
 {
     $returnVal = array();
     for ($i = 1; $i < 13; $i++) {
@@ -236,7 +233,7 @@ function countMonths($taxonKey)
     }
     return $returnVal;
 }
-function countYears($taxonKey, $count)
+function getCountYears($taxonKey, $count)
 {
     $returnVal = array();
     $offset = 0;
@@ -287,7 +284,6 @@ function getOrganizationNames($organizations)
             'page'=>$json['homepage'],
             'addr'=>$json['address']
         );
-
         $contacts=array();
         foreach($json['contacts'] as $j){
             array_push($contacts,array(
@@ -298,14 +294,11 @@ function getOrganizationNames($organizations)
         }
         array_push($localTemp,$contacts);
         array_push($orgData,$localTemp);
-
-        //array_push($result,array($json['title'],$i));
-        //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
     $finalResult=array($result,$orgData);
     return $finalResult;
 }
-function suma($data,$decada){
+function getSuma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
         if(substr($key,0,3)==$decada) {
@@ -315,8 +308,6 @@ function suma($data,$decada){
     return $sum;
 }
 function getYears($data,$decada){
-
-
     $years=array();
     $i=0;
     foreach($data as $key=>$value){
@@ -331,17 +322,14 @@ function getYears($data,$decada){
         $trans=$decada.$cambio;
         if($temp!=(int)$trans){//error
             $years[$i]=(int)$trans;
-
         }
         else{
             $years[$i]=$temp;
         }
     }
     return $years;
-
 }
 function getData($data,$decada){
-
     $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     $i=0;
     foreach($data as $key=>$value){
@@ -352,12 +340,11 @@ function getData($data,$decada){
     }
     return $out;
 }
-function CalculaEjeX($var1,$var2){
-    $categorias=array();
+function setCategoryDecades($var1,$var2){
+    $categories=array();
     reset($var1);
     $anyo=date('Y');
     if(sizeof($var1)==0){
-        //if($var1[0]==0){
         $uno=1900;
     }
     else{
@@ -368,7 +355,6 @@ function CalculaEjeX($var1,$var2){
     }
     reset($var2);
     if(sizeof($var2)==0){
-        //if($var1[0]==0){
         $dos=1900;
     }
     else{
@@ -382,25 +368,24 @@ function CalculaEjeX($var1,$var2){
         $ini=substr($uno, 0, 3).'0';
         $inicio=(int)$ini;
         for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categorias,$i);
+            array_push($categories,$i);
         }
     }
     else{
         $ini=substr($dos, 0, 3).'0';
         $inicio=(int)$ini;
         for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categorias,$i);
+            array_push($categories,$i);
         }
     }
-    return $categorias;
-
+    return $categories;
 }
-function createDrilldown($var,$categorias){//function setYearCountData(yearCount)
+function createDrilldown($var,$categories){
     $out=array();
     $decadas=array();
     $decadas2=array();
     $deca=array();
-    $decadas2=$categorias;
+    $decadas2=$categories;
     foreach($decadas2 as $value) {
         $dec2 = substr($value, 0, 3);
         array_push($deca,$dec2);
@@ -408,7 +393,7 @@ function createDrilldown($var,$categorias){//function setYearCountData(yearCount
     $i=0;
     $aux=array();
     foreach($var as $key=>$value) {
-        $dec2 = substr($key, 0, 3).'0';//$dec . '0';
+        $dec2 = substr($key, 0, 3).'0';
         array_push($aux,$dec2);
     }
     foreach($decadas2 as $value){
@@ -416,38 +401,76 @@ function createDrilldown($var,$categorias){//function setYearCountData(yearCount
             if(!in_array($value,$decadas)){//y si no esta agregado
                 array_push($decadas, $value);
                 $out[$i] = array(
-                    'y' => suma($var, $deca[$i]),//error
-                    //'color' => $colors[$i],
-                    //'color'=>'#53AD25',
+                    'y' => getSuma($var, $deca[$i]),//error
                     'drilldown' => array(
                         'name' => $value,
-                        'categories' => getYears($var, $deca[$i]),//error
-                        'data' => getData($var, $deca[$i]),//error
-                        //'color' => $colors[$i]
-                        //'color'=>'#53AD25'
+                        'categories' => getYears($var, $deca[$i]),
+                        'data' => getData($var, $deca[$i]),
                     )
-                );//
+                );
                 $i+=1;
             }
         }
         else{//Grafico vacio
             $out[$i] = array(
-                'y' => suma($var, $deca[$i]),
-                //'color' => $colors[$i],
-                //'color'=>'#53AD25',
+                'y' => getSuma($var, $deca[$i]),
                 'drilldown' => array(
                     'name' => $value,
                     'categories' => getYears($var, $deca[$i]),
                     'data' => getData($var, $deca[$i]),
-                    //'color' => $colors[$i]
-                    //'color'=>'#53AD25'
                 )
-            );//
+            );
             $i += 1;
         }
     }
     return array($out,$decadas2);
-
+}
+function setRegistrosSingPlu($var){
+    if($var==0 or $var==1)
+    {return 'registro en ';}
+    else{ return 'registros en ';}
+}
+function setYearSingPluReuna($var){
+    $tamano=sizeof($var);
+    reset($var);
+    if($tamano==2 and key($var)=="" ){
+        $tamano-=1;
+    }
+    else{
+    if(key($var)==""){
+        $tamano-=1;
+    }
+    }
+    if($tamano==0 or $tamano==1){
+        return 'año con registro en ';}
+        else{
+            return 'años con registros en ';
+        }
+}
+function setYearSingPluGbif($var){
+    $tamano=sizeof($var);
+    reset($var);
+    if($tamano==0 or $tamano==1){
+        return 'año con registro en ';}
+    else{
+        return 'años con registros en ';
+    }
+}
+function setOrganizationSingPlu($var){
+    $tamano=sizeof($var);
+    if($tamano==0 or $tamano==1){
+        return 'organización ha';}
+    else{
+        return 'organizaciones han';
+    }
+}
+function setInvestigatorSingPlu($var){
+    $tamano=count($var);
+    if($tamano==0 or $tamano==1){
+        return 'investigador ha';}
+    else{
+        return 'investigadores han';
+    }
 }
 function makeTaxaHierarchy($i){
     isset($i['kingdom'])?$kingdom=json_encode($i['kingdom']):$kingdom='';
@@ -467,7 +490,6 @@ function makeTaxaHierarchy($i){
         $result.=''.$class.' > ';
     }
     if($order!=''){
-        //$result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/order/'.$order.'">'.$order.'</a>';
         $result.=''.$order.' > ';
     }
     if($family!=''){
@@ -487,11 +509,9 @@ function createDrilldownCategories($var){
         }
     }
     return $decadas;
-
-
 }
-function setAccumulatedYears($yearCount){
-    $years=$yearCount?$yearCount:null;
+function setAccumulatedYears($yearCountReuna){
+    $years=$yearCountReuna?$yearCountReuna:null;
     $result=array();
     $year=date('Y');
     $n=0;
@@ -513,7 +533,6 @@ function setAccumulatedYears($yearCount){
             $j=0;}
     }
     return $result;
-
 }
 function setCategoryYears()
 {
@@ -521,40 +540,30 @@ function setCategoryYears()
     $result=array();
     $year=date('Y');
     $n=1900;
-    /*for($i=0;$i<=$anyo;$i++){
-        $n=$year-$anyo+$i;
-        $ene=strval($n);
-        array_push($result,$ene);
-    }*/
     while($n<=$year){
-
         $ene=strval($n);
         array_push($result,$ene);
-        //$n+=5;
         $n++;
     }
-
     return $result;
-
 }
-//PQ NO ESTABA ESTA FUNCION!!!!
 function setPieData($graph){
     $data=$graph;
     $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
     $outPie=array();
     $i=0;
     $outBar=array();
-    $categorias=array();
+    $categories=array();
     foreach($data as $key=>$value){
         $outPie[$i]=array($key,$value);
-        $categorias[$i]=$key;
+        $categories[$i]=$key;
         $outBar[$i]=array(
             "y"=>$value,
             "color"=>$colors[$i]
         );
         $i+=1;
     }
-    $out=array($outPie,$categorias,$outBar);
+    $out=array($outPie,$categories,$outBar);
     return $out;
 
 }
@@ -592,62 +601,48 @@ function cmpInst($a,$b){
     }
     return ($b[1] < $a[1]) ? -1 : 1;
 }
-/*--------------------------*/
-
-
-/*__Variables Gbif__*/
-
-$mesGbif = "";
-$coordinatesGBIFInPHP=array();
-$institutionNamesGBIF = array();
-$yearsGBIFforRange = array();
-$yearCountGbif = array();
-$coordYearsGBIF = '';
-$totalGBIF = 0;
-$totalEnGBIF=0;
-$drilldownData=array();
-$accumulatedYearsGbif=array();
-/*------------------------*/
-
-/*__Variables Reuna__*/
-
-$coordinatesInPHP;//
-$totalReuna = 0;
-$totalReunaConCoordenadas = 0;
-$reunaVacios = 0;
-$yearCount = array();
-$monthCountReuna = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-$coordYearsREUNA = '';
-$coordinatesReuna=array();
-$institutionNamesReuna = array();
-$DrillDownDataReuna=array();
-$accumulatedYearsReuna=array();
-/*-------------------*/
-$jerarquia='';
-$nombreEspecieAutor;
-$categorias=array();
-$categoryYears=array();
+$reuna='REUNA';
+$hierarchy='';
+$nameSpecieAuthor;
 $limit = 10000;
 $tipo = "";
 $results = false;
-$REUNA='REUNA';
+$categoriesGbif;
+$totalInGbif=0;
+$totalReuna = 0;
+$totalReunaWithCoordinates = 0;
+$totalGbifWithCoordinates = 0;
+$reunaVacios = 0;
+$categories=array();
+$speciesByInvestigator=array();
+$categoryYears=array();
 $OrganizationKey = '';
+$institutionNamesGbif = array();
+$institutionNamesReuna = array();
+$yearsGBIFforRange = array();
+$institutionGbif=array();
+$coordYearsGBIF = '';
+$coordYearsREUNA = '';
+$yearCountReuna = array();
+$yearCountGbif = array();
+$monthCountReuna = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+$monthCountGbif = "";
+$coordinatesReunaInPhp=array();
+$coordinatesGbifInPhp=array();
+$drillDownDataReuna=array();
+$drillDownDataGbif=array();
+$accumulatedYearsReuna=array();
+$accumulatedYearsGbif=array();
 $OrganizationKeyArray = array();
 $instituionsNamesOcurr = array();
-
 $regionesCoordenadasReuna=array();
 $regionesCoordenadasGbif=array();
 $institutionDataReuna=array();
 $institutionDataGbif=array();
-
 $institutionInfo=array();
-
 $additionalParameters = array();
 $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $specie = substr(current_path(), strripos(current_path(), '/') + 1);
-
-
-
 if($specie){
     $parameters = array(
         'fq' => 'dwc.scientificName_mt:"'.$specie.'"',
@@ -658,7 +653,6 @@ if($specie){
     );
     $results=getResults($parameters,$solr,10000);
     $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
-    $especiesPorInvestigador=array();
     $primero=0;
     $nulos='';
     if($results){
@@ -681,7 +675,7 @@ if($specie){
                 if($value>0&&strcmp($field,'_empty_')!=0){
                     if($primero==0)$primero=$value;
                     $salida.='<div class="tableElement"><div class="key2">'.$field.'<div class="miniInst">['.$institInvest[$field].']</div></div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
-                    array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                    array_push($speciesByInvestigator,array('name:'=>$field,'data:'=>array($value)));
                 }
                 elseif(strcmp($field,'_empty_')==0){
                     $nulos='<div class="tableFooter">*Registros sin investigador asociado ['.$value.']</div>';
@@ -692,44 +686,43 @@ if($specie){
     }
     if ($cached = cache_get($specie, 'cache')){
         $results = $cached->data;
-        $institutionNamesGBIF=$results->getInstitucionGbif();
-        uasort($institutionNamesGBIF,'cmpInst');
-        $categoriesGBIF=$results->getCategoriesGbif();
-        $coordinatesGBIFInPHP=$results->getCoordinatesGBIFInPHP();
-        $coordinatesReuna=$results->getCoordinatesInPHP();
-        $institutionNamesReuna=$results->getInstitucionReuna();//getInstitutionNames EN INGLÉS
+        $institutionNamesGbif=$results->getInstitutionNamesGbif();
+        uasort($institutionNamesGbif,'cmpInst');
+       // $categoriesGbif=$results->getCategoriesGbif();
+        $coordinatesGbifInPhp=$results->getCoordinatesGBIFInPHP();
+        $coordinatesReunaInPhp=$results->getCoordinatesReunaInPhp();
+        $institutionNamesReuna=$results->getInstitutionNamesReuna();//getInstitutionNames EN INGLÉS
         $monthCountReuna=$results->getMonthCountReuna();
-        $mesGbif=$results->getMesGbif();
-        $yearCountGbif=$results->getAnyoGbif();
-        $DrillDownDataGbif=$results->getDrillDownDataGbif();
-        $yearCount=$results->getYearCount();
+        $monthCountGbif=$results->getMonthCountGbif();
+        $yearCountGbif=$results->getYearCountGbif();
+        $drillDownDataGbif=$results->getDrillDownDataGbif();
+        $yearCountReuna=$results->getYearCountReuna();
         $coordYearsREUNA=$results->getCoordYearsREUNA();
         $speciesKey=$results->getSpeciesKey();
         $search=$results->getSearch();//nombre de especie
-        $totalGBIF=$results->getTotalGbif();
-        $totalReunaConCoordenadas=$results->getTotalReunaConCoordenadas();
+        $totalGbifWithCoordinates=$results->getTotalGbifWithCoordinates();
+        $totalReunaWithCoordinates=$results->getTotalReunaWithCoordinates();
         $totalReuna=$results->getTotalReuna();
-        $DrillDownDataReuna=$results->getDrillDownDataReuna();
+        $drillDownDataReuna=$results->getDrillDownDataReuna();
         $categoryYears=$results->getCategoryYears();
         $accumulatedYearsGbif=$results->getAccumulatedYearsGbif();
         $accumulatedYearsReuna=$results->getAccumulatedYearsReuna();
-        $REUNA=$results->getReuna();
+        $reuna=$results->getReuna();
         $coordYearsGBIF=$results->getCoordYearsGBIF();
-        $totalEnGBIF=$results->getTotalEnGBIF();
-        $categorias=$results->getCategorias();
-        $nombreEspecieAutor=$results->getNombreEspecieAutor();
-        $jerarquia=$results->getJerarquia();
-        $regionesCoordenadasReuna=$results->getRegionesPresentes('reuna');
-        $regionesCoordenadasGbif=$results->getRegionesPresentes('gbif');
+        $totalInGbif=$results->getTotalInGbif();
+        $categories=$results->getCategories();
+        $nameSpecieAuthor=$results->getNameSpecieAuthor();
+        $hierarchy=$results->getHierarchy();
+        $regionesCoordenadasReuna=$results->getRegionsPresents('reuna');
+        $regionesCoordenadasGbif=$results->getRegionsPresents('gbif');
         $institutionDataReuna=$results->getInstitutionData('reuna');
         $institutionDataGbif=$results->getInstitutionData('gbif');
         $institutionInfo=$results->getInstitutionInfo();
+        $institutionGbif=$results->getInstitutionGbif();
     }
     else{
         $query='*:*';
-        //$search=explode(' ',$specie);
         $additionalParameters = array(
-            //'fq' => 'dwc.genus_mt:'.$search[0].' AND dwc.specificEpithet_mt:'.$search[1],
             'fq' => 'dwc.scientificName_mt:"'.$specie.'"',
             'fl' => 'dwc.month_s,
                  dwc.year_s,
@@ -751,8 +744,8 @@ if($specie){
                     switch ($field) {
                         case 'dwc.latlong_p'://[(a,b),(a,b)
                             $coord=explode(',',$value);
-                            array_push($coordinatesReuna,$coord);
-                            $totalReunaConCoordenadas++;
+                            array_push($coordinatesReunaInPhp,$coord);
+                            $totalReunaWithCoordinates++;
                             $i++;
                             break;
                         case 'dwc.institutionCode_s':
@@ -763,10 +756,10 @@ if($specie){
                             }
                             break;
                         case 'dwc.year_s':
-                            if (!array_key_exists($value, $yearCount)) {
-                                $yearCount[$value] = 1;
+                            if (!array_key_exists($value, $yearCountReuna)) {
+                                $yearCountReuna[$value] = 1;
                             } else {
-                                $yearCount[$value]++;
+                                $yearCountReuna[$value]++;
                             }
                             $coordYearsREUNA .= $value . ',';
                             break;
@@ -781,32 +774,28 @@ if($specie){
                 array_push($instNamesReuna,array($key,$value));
             }
             $institutionNamesReuna=$instNamesReuna;
-            ksort($yearCount);
+            ksort($yearCountReuna);
             $reunaVacios = $totalReuna - $i;
         }
-        $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReuna,'reuna'));
+        $regionesCoordenadasReuna=array_count_values(getCountyName($coordinatesReunaInPhp,'reuna'));
         $url_species = 'http://api.gbif.org/v1/species/match?name=' . str_replace(' ', '+', $specie);
         $content = file_get_contents($url_species);
         $json = json_decode($content, true);
-        $nombreEspecieAutor=isset($json['scientificName'])?json_encode($json['scientificName']):null;
-        $jerarquia=makeTaxaHierarchy($json);
+        $nameSpecieAuthor=isset($json['scientificName'])?json_encode($json['scientificName']):null;
+        $hierarchy=makeTaxaHierarchy($json);
         //se obtiene la llave que identifica a la especie en el repositorio de especies de GBIF
         $speciesKey = isset($json['usageKey']) ? json_encode($json['usageKey']) : null;
         //Obtenemos la cantidad de ocurrencias chilenas georeferenciadas usando la llave que encontramos antes
-       // $url = 'http://api.gbif.org/v1/occurrence/count?taxonKey=' . $speciesKey . '&isGeoreferenced=true&country=CL';
         $url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$speciesKey.'&country=CL';
         $url='http://api.gbif.org/v1/occurrence/search?taxonKey='.$speciesKey.'&HAS_COORDINATE=true&country=CL&isGeoreferenced=true&year=1900,2015';
-        //$url2='http://api.gbif.org/v1/occurrence/count?taxonKey='.$genusKey.'&country=CL';
         $res=json_decode(file_get_contents($url),true);
-        $totalGBIF=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
-        //$totalGBIF = isset($json['speciesKey']) ? file_get_contents($url) : null;
-        $totalEnGBIF=isset($json['usageKey']) ? file_get_contents($url2) : null;
+        $totalGbifWithCoordinates=$res['count'];//ocurrencias georeferenciadas desde 1900 en gbif
+        $totalInGbif=isset($json['usageKey']) ? file_get_contents($url2) : null;
         $offset = 0;
-        $count=$totalGBIF;
+        $count=$totalGbifWithCoordinates;
         //obtenemos un arreglo con los años como llave y en cada posicion la cantidad de ocurrencias para ese año(llave del arreglo)
-        $yearCountGbif = countYears($speciesKey, $count);
-
-        $SpeciesObject=new Especie();
+        $yearCountGbif = getCountYears($speciesKey, $count);
+        $SpeciesObject=new Especies();
         $temporaryArray = array();
         if ($count > 300) {
             while ($count > 0) {
@@ -815,12 +804,12 @@ if($specie){
                 $content = file_get_contents($url);
                 $json = json_decode($content, true);
                 isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
-                $mesGbif= countMonths($speciesKey);
+                $monthCountGbif= getCountMonths($speciesKey);
                 foreach ($json['results'] as $i) {
                     $localArray=array(strval($i['decimalLongitude']),strval($i['decimalLatitude']));
                     //array_push($temporaryArray, $i['decimalLongitude']);
                     //array_push($temporaryArray, $i['decimalLatitude']);
-                    array_push($coordinatesGBIFInPHP,$localArray );
+                    array_push($coordinatesGbifInPhp,$localArray );
                     if (isset($i['year'])) {
                         if ($i['year'] != '') {
                             $coordYearsGBIF .= $i['year'] . ',';
@@ -844,13 +833,11 @@ if($specie){
             $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
             $content = file_get_contents($url);
             $json = json_decode($content, true);
-            $mesGbif = countMonths($speciesKey);
+            $monthCountGbif = getCountMonths($speciesKey);
             //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
             foreach ($json['results'] as $i) {
                 $localArray=array(strval($i['decimalLongitude']),strval($i['decimalLatitude']));
-                /*array_push($temporaryArray, $i['decimalLongitude']);
-                array_push($temporaryArray, $i['decimalLatitude']);*/
-                array_push($coordinatesGBIFInPHP,$localArray );
+                array_push($coordinatesGbifInPhp,$localArray );
                 if (isset($i['year'])) {
                     if ($i['year'] != '') {
                         $coordYearsGBIF .= $i['year'] . ',';
@@ -861,7 +848,6 @@ if($specie){
                 else {
                     $coordYearsGBIF .= '-1,';
                 }
-                //echo '_año_'.$i['year'].'_año';
                 if (!array_key_exists($i['publishingOrgKey'], $OrganizationKeyArray)) {
                     $OrganizationKeyArray[$i['publishingOrgKey']] = 1;
                 } else {
@@ -869,63 +855,55 @@ if($specie){
                 }
             }
         }
-        $regionesCoordenadasGbif=array_count_values(getCountyName($coordinatesGBIFInPHP,'gbif'));
-        //$coordinatesGBIFInPHP = implode(', ', $temporaryArray);
-        //$yearsGBIFforRange=implode(', ',$tempRange);
+        $regionesCoordenadasGbif=array_count_values(getCountyName($coordinatesGbifInPhp,'gbif'));
+
         $organizationNames=getOrganizationNames($OrganizationKeyArray);
-        $institutionNamesGBIF = $organizationNames[0];
+        $institutionNamesGbif = $organizationNames[0];
         $institutionInfo=$organizationNames[1];
-        uasort($institutionNamesGBIF,'cmpInst');
-        //$results = json_decode(file_get_contents($search_url));
-        $categorias=CalculaEjeX($yearCount,$yearCountGbif);
-        $DrillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
-        $DrillDownDataReuna=createDrilldown($yearCount,$categorias);
+        uasort($institutionNamesGbif,'cmpInst');
+        $categories=setCategoryDecades($yearCountReuna,$yearCountGbif);
+        $drillDownDataGbif=createDrilldown($yearCountGbif,$categories);
+        $drillDownDataReuna=createDrilldown($yearCountReuna,$categories);
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
-        $accumulatedYearsReuna=setAccumulatedYears($yearCount);
-
+        $accumulatedYearsReuna=setAccumulatedYears($yearCountReuna);
         $institutionDataReuna=setPieData($institutionNamesReuna);
-        $institutionDataGbif=setPieData($institutionNamesGBIF);
-
+        $institutionDataGbif=setPieData($institutionNamesGbif);
         $SpeciesObject->setSpecie(
             $specie,
-            $coordinatesReuna,
-            $coordinatesGBIFInPHP,
+            $coordinatesReunaInPhp,
+            $coordinatesGbifInPhp,
             $yearCountGbif,
-            $mesGbif,
+            $monthCountGbif,
             $institutionNamesReuna,
-            $institutionNamesGBIF,
+            $institutionNamesGbif,
             $monthCountReuna,
-            $DrillDownDataGbif,
-            $yearCount,
+            $drillDownDataGbif,
+            $yearCountReuna,
             $coordYearsREUNA,
             $speciesKey,
             $search,
-            $totalGBIF,
-            $totalReunaConCoordenadas,
+            $totalGbifWithCoordinates,
+            $totalReunaWithCoordinates,
             $totalReuna,
-            $DrillDownDataReuna,
+            $drillDownDataReuna,
             $categoryYears,
             $accumulatedYearsGbif,
             $accumulatedYearsReuna,
-            $REUNA,
+            $reuna,
             $coordYearsGBIF,
-            $totalEnGBIF,
-            $categorias,
-            $nombreEspecieAutor,
-            $jerarquia,
+            $totalInGbif,
+            $categories,
+            $nameSpecieAuthor,
+            $hierarchy,
             $regionesCoordenadasReuna,
             $regionesCoordenadasGbif,
             $institutionDataReuna,
             $institutionDataGbif
         );
-
         $SpeciesObject->setInstitutionInfo($institutionInfo);
-
         cache_set($specie, $SpeciesObject, 'cache', 60*60*30*24); //30 dias
     }
-    //var_dump(getCountyName($coordinatesReuna,'reuna'));
-    //var_dump(getCountyName($coordinatesGBIFInPHP,'gbif'));
 }
 echo '2';
 ?>
