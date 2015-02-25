@@ -55,8 +55,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <div id="acumuladas"></div>
         <span style="color:gray">*Existen datos sin fecha de registro</span>
     </div>
+
 </div>
 <p></p>
+
 <div class="boxsec">
     <span class="species" style="margin-bottom:30px;">
         <span class="heading2">Distribución Geográfica </span>
@@ -86,7 +88,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <p></p>
         <div>
             <span class="heading3">Distribución por región:</span> <p></p>
-            <?var_dump($regionesCoordenadasReuna);?>
             XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
         </div>
         <br>
@@ -141,7 +142,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     <span>No hay datos para mostrar</span>
                 </div>
             <?php endif;?>
-            <?php if(count($monthGbif)>0):?>
+            <?php if(count(array_filter($mesGbif))>0):?>
             <div id="GbifBarrasmes"></div>
             <?php else:?>
                 <div class="sinGrafico">
@@ -411,8 +412,12 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         type: 'pie',
                         name: 'Total',
                         data: institutionDataGbif[0]
-                    }]
-                });
+                    }],
+                    annotations:[]
+                };
+                if(institutionDataGbif[0].length==0)institutionPieGbifOptions.annotations.push(noHayDatos);
+                $('#institucionPieGBIF').highcharts(institutionPieGbifOptions);
+
                 // GRAFICO TEMPORAL ANUAL GBIF
                 var chartGbifOptions={
                     chart: {
@@ -828,6 +833,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     var source = new ol.source.Vector({
         features: features
     });
+
     var clusterSource = new ol.source.Cluster({
         distance: 8,
         source: source
