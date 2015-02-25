@@ -577,6 +577,9 @@ function getResults($p,$s){
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
+function getWidth($a,$b){
+    return $b*44/$a;
+}
 $categorias=array();
 $stackedChildrensReuna=array();
 $stackedChildrensGbif=array();

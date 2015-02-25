@@ -109,46 +109,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
       <div id="temp-left">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
             <span class="heading3">Registros por año</span>
-            <?php if(count($drillDownDataReuna[1])>0): ?>
+
                 <div id="contribucionBarrasREUNA"></div>
                 <div class="suave" style="margin-top:-5px; position:relative;">
                   <?php reset($yearCountReuna);if(sizeof($yearCountReuna)==0){echo 0 .' ';}else{if(sizeof($yearCountReuna)==2 and key($yearCountReuna)==""){echo sizeof($yearCountReuna)-1 .' ';}else{if(key($yearCountReuna)==""){echo sizeof($yearCountReuna)-1 .' ';}else {echo sizeof($yearCountReuna).' ';}}};?></span><?php echo setYearSingPluReuna($yearCountReuna).$reuna; ?>
                   (<?php if(sizeof($yearCountReuna)==1){echo key($yearCountReuna);}else{reset($yearCountReuna);if(key($yearCountReuna)==""){next($yearCountReuna);echo key($yearCountReuna).' - ';end($yearCountReuna);echo key($yearCountReuna);} else{echo key($yearCountReuna).' - ';end($yearCountReuna);echo key($yearCountReuna);}};?>)
                 </div>
-            <?else:?>
-              <div class="sinGrafico">
-                  <span>No hay datos para mostrar</span>
-              </div>
-            <?endif;?>
-             <?php if(count($drillDownDataGbif[1])>0): ?>
                 <div id="contribucionBarrasGBIF"></div>
                 <div class="suave" style="margin-top:-5px; position:relative;">
                 <span class="bignumber"><?php echo sizeof($yearCountGbif).' '?></span><?php echo setYearSingPluGbif($yearCountGbif).'GBIF'; ?>
                 (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
                 </div>
-            <?else:?>
-              <div class="sinGrafico">
-                  <span>No hay datos para mostrar</span>
-              </div>
-            <?endif;?>
       </div>
         <div id="temp-right">
             <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
             <span class="heading3">Registros por mes</span>
-            <?php if(count(array_filter($monthCountReuna))>0):?>
             <div id="reunaGbifBarras"></div>
-            <?php else:?>
-                <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
-                </div>
-            <?php endif;?>
-            <?php if(count(array_filter($mesGbif))>0):?>
             <div id="GbifBarrasmes"></div>
-            <?php else:?>
-                <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
-                </div>
-            <?php endif;?>
         </div>
     <p></p>&nbsp
     <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalInGbif-end($accumulatedYearsGbif)); ?>] GBIF
@@ -167,7 +144,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             <?php echo setOrganizationSingPlu($institutionNamesReuna).' contribuido con registros de la especie'?>
             <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
         </div>
-        <?php if(count($institutionNamesReuna)>0):?>
             <div id="REUNATable"><?php print '
                 <div class="tableElement">
                     <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
@@ -178,22 +154,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 }
                 ?>
             </div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos para mostrar</span>
-            </div>
-        <?php endif;?>
         <p></p>
         <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:left;display:inline-block;width:85%;">
             Distribución relativa contribución de registros:
-            <?php if(count($institutionNamesReuna)>0):?>
             <div id="institucionPieREUNA" class="institucionPie"></div>
             <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
-                <?php else:?>
-                    <div class="sinGrafico">
-                        <span>No hay datos para mostrar</span>
-                    </div>
-                <?php endif;?>
             </div>
         </div>
     </div>
@@ -210,7 +175,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     </div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
+                    <span>No se encontraron registros asociados en esta plataforma</span>
                 </div>
             <?php endif;?>
         </td></tr>
@@ -249,7 +214,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
       </div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos para mostrar</span>
+                    <span>No se encontraron registros asociados en esta plataforma</span>
                 </div>
             <?php endif;?>
 </td></tr>
@@ -276,9 +241,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         var newFeaturesGBIF = [];
         var j = 0;
         var k = 0;
-        for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i++) {
-            if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-                var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
+        for (var i = 0; i < arrayCoordinatesGbifInJS.length; i++) {
+            if (first <= coordYearsGbif[k] && coordYearsGbif[k] <= last) {
+                var coordinateGBIF = [parseFloat(arrayCoordinatesGbifInJS[i][0]), parseFloat(arrayCoordinatesGbifInJS[i][1])];
                 var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
                 newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
                 j++;
@@ -336,7 +301,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 var dataGBIF = drillDownDataGbif[0];
                 var monthCountReuna =<?php echo json_encode($monthCountReuna); ?>;
                 var monthCountGbif =<?php echo json_encode($monthCountGbif); ?>;
-                $('#institucionPieREUNA').highcharts({
+                var noHayDatos={
+                    title: {
+                        text: '<span style="">No hay datos para mostrar</span>',
+                        style: {
+                            color: 'black'
+                        }
+                    },
+                    anchorX: "left",
+                    anchorY: "top",
+                    allowDragX: true,
+                    allowDragY: true,
+                    x: 125,
+                    y: 75
+                };
+                var y=0;
+
+                var institutionPieReunaOptions={
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: null,
@@ -355,7 +336,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     plotOptions: {
                         pie: {
-                            size: 170,
                             allowPointSelect: true,
                             cursor: 'pointer',
                             dataLabels: {
@@ -373,10 +353,15 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     series: [{
                         type: 'pie',
                         name: 'Total',
-                        data: institutionNamesReuna//data[0]
-                    }]
-                });
-                $('#institucionPieGBIF').highcharts({
+                        data: institutionNamesReuna
+                    }],
+                    annotations:[]
+                };
+                console.log()
+                if(institutionNamesReuna.length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
+                $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
+
+                var institutionPieGbifOptions={
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: null,
@@ -395,7 +380,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     plotOptions: {
                         pie: {
-                            size: 250,
                             allowPointSelect: true,
                             cursor: 'pointer',
                             dataLabels: {
@@ -493,15 +477,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                                 s += 'Click to return.';
                             }
                             return s;
-                        },
-                        positioner: function () {
-                            return { x: 0, y: 0 };
                         }
                     },
                     series: [{
                         name: name,
                         data: dataGBIF
-                        //color: 'white'
                     }],
                     exporting: {
                         enabled: false
@@ -512,30 +492,23 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     legend: {
                         enabled:false
                     },
-                    annotations: [{
-                        title: {
-                            text: '<span style="">No hay datos para mostrar</span>',
-                            style: {
-                                color: 'black'
-                            }
-                        },
-                        anchorX: "left",
-                        anchorY: "top",
-                        allowDragX: true,
-                        allowDragY: true,
-                        x: 50,
-                        y: 50
-                    }]
+                    annotations: []
                 };
+                y=0;
+                for(var i=0;i<dataGBIF.length;i++){
+                    y+=dataGBIF[i]['y'];
+                }
+                if(y==0)chartGbifOptions.annotations.push(noHayDatos);
                 chartGBIF = new Highcharts.Chart(chartGbifOptions);
+
                 // GRAFICO TEMPORAL ANUAL REUNA
-                if(dataREUNA.length>0)chartREUNA = new Highcharts.Chart({
+                var chartReunaOptions={
                     chart: {
                         renderTo: 'contribucionBarras<?php echo $reuna; ?>',
                         type: 'column'
                     },
                     title: {
-                        text: 'Registros',
+                        text: '<?php echo $reuna; ?>',
                         style: {
                             fontSize: '14px',
                             fontWeight: 'bold'
@@ -548,7 +521,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                             style: {
 
                                 color: '#000000'
-                                //font: '11px Trebuchet MS, Verdana, sans-serif'
                             }
                         },
                         lineColor: '#666'
@@ -609,7 +581,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     series: [{
                         name: name,
                         data: dataREUNA
-                        //color: 'white'
                     }],
                     exporting: {
                         enabled: false
@@ -619,10 +590,17 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     legend: {
                         enabled:false
-                    }
-                });
+                    },
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<dataREUNA.length;i++){
+                    y+=dataREUNA[i]['y'];
+                }
+                if(y==0)chartReunaOptions.annotations.push(noHayDatos);
+                chartREUNA = new Highcharts.Chart(chartReunaOptions);
                 // GRAFICO TEMPORAL MENSUAL REUNA
-                $('#reunaGbifBarras').highcharts({
+                var reunaGbifBarrasOptions={
                     chart: {
                         type: 'column'
                     },
@@ -676,12 +654,19 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     series: [{
                         name: '<?php echo $reuna; ?>',
-                        data: monthCountReuna//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2, 1, 0]//monthCount//
-                    },
-                    ]
-                });
+                        data: monthCountReuna
+                    }
+                    ],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<monthCountReuna.length;i++){
+                    y+=monthCountReuna[i];
+                }
+                if(y==0)reunaGbifBarrasOptions.annotations.push(noHayDatos);
+                $('#reunaGbifBarras').highcharts(reunaGbifBarrasOptions);
                 // GRAFICO TEMPORAL MENSUAL GBIF
-                $('#GbifBarrasmes').highcharts({
+                var gbifBarrasMesOptions={
                     chart: {
                         type: 'column'
                     },
@@ -735,12 +720,19 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     },
                     series: [{
                         name: 'GBIF',
-                        data: monthCountGbif//[2, 2, 4, 6, 10, 16, 26, 41, 68, 110, 178, 281]
+                        data: monthCountGbif
                     },
-                    ]
-                });
+                    ],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<monthCountGbif.length;i++){
+                    y+=monthCountGbif[i];
+                }
+                if(y==0)gbifBarrasMesOptions.annotations.push(noHayDatos);
+                $('#GbifBarrasmes').highcharts(gbifBarrasMesOptions);
                 // GRAFICO TEMPORAL ACUMULACION
-                $('#acumuladas').highcharts({
+                var acumulatedOptions={
                     chart: {
                         type: 'area'
                     },
@@ -748,7 +740,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         enabled: false
                     },
                     legend: {
-                        //itemWidth: 150
                         adjustChartSize: true
                     },
                     title: {
@@ -803,17 +794,28 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         color:'#53AD25'
                     },{
                         name: '<?php echo $reuna; ?>',
-                        data:accumulatedDataReuna,
+                        data: accumulatedDataReuna,
                         color:'#000000'
-                    }]
-                });
+                    }],
+                    annotations:[]
+                };
+                y=0;
+                for(var i=0;i<accumulatedDataGbif.length;i++){
+                    y+=accumulatedDataGbif[i];
+                }
+                for(var i=0;i<accumulatedDataReuna.length;i++){
+                    y+=accumulatedDataReuna[i];
+                }
+                if(y==0)acumulatedOptions.annotations.push(noHayDatos);
+                $('#acumuladas').highcharts(acumulatedOptions);
             }
         }
+
     })(jQuery);
     var arrayCoordinatesReunaInJS =<?php echo json_encode($coordinatesReunaInPhp);?>;
-    var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGbifInPhp);?>;
-    var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
-    var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
+    var arrayCoordinatesGbifInJS =<?php echo json_encode($coordinatesGbifInPhp);?>;
+    var coordYearsReuna =<?php if(isset($coordYearsReuna)&&$coordYearsReuna!="")echo "[".$coordYearsReuna."]";else{echo "[]";}?>;
+    var coordYearsGbif =<?php if(isset($coordYearsGbif)&&$coordYearsGbif!="")echo "[".$coordYearsGbif."]";else{echo "[]";}?>;
     var largo = (arrayCoordinatesReunaInJS.length);
     if (largo > 0) {
         var features = new Array(largo);
@@ -924,11 +926,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         renderer: 'canvas',
         view: mapView
     });
-    var largoGBIF = (arrayCoordinatesGBIFInJS.length);
+    var largoGBIF = (arrayCoordinatesGbifInJS.length);
     if (largoGBIF > 0) {
         var featuresGBIF = new Array(largoGBIF);
-        for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
-            var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
+        for (var i = 0; i < arrayCoordinatesGbifInJS.length; i ++) {
+            var coordinateGBIF = [parseFloat(arrayCoordinatesGbifInJS[i][0]), parseFloat(arrayCoordinatesGbifInJS[i][1])];
             var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
             featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
         }

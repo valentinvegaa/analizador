@@ -28,7 +28,7 @@ Explore los resultados:
         <div id="left-b-index">
             <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
             <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
+            <div class="line"><span class="bignumber"><?php echo $totalGbifWithCoordinates; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
             <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
         </div>
     </div>
@@ -38,7 +38,7 @@ Explore los resultados:
             <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)))?></span> años con registros en la base de datos Reuna</div>
             <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
             <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGBIF);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
+            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGbif);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>

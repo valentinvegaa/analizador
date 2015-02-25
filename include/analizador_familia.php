@@ -10,7 +10,7 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
-echo isset($familyKey) ? $familyKey : '';
+//echo isset($familyKey) ? $familyKey : '';
 //var_dump($speciesFound);
 //var_dump($yearCountGbif);
 ?>
@@ -20,124 +20,83 @@ echo isset($familyKey) ? $familyKey : '';
         <input type="submit" value="Search"/>
     </form>
 </div>-->
-<div class="nombre-completo"><span style="color: darkgray">FAMILIA </span><?php if (isset($family)) echo $family; ?>
-</div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
-<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGBIF; ?></b></div>
-<div style="font-size: 1.2em;">Observaciones no georeferencias en REUNA: <b><?php echo $totalReuna-$totalReunaConCoordenadas; ?></b></div>
 
-Explore los resultados:
-<div id="index">
-    <div id="left-index">
-        <div id="left-t-index">
-            <div class="title-a">Composición Taxonómica</div>
-            <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($speciesFound); ?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
-            <div class="line"><a href="#GbifStacked"><span><?php  //sizeof(FamilyChildrens($familyKey));?> Especies</span> en la base de datos GBIF.</a></div>
-            <div class="line">
-                <b><?php echo isset($countSpecies)?$countSpecies:''; ?> Especies</b> (<?php echo sizeof($speciesFound); ?> especies encontradas en CHILE)<br>
-            </div>
-            <div class="endline">Última especie del Genero ingresado a <?php echo $REUNA; ?>:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
-        </div>
-        <div id="left-b-index">
-            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
-            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
+<div class="summary1">
+    <div class="nombre-completo"><span style="color: darkgray">FAMILIA </span>
+        <br>
+        <span class="titspecies"><?php $i=0;if (isset($nameSpecieAuthor)) $editado=str_replace('"','',$nameSpecieAuthor);$editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);$editado4=explode(' ',$editado3);
+            foreach($editado4 as $value){$i+=1;if($i==2){echo '( ';}echo $value.' ';}echo ')'; ?>
+        </span>
+        <br>
+        <div id="jerarquia"><span> <?php echo str_replace('"','',$hierarchy);?></span>
+        </div><br>
+        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $familyKey;?></span>
+        <div class="linea_hor"></div>
+    </div>
+    <div class="summary-left">
+        <div id="boxleft">
+            <span class="little">Contenido en fuentes de datos: </span> <br/>
+            <b>
+            <span class="Reuna">
+            <span style="font-size: 2.5em;"><?php echo $totalReuna.' '; ?></span><?php echo setRegistrosSingPlu($totalReuna).$reuna; ?>
+            </span>
+                &nbsp &nbsp &nbsp
+            <span class="GBIF">
+            <span style="font-size: 2em;"> <?php echo $totalInGbif.' '; ?></span><?php echo setRegistrosSingPlu($totalInGbif).'GBIF'; ?>
+            </span>
+            </b>
         </div>
     </div>
-    <div id="right-index">
-        <div id="right-t-index">
-            <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos GBIF</div>
-            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></span></div>
-            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
-        </div>
-        <div id="right-b-index">
-            <div class="title-b"><a href="#institucion">Instituciones</a></div>
-            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Instituciones (<?php echo $REUNA; ?>) han contribuido con registros de la Familia <?if (isset($family)) echo $family;?></div>
-            <div class="line"><span><?php echo sizeof($institutionNamesGBIF)?></span> Instituciones (GBIF) han contribuido con registros de la Familia <?if (isset($family)) echo $family;?></div>
+    <!--<div id="summary-right">
+        <div id="acumuladas"></div>
+        <span style="color:gray">*Existen datos sin fecha de registro</span>
+    </div>-->
 
-        </div>
-    </div>
 </div>
-<div class="wraper-container" style="border: thick; border-color: black;">
-    <div class="left" id="temporal">
-        <div class="title-a subtitulo">Distribución Temporal</div>
-        <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
-        <?php if(count($drillDownDataReuna[0])>0&&count($drillDownDataReuna[1])>0):?>
-            <div id="contribucionBarrasREUNA"></div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-        <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
-            <div id="contribucionBarrasGBIF"></div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos en GBIF o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-    </div>
-    <div id="containers geografica" class="containers">
-        <div class="title-a subtitulo">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> Ocurrencias Georeferenciadas, correspondiente al <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+<p></p>
+
+<div class="boxsec">
+    <span class="species" style="margin-bottom:30px;">
+        <span class="heading2">Distribución Geográfica </span>
+        <span style="font-size: 1.3em;"> registros de la especie
+        <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>
+    en Chile </span>
+    </span>
+    <!--<span class="species"> <?php if (isset($family)) echo $family; ?> en Chile</span>-->
+    <div id="geo-left">
         <div id="mapContainer" class="mapContainer">
-            <div class="mapTitle"><?php echo $REUNA; ?></div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $reuna; ?></div>
+            <div id="legend"></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
-            <div class="mapTitle">GBIF</div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;">GBIF</div>
         </div>
-        <div id="slider-range"></div>
-        <input type="text" id="amount" readonly>
+    </div>
+    <div id="right_geo">
+        <p></p>
+        <div class="heading3">Datos Georeferenciados</div>
+        <span style="font-size:1.1em"><?php echo round($totalReunaWithCoordinates*100/$totalReuna,1);?>% de los registros en <?php echo $reuna; ?></span>
+        <span class="suave">(n=<?php echo $totalReunaWithCoordinates; ?>)</span>
+        <br>
+        <span style="font-size:1.1em"><?php echo round($totalGbifWithCoordinates*100/$totalInGbif,1);?>% de los registros en GBIF</span>
+        <span class="suave">(n=<?php echo $totalGbifWithCoordinates; ?>)</span>
+        <p></p>
+        <p></p>
+        <div>
+            <span class="heading3">Distribución por región:</span> <p></p>
+            XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
+        </div>
+        <br>
+        <strong><span class="suave">Filtro temporal:</span></strong>
+        <div id="slider-range" style="clear: both; bottom: -10px;"></div>
+        <div style="widt:100%">
+            <input type="text"  id="amountL" readonly style="float:left;border:0; position:relative; bottom: -10px; color:#000000;">
+            <input type="text"  id="amountR" readonly style="text-align:right; float:right;border:0; position:relative; bottom: -10px; color:#000000;">
+        </div>
     </div>
 </div>
-<div class="wraper-container" style="padding-top: 40px;">
-    <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
-    <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
-    <?php if(count($stackedChildrens)>0):?>
-        <div id="ReunaStacked"></div>
-    <?php else:?>
-        <div class="sinGrafico">
-            <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-        </div>
-    <?php endif;?>
-    <?php if(count($stackedChildrensGbif)>0):?>
-        <div id="GbifStacked"></div>
-    <?php else:?>
-        <div class="sinGrafico">
-            <span>No hay datos en GBIF o hay problemas con el indice.</span>
-        </div>
-    <?php endif;?>
-    <div class="title-a subtitulo">Instituciones</div>
-    <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
-    <div style="width: 45%;float:left">
-        <b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros
-        <span style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span>
-    </div>
-    <div style="width: 45%;float:right">
-        <b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros
-        <span style="color: darkgray">Base de Datos GBIF</span>
-    </div>
-    <!--<div id="institucionBar" class="institucionBar"></div>-->
-    <div id="institucionPieREUNA" class="institucionPie"></div>
-    <div id="institucionPieGBIF" class="institucionPie"></div>
-    <div id="REUNATable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionDataReuna[0] as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
-    <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionDataGbif[0] as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$value[0].'</div><div class="value">'.$value[1].'</div></div>';
-        }
-        ?></div>
-    <div id="registrosPorInvestigador"><?print $salida;?></div>
-</div>
+
+
 <script>
 
 (function ($) {
@@ -145,7 +104,7 @@ Explore los resultados:
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1', '1889', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -153,11 +112,13 @@ Explore los resultados:
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin año' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin año' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amountL").val(steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]]));
+                    $("#amountR").val(steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]]));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
-            $("#amount").val('Sin año' + " - " + steps[$("#slider-range").slider("values", 1)]);
+            $("#amountL").val('Sin fecha');
+            $("#amountR").val(steps[$("#slider-range").slider("values", 1)]);
         }
     };
     var chartREUNA, colors = Highcharts.getOptions().colors;
@@ -179,18 +140,13 @@ Explore los resultados:
             var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
             var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
             var name = 'Decada';
-            var yearCountGBIF =<?php echo json_encode($yearCountGbif); ?>;
             var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
             var dataREUNA = tempREUNA[0];
             var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
-            //var dataGBIF = tempGBIF[0];
-            //var monthCount =<?php echo json_encode($monthCount); ?>;
-            //var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-            var stackedReunaData=<?php echo json_encode($stackedChildrens);?>;
+            var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
             var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
-            // console.log(tempGBIF[0]);
-            // console.log(tempGBIF[1]);
-            //console.log(yearCountGBIF)
+            console.log(stackedGbifData);
+
             $('#institucionPieREUNA').highcharts({
                 chart: {
                     plotBackgroundColor: null,
@@ -291,7 +247,7 @@ Explore los resultados:
                 },
                 yAxis: {
                     title: {
-                        text: 'Observ. <?php echo $REUNA; ?>',
+                        text: 'Observ. <?php echo $reuna; ?>',
                         style: {
                             color: '#000000',
                             fontSize: '12px',
@@ -503,7 +459,7 @@ Explore los resultados:
                         renderTo: 'ReunaStacked'
                     },
                     title: {
-                        text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
+                        text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $reuna; ?>)'
                     },
                     credits: {
                         enabled: false
@@ -588,21 +544,12 @@ function changeFeatures(first, last) {
         }
         k++;
     }
-    /*
-     for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-     if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-     var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
-     newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-     j++;
-     }
-     k++;
-     }*/
     var newFeaturesGBIF = [];
     j = 0;
     k = 0;
 
     for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
-        if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
+        if (first <= coordYearsGbif[k] && coordYearsGbif[k] <= last) {
             var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
             var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
             //var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
@@ -611,26 +558,15 @@ function changeFeatures(first, last) {
         }
         k++;
     }
-
-    /* for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-     if (first <= coordYearsGBIF[k] && coordYearsGBIF[k] <= last) {
-     var tempLonlatGBIF = ol.proj.transform([arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]], 'EPSG:4326', 'EPSG:3857');
-     newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-     j++;
-     }
-     k++;
-     }*/
     ;
     console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
     source.addFeatures(newFeatures);
 }
 var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
-var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
-var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
-var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-//console.log(arrayCoordinatesInJS);
-
+var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGbif);?>;
+var coordYearsReuna =<?php if(isset($coordYearsReuna)&&$coordYearsReuna!="")echo "[".$coordYearsReuna."]";else{echo "[]";}?>;
+var coordYearsGbif =<?php if(isset($coordYearsGbif)&&$coordYearsGbif!="")echo "[".$coordYearsGbif."]";else{echo "[]";}?>;
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
@@ -684,7 +620,6 @@ var clusters = new ol.layer.Vector({
         }
         return style;
     }
-    //projection: ol.proj.get('EPSG:4326')
 });
 
 var geoJsonSource = new ol.source.GeoJSON({
@@ -724,14 +659,6 @@ var geoJson = new ol.layer.Vector({
         }
         return styleCache[text];
     }
-
-    /*style: new ol.style.Style({
-     stroke: new ol.style.Stroke({color: 'blue', width: 0.5
-     }),
-     fill: new ol.style.Fill({
-     color: 'rgba(255, 255, 0, 0.5)'
-     })
-     })*/
 });
 var map = new ol.Map({
     target: 'mapContainer',
@@ -816,9 +743,6 @@ collection.on('add', function () {
             });
         }
     );
-
-    //console.log(featuresinBox);
-    //featuresSelected.push(e);
 });
 collection.on('remove', function () {
     console.log('remove');
@@ -852,7 +776,6 @@ collectionGBIF.on('add', function () {
         }
     );
 });
-//collection.on('remove', function(){console.log('remove');});
 var changeInteraction = function () {
     select = selectClick;
     map.addInteraction(select);
@@ -875,10 +798,8 @@ boxControl.on('boxend', function () {
             featuresinBox.push(e);
         }
     });
-    //document.getElementById("msg").innerHTML = featuresinBox.length;
     console.log(featuresinBox);
 });
 changeInteraction();
-//mapGBIF.bindTo('layergroup', map);
 mapGBIF.bindTo('view', map);
 </script>

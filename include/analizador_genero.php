@@ -23,7 +23,7 @@ echo isset($genusKey) ? $genusKey : '';
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
-<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGBIF; ?></b></div>
+<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGbifWithCoordinates; ?></b></div>
 <div style="font-size: 1.2em;">Observaciones sin fecha registrada en GBIF: <b><?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?></b></div>
 <div style="font-size: 1.2em;">Observaciones no georeferencias en REUNA: <b><?php echo $totalReuna-$totalReunaConCoordenadas; ?></b></div>
 <div style="font-size: 1.2em;">Observaciones sin fecha registrada en REUNA: <b><?php echo ($totalReuna-end($accumulatedYearsReuna)); ?></b></div>
@@ -40,7 +40,7 @@ Explore los resultados:
         <div id="left-b-index">
             <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
             <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
+            <div class="line"><span class="bignumber"><?php echo $totalGbifWithCoordinates; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
             <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
         </div>
     </div>
@@ -100,7 +100,7 @@ Explore los resultados:
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
     <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
-    <?php if(count($stackedChildrens)>0):?>
+    <?php if(count($stackedChildrensReuna)>0):?>
         <div id="ReunaStacked"></div>
     <?php else:?>
         <div class="sinGrafico">
@@ -741,9 +741,9 @@ function changeFeatures(first, last) {
     });
 })(jQuery);
 var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
-var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+var arrayCoordinatesGBIFInJS =<?php if($coordinatesGbif!="")echo "[".$coordinatesGbif."]";else{echo "[]";}?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
-var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
+var coordYearsGBIF =<?php if(isset($coordYearsGbif)&&$coordYearsGbif!="")echo "[".$coordYearsGbif."]";else{echo "[]";}?>;
 console.log(arrayCoordinatesInJS);
 console.log(arrayCoordinatesGBIFInJS);
 console.log(coordYearsGBIF);
