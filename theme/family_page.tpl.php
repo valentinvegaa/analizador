@@ -8,7 +8,7 @@
 class Family{
     private $hierarchy='';//jerarquia taxonomica
     private $nameSpecieAuthor;
-    private $nombreFamilia='';
+    private $familyName='';
     private $generos=array();//
     private $especies=array();//
     private $cantidadGeneros=0;//
@@ -41,7 +41,7 @@ class Family{
         $this->institutionInfo=$institutionInfo;
     }
     public function setFamily(
-        $nombreFamilia,
+        $familyName,
         $generos,
         $especies,
         $cantidadGeneros,
@@ -73,7 +73,7 @@ class Family{
         $hierarchy,
         $nameSpecieAuthor
     ){
-        $this->nombreFamilia=$nombreFamilia;
+        $this->familyName=$familyName;
         $this->generos=$generos;
         $this->especies=$especies;
         $this->cantidadGeneros=$cantidadGeneros;
@@ -286,15 +286,6 @@ function setOrganizationSingPlu($var){
     else{
         return 'organizaciones han';
     }
-}
-function getCountMonths($taxonKey)
-{
-    $returnVal = array();
-    for ($i = 1; $i < 13; $i++) {
-        $months = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&month=' . $i . '&limit=1'));
-        $returnVal[$i - 1] = $months->count;
-    }
-    return $returnVal;
 }
 function getCountYears($taxonKey, $count)
 {
@@ -556,30 +547,6 @@ function createDrilldown($var,$categories){//function setYearCountData(yearCount
     return array($out,$decadas2);
 
 }
-function createDrilldownCategories($var){
-    $decadas=array();
-    for($i=0;$i<sizeof($var);$i++){
-        $dec=substr($var[$i],0,3).'0';
-        if(!in_array($dec,$decadas)){
-            array_push($decadas,$dec);
-        }
-    }
-    return $decadas;
-}
-function setCategoryYears(){
-    $anyo=100;
-    $result=array();
-    $year=date('Y');
-    $n=0;
-    for($i=0;$i<=$anyo;$i++){
-        $n=$year-$anyo+$i;
-        $ene=strval($n);
-        array_push($result,$ene);
-    }
-
-    return $result;
-
-}
 function setPieData($graph){
     $data=$graph;
     $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
@@ -631,7 +598,6 @@ $nameSpecieAuthor;
 $categories=array();
 $reuna='REUNA';
 $limit = 10000;
-$someVar = "";
 $results = false;
 $coordinatesReuna = array();
 $coordinatesGbif = array();
@@ -718,7 +684,7 @@ if ($family) {
         $totalGbifWithCoordinates=$results->getTotalGbifWithCoordinates();
         $institutionNamesReuna=$results->getInstitutionNamesReuna();
         $institutionNamesGbif=$results->getInstitutionNamesGbif();
-        uasort($institutionNamesGbif,'cmpInst');
+        //uasort($institutionDataGbif[0],'cmpInst');
         $countSpecies=$results->getCountSpecies();
         $speciesFound=$results->getSpeciesFound();
         $totalInGbif=$results->getTotalInGbif();
@@ -844,7 +810,6 @@ if ($family) {
                     $content = file_get_contents($url);
                     $json = json_decode($content, true);
                     isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
-                    $someVar = getCountMonths($speciesKey);
                     foreach ($json['results'] as $i) {
                         $localArray=array($i['decimalLongitude'],$i['decimalLatitude']);
                         array_push($coordinatesGbif,$localArray );
@@ -869,7 +834,6 @@ if ($family) {
                 $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
                 $content = file_get_contents($url);
                 $json = json_decode($content, true);
-                $someVar =getCountMonths($speciesKey);
                 //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
                 foreach ($json['results'] as $i) {
                     $localArray=array(strval($i['decimalLongitude']),strval($i['decimalLatitude']));

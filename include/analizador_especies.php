@@ -11,19 +11,8 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
-//echo $path . '     _path';
-//var_dump($yearCountGbif);
-//var_dump($categoriesGBIF);
 ?>
 </span>
-
-</div>
-<!--<div>
-     <form  accept-charset="utf-8" method="post">
-<input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
-<input type="submit" value="Search"/>
-</form>
-  </div>-->
 <p></p>
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">ESPECIE </span>
@@ -333,7 +322,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         style: '"fontSize": "14px"'
                     },
                     tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>',
+                        positioner: function () {
+                            return { x: 0, y: 0 };
+                        }
                     },
                     plotOptions: {
                         pie: {
@@ -377,7 +369,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         style: '"fontSize": "14px"'
                     },
                     tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>',
+                        positioner: function () {
+                            return { x: 0, y: 0 };
+                        }
                     },
                     plotOptions: {
                         pie: {
@@ -478,6 +473,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                                 s += 'Click to return.';
                             }
                             return s;
+                        },
+                        positioner: function () {
+                            return { x: 0, y: 0 };
                         }
                     },
                     series: [{
@@ -577,6 +575,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                                 s += 'Click to return.';
                             }
                             return s;
+                        },
+                        positioner: function () {
+                            return { x: 0, y: 0 };
                         }
                     },
                     series: [{
@@ -640,7 +641,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         '<td style="padding:0"><b>{point.y}</b></td></tr>',
                         footerFormat: '</table>',
                         shared: true,
-                        useHTML: true
+                        useHTML: true,
+                        positioner: function () {
+                            return { x: 0, y: 0 };
+                        }
                     },
                     plotOptions: {
 
@@ -707,7 +711,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         '<td style="padding:0"><b>{point.y}</b></td></tr>',
                         footerFormat: '</table>',
                         shared: true,
-                        useHTML: true
+                        useHTML: true,
+                        positioner: function () {
+                            return { x: 0, y: 0 };
+                        }
                     },
                     plotOptions: {
                         column: {
@@ -769,7 +776,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         '<td style="padding:0"><b>{point.y}</b></td></tr>',
                         footerFormat: '</table>',
                         shared: true,
-                        useHTML: true
+                        useHTML: true,
+                        positioner: function () {
+                            return { x: 0, y: 0 };
+                        }
                     },
                     plotOptions: {
                         area: {
