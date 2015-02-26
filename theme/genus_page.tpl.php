@@ -234,7 +234,7 @@ $solr = new Apache_Solr_Service("$USR:$PSWD@$HOST", 80, $SOLRPATH);
 $search = substr(current_path(), strripos(current_path(), '/') + 1);
 if ($search) {
     $parameters = array(
-        'fq' => 'dwc.genus_s:'.$search,
+        'fq' => 'dwc.genus_mt:'.$search,
         'fl' => 'dwc.identifiedBy_s,dwc.institutionCode_s',
         'facet' => 'true',
         'facet.field' => 'dwc.identifiedBy_s',
@@ -287,7 +287,7 @@ if ($search) {
         $yearCountGbif=$results->getYearCountGbif();
         $institutionNamesReuna=$results->getInstitutionNames();
         $institutionNamesGBIF=$results->getInstitutionNamesGbif();
-        uasort($institutionNamesGBIF[0],'cmpInst');
+        uasort($institutionNamesGBIF,'cmpInst');
         $yearCount=$results->getYearCount();
         $monthCount=$results->getMonthCount();
         $mesGbif=$results->getSomeVar();
@@ -462,7 +462,7 @@ if ($search) {
         $organizationNames=getOrganizationNames($OrganizationKeyArray);
         $institutionNamesGBIF = $organizationNames[0];
         $institutionInfo=$organizationNames[1];
-        uasort($institutionNamesGBIF[0],'cmpInst');
+        uasort($institutionNamesGBIF,'cmpInst');
         $institutionDataReuna=setPieData($institutionNamesReuna);
         $institutionDataGbif=setPieData($institutionNamesGBIF);
         $childrenNames=getChildrenNames($genusKey);

@@ -515,10 +515,10 @@ function cmp($a,$b){
     return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
 }
 function cmpInst($a,$b){
-    if ($a[1] == $b[1]) {
+    if ($a == $b) {
         return 0;
     }
-    return ($b[1] < $a[1]) ? -1 : 1;
+    return ($b < $a) ? -1 : 1;
 }
 
 function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
@@ -593,4 +593,179 @@ function FamilyChildrens($key){
         };
     }
     return $result;
+}
+
+function setInvestigatorSingPlu($var){
+    $tamano=count($var);
+    if($tamano==0 or $tamano==1){
+        return 'investigador ha';}
+    else{
+        return 'investigadores han';
+    }
+}
+function setRegistrosSingPlu($var){
+    if($var==0 or $var==1)
+    {return 'registro en ';}
+    else{ return 'registros en ';}
+}
+function setYearSingPluReuna($var){
+    $tamano=sizeof($var);
+    reset($var);
+    if($tamano==2 and key($var)=="" ){
+        $tamano-=1;
+    }
+    else{
+        if(key($var)==""){
+            $tamano-=1;
+        }
+    }
+    if($tamano==0 or $tamano==1){
+        return 'año con registro en ';}
+    else{
+        return 'años con registros en ';
+    }
+}
+function setYearSingPluGbif($var){
+    $tamano=sizeof($var);
+    reset($var);
+    if($tamano==0 or $tamano==1){
+        return 'año con registro en ';}
+    else{
+        return 'años con registros en ';
+    }
+}
+function setOrganizationSingPlu($var){
+    $tamano=sizeof($var);
+    if($tamano==0 or $tamano==1){
+        return 'organización ha';}
+    else{
+        return 'organizaciones han';
+    }
+}
+function getCountMonths($taxonKey)
+{
+    $returnVal = array();
+    for ($i = 1; $i < 13; $i++) {
+        $months = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&month=' . $i . '&limit=1'));
+        $returnVal[$i - 1] = $months->count;
+    }
+    return $returnVal;
+}
+function getCountYears($taxonKey, $count)
+{
+    $returnVal = array();
+    $offset = 0;
+    $localCount = $count;
+    if ($localCount > 300) {
+        while ($localCount > 0) {
+            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
+            foreach ($years['results'] as $i) {
+                if (!array_key_exists($i['year'], $returnVal)) {
+                    $returnVal[$i['year']] = 1;
+                } else {
+                    $returnVal[$i['year']]++;
+                }
+            }
+            $localCount -= 300;
+            $offset += 300;
+        }
+    } else {
+        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
+        foreach ($years['results'] as $i) {
+            if (!array_key_exists($i['year'], $returnVal)) {
+                $returnVal[$i['year']] = 1;
+            } else {
+                $returnVal[$i['year']]++;
+            }
+        }
+    }
+    ksort($returnVal);
+    return $returnVal;
+}
+function getFamilyChildrens($key){
+
+    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
+    $result=array();
+    $genusCount=$children['count'];
+    $offset=0;
+    $genus=array();
+    if($genusCount>300){
+        while($genusCount>0){
+            foreach($children['results'] as $i){
+                array_push($genus,array($i['genus']=>$i['key']));
+            };
+            $genusCount-=300;
+            $offset+=300;
+            $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&offset='.$offset.'&highertaxon_key='.$key), true);
+        }
+    }
+    else{
+        foreach($children['results'] as $i){
+            array_push($genus,array($i['genus'],$i['key']));
+        };
+    }
+    $result=array();
+    foreach($genus as $key=>$value) {
+        $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/' . $value . '/children/?limit=300'), true);//106311492
+
+        foreach ($children['results'] as $i) {
+            $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey=' . $i['nubKey'] . '&country=CL&isGeoreferenced=true'), true);
+            if ($count > 0) {
+                //$result.="{'name':'".$i['species']."','data':[".$count."]},";
+                $result[$i['species']] = $count;
+            }
+            //echo 'species '.$i['species'].' count '.$count;
+        };
+    }
+    return $result;
+}
+function getSuma($data,$decada){
+    $sum=0;
+    foreach($data as $key=>$value){
+        if(substr($key,0,3)==$decada) {
+            $sum +=$value;//duda
+        }
+    }
+    return $sum;
+}
+function setCategoryDecades($var1,$var2){
+    $categories=array();
+    reset($var1);
+    $anyo=date('Y');
+    if(sizeof($var1)==0){
+        $uno=1900;
+    }
+    else{
+        if(key($var1)==''){
+            $uno=1900;
+        }else{
+            $uno=key($var1);}
+    }
+    reset($var2);
+    if(sizeof($var2)==0){
+        $dos=1900;
+    }
+    else{
+        if(key($var2)==""){
+            next($var2);
+            $dos=key($var2);
+        }else{
+            $dos=key($var2);}
+    }
+    if($uno<=$dos){
+        $ini=substr($uno, 0, 3).'0';
+        $inicio=(int)$ini;
+        for($i=$inicio;$i<=$anyo;$i+=10){
+            array_push($categories,$i);
+        }
+    }
+    else{
+        $ini=substr($dos, 0, 3).'0';
+        $inicio=(int)$ini;
+        for($i=$inicio;$i<=$anyo;$i+=10){
+            array_push($categories,$i);
+        }
+    }
+    return $categories;
+
 }

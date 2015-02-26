@@ -11,6 +11,7 @@ $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
 ?>
+
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">FAMILIA </span>
         <br>
@@ -79,7 +80,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
         <br>
         <strong><span class="suave">Filtro temporal:</span></strong>
         <div id="slider-range" style="clear: both; bottom: -10px;"></div>
-        <div style="widt:100%">
+        <div style="width:100%">
             <input type="text"  id="amountL" readonly style="float:left;border:0; position:relative; bottom: -10px; color:#000000;">
             <input type="text"  id="amountR" readonly style="text-align:right; float:right;border:0; position:relative; bottom: -10px; color:#000000;">
         </div>
@@ -90,7 +91,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     <tr><td class="boxinstituc">
             <div class="heading2" >Distribución Temporal  &nbsp</div>
     <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la evolución temporal de los registros por año en Chile de
-        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span> en ambas fuentes de datos.
+        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>en ambas fuentes de datos.
     </span>
             <div id="temp-left">
                 <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
@@ -123,22 +124,22 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-            <div class="heading2" >Distribución de ocurrencias por género  &nbsp</div>
+            <div class="heading2" >Distribución Taxonomica  &nbsp</div>
     <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la distribucion de los registros en Chile de
-        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span> en ambas fuentes de datos.
+        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>en ambas fuentes de datos.
     </span>
-           <?php if(count($stackedChildrensReuna)>0):?>
+            <?php if(count($stackedChildrensReuna)>0):?>
                 <div id="ReunaStacked"></div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos asociados a Chile en <?php echo $reuna; ?></span>
+                    <span>No hay datos en <?php echo $reuna; ?> o hay problemas con el indice.</span>
                 </div>
             <?php endif;?>
             <?php if(count($stackedChildrensGbif)>0):?>
                 <div id="GbifStacked"></div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos asociados a Chile en GBIF</span>
+                    <span>No hay datos en GBIF o hay problemas con el indice.</span>
                 </div>
             <?php endif;?>
         </td></tr>
@@ -161,7 +162,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
                     <div style="color: #168970;width:14%;float:right;font-size:0.9em;">Registros</div>
                 </div>';
-                        foreach($institutionDataReuna[0] as $elemento){
+                        foreach($institutionNamesReuna as $elemento){
                             print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$elemento[0]).'" target="_blank">'.$elemento[0].'</a></div><div class="value">'.$elemento[1].'</div></div>';
                         }
                         ?>
@@ -270,11 +271,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             color: color || 'white'
         });
     }
-    Drupal.behaviors.yourThemeSlider = {
+    Drupal.behaviors.analizador_biodiversidad = {
         attach: function (context, settings) {
             var institutionDataReuna =<?php echo json_encode($institutionDataReuna); ?>;
+            //console.log(institutionNamesReuna);
             var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
-            console.log(institutionDataGbif);
             var name = 'Decada';
             var drillDownDataReuna = <?php echo json_encode($drillDownDataReuna); ?>;
             var dataREUNA = drillDownDataReuna[0];
@@ -487,6 +488,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             }
             if(y==0)chartGbifOptions.annotations.push(noHayDatos);
             chartGBIF = new Highcharts.Chart(chartGbifOptions);
+
             // GRAFICO TEMPORAL ANUAL REUNA
             var chartReunaOptions={
                 chart: {
@@ -690,7 +692,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     name:'Otros',
                     data:arr,
                     index:cont,
-                    legendIndex:cont
+                    legendIndex:cont,
+                    pointWidth:28
                 });}
             if(Object.keys(stackedReunaData).length>0){
                 var k=0;
@@ -709,7 +712,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     name:'Otros',
                     data:arre,
                     index:conta,
-                    legendIndex:conta
+                    legendIndex:conta,
+                    pointWidth:28
                 });}
         }
     }

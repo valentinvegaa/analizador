@@ -95,7 +95,7 @@ echo isset($genusKey) ? $genusKey : '';
         <br>
         <strong><span class="suave">Filtro temporal:</span></strong>
         <div id="slider-range" style="clear: both; bottom: -10px;"></div>
-        <div style="widt:100%">
+        <div style="width:100%">
             <input type="text"  id="amountL" readonly style="float:left;border:0; position:relative; bottom: -10px; color:#000000;">
             <input type="text"  id="amountR" readonly style="text-align:right; float:right;border:0; position:relative; bottom: -10px; color:#000000;">
         </div>
@@ -206,13 +206,13 @@ echo isset($genusKey) ? $genusKey : '';
                             <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
                             <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div>
                         </div>';
-                        foreach($institutionDataGbif[0] as $key=>$value){
-                            $tooltip=getOrgArray($institutionInfo,$value[0]);
+                        foreach($institutionNamesGBIF as $key=>$value){
+                            $tooltip=getOrgArray($institutionInfo,$key);
                             print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['addr'][0].'&#xa;Contacto: '.$tooltip[0][0]['name'].'&#xa;Correo: '.$tooltip[0][0]['email'][0].'">
                                     <div class="key">
-                                        <a href="'.$tooltip['page'][0].'" target="_blank">'.$value[0].'</a>
+                                        <a href="'.$tooltip['page'][0].'" target="_blank">'.$key.'</a>
                                     </div>
-                                    <div class="value">'.$value[1].'</div>
+                                    <div class="value">'.$value.'</div>
                                 </div>';
                         }
                         ?></div>
@@ -793,7 +793,7 @@ function changeFeatures(first, last) {
 
                 }
                 var arr=[cont];
-                GbifStacked.addSeries({
+                if(j>15)GbifStacked.addSeries({
                     name:'Otros',
                     data:arr,
                     index:cont,
@@ -814,7 +814,7 @@ function changeFeatures(first, last) {
                     }
                 }
                 var arre=[conta];
-                ReunaStacked.addSeries({
+                if(k>15)ReunaStacked.addSeries({
                     name:'Otros',
                     data:arre,
                     index:conta,

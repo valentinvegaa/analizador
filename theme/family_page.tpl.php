@@ -5,6 +5,12 @@
  * Date: 01-12-2014
  * Time: 11:02
  */
+$queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
+$path = drupal_get_path('module', 'analizador_biodiversidad');
+include($path . '/include/functions.php');
+include($path . '/include/solrConnection.php');
+include($path . '/Apache/Solr/Service.php');
+
 class Family{
     private $hierarchy='';//jerarquia taxonomica
     private $nameSpecieAuthor;
@@ -182,422 +188,14 @@ class Family{
     }
 
 }
-$queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
-$path = drupal_get_path('module', 'analizador_biodiversidad');
-include($path . '/include/solrConnection.php');
-include($path . '/Apache/Solr/Service.php');
-function getOrgArray($instInfo,$name){
-    foreach($instInfo as $i){
-        if(strcmp($i['title'],$name)==0){
-            return $i;
-        }
-        else{}
-    }
-}
-function setInvestigatorSingPlu($var){
-    $tamano=count($var);
-    if($tamano==0 or $tamano==1){
-        return 'investigador ha';}
-    else{
-        return 'investigadores han';
-    }
-}
-function setRegistrosSingPlu($var){
-    if($var==0 or $var==1)
-    {return 'registro en ';}
-    else{ return 'registros en ';}
-}
-function makeTaxaHierarchy($i){
-    isset($i['kingdom'])?$kingdom=json_encode($i['kingdom']):$kingdom='';
-    isset($i['phylum'])?$phylum=json_encode($i['phylum']):$phylum='';
-    isset($i['class'])?$class=json_encode($i['class']):$class='';
-    isset($i['order'])?$order=json_encode($i['order']):$order='';
-    isset($i['family'])?$family=json_encode($i['family']):$family='';
-    isset($i['genus'])?$genus=json_encode($i['genus']):$genus='';
-    $result='';
-    if($kingdom!=''){
-        $result.=''.$kingdom.' > ';
-    }
-    if($phylum!=''){
-        $result.=''.$phylum.' > ';
-    }
-    if($class!=''){
-        $result.=''.$class.' > ';
-    }
-    if($order!=''){
-        $result.=''.$order.' > ';
-    }
-    if($family!=''){
-        $result.=' '.'<a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'" > '.$family.'</a>';
-    }
-    if($genus!=''){
-        $result.=' >'.'<a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'" > '.$genus.'</a>';
-    }
-    return $result;
-}
-function getCountyName($coords,$r){
-    $coordsWithCounty=array();
-    foreach($coords as $coord){
-        if(strcmp($r,'reuna')==0){
-            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.floatval($coord[0]).','.floatval($coord[1]);
-            $response=file_get_contents($url);
-            $json=json_decode($response);
-            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
-        }
-        else{
-            $url='http://www.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd|luu8216anl%2Crw%3Do5-947wdr&location='.$coord[1].','.$coord[0];
-            $response=file_get_contents($url);
-            $json=json_decode($response);
-            array_push($coordsWithCounty,array($coord,$json->results[0]->locations[0]->adminArea3));
-        }
-    }
-    return $coordsWithCounty;
-}
-function setYearSingPluReuna($var){
-    $tamano=sizeof($var);
-    reset($var);
-    if($tamano==2 and key($var)=="" ){
-        $tamano-=1;
-    }
-    else{
-        if(key($var)==""){
-            $tamano-=1;
-        }
-    }
-    if($tamano==0 or $tamano==1){
-        return 'año con registro en ';}
-    else{
-        return 'años con registros en ';
-    }
-}
-function setYearSingPluGbif($var){
-    $tamano=sizeof($var);
-    reset($var);
-    if($tamano==0 or $tamano==1){
-        return 'año con registro en ';}
-    else{
-        return 'años con registros en ';
-    }
-}
-function setOrganizationSingPlu($var){
-    $tamano=sizeof($var);
-    if($tamano==0 or $tamano==1){
-        return 'organización ha';}
-    else{
-        return 'organizaciones han';
-    }
-}
-function getCountYears($taxonKey, $count)
-{
-    $returnVal = array();
-    $offset = 0;
-    $localCount = $count;
-    if ($localCount > 300) {
-        while ($localCount > 0) {
-            $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
-            foreach ($years['results'] as $i) {
-                if (!array_key_exists($i['year'], $returnVal)) {
-                    $returnVal[$i['year']] = 1;
-                } else {
-                    $returnVal[$i['year']]++;
-                }
-            }
-            $localCount -= 300;
-            $offset += 300;
-        }
-    } else {
-        $years = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?taxonKey=' . $taxonKey . '&HAS_COORDINATE=true&country=CL&limit=' . $localCount . '&offset=' . $offset. '&year=1900,2015'), true);
-        foreach ($years['results'] as $i) {
-            if (!array_key_exists($i['year'], $returnVal)) {
-                $returnVal[$i['year']] = 1;
-            } else {
-                $returnVal[$i['year']]++;
-            }
-        }
-    }
-    ksort($returnVal);
-    return $returnVal;
-}
-function getOrganizationNames($organizations)
-{
-    $result = array();
-    $orgData=array();
-    foreach ($organizations as $key => $i) {
-        $json = json_decode(file_get_contents('http://api.gbif.org/v1/organization/' . $key), true);
-        $result[$json['title']] = $i;
-        $localTemp=array(
-            'title'=>$json['title'],
-            'page'=>$json['homepage'],
-            'addr'=>$json['address']
-        );
-        $contacts=array();
-        foreach($json['contacts'] as $j){
-            array_push($contacts,array(
-                'name'=>$j['lastName'].' '.$j['firstName'],
-                'email'=>$j['email'],
-                'phone'=>$j['phone']
-            ));
-        }
-        array_push($localTemp,$contacts);
-        array_push($orgData,$localTemp);
-    }
-    $finalResult=array($result,$orgData);
-    return $finalResult;
-}
-function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
-    //d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
-    //fab88965-e69d-4491-a04d-e3198b626e52
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
-    $result=array();
-    $genusCount=$children['count'];
-    $offset=0;
-    $genus=array();
-    if($genusCount>300){
-        while($genusCount>0){
-            foreach($children['results'] as $i){
-                array_push($genus,array($i['genus']=>$i['key']));
-            };
-            $genusCount-=300;
-            $offset+=300;
-            $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&offset='.$offset.'&highertaxon_key='.$key), true);
-        }
-    }
-    else{
-        foreach($children['results'] as $i){
-            array_push($genus,array($i['genus'],$i['key']));
-        };
-    }
-    $count=array();
-    $i=0;
-    foreach($genus as $value){
-        foreach($value as $key=>$value){
-            $localTemp=json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/search?scientificName='.$key.'&hasCoordinate=true&limit=0&country=CL'), true);//106311492
-            if(array_key_exists('count',$localTemp)&&$localTemp['count']>0){
-                $count[$key]=$localTemp['count'];
-            }
-        }
-    }
-    arsort($count);
-    return $count;
-}
-function getFamilyChildrens($key){
 
-    $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
-    $result=array();
-    $genusCount=$children['count'];
-    $offset=0;
-    $genus=array();
-    if($genusCount>300){
-        while($genusCount>0){
-            foreach($children['results'] as $i){
-                array_push($genus,array($i['genus']=>$i['key']));
-            };
-            $genusCount-=300;
-            $offset+=300;
-            $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&offset='.$offset.'&highertaxon_key='.$key), true);
-        }
-    }
-    else{
-        foreach($children['results'] as $i){
-            array_push($genus,array($i['genus'],$i['key']));
-        };
-    }
-    $result=array();
-    foreach($genus as $key=>$value) {
-        $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/' . $value . '/children/?limit=300'), true);//106311492
-
-        foreach ($children['results'] as $i) {
-            $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey=' . $i['nubKey'] . '&country=CL&isGeoreferenced=true'), true);
-            if ($count > 0) {
-                //$result.="{'name':'".$i['species']."','data':[".$count."]},";
-                $result[$i['species']] = $count;
-            }
-            //echo 'species '.$i['species'].' count '.$count;
-        };
-    }
-    return $result;
-}
-function getSuma($data,$decada){
-    $sum=0;
-    foreach($data as $key=>$value){
-        if(substr($key,0,3)==$decada) {
-            $sum +=$value;//duda
-        }
-    }
-    return $sum;
-}
-function getYears($data,$decada){
-    $years=array();
-    $i=0;
-    foreach($data as $key=>$value){
-        if(substr($key,0,3)==$decada){
-            $years[$i]=$key;
-            $i+=1;
-        }
-    }
-    $temp=$years;
-    for($i=0;$i<10;$i++){
-        $cambio=strval($i);
-        $trans=$decada.$cambio;
-        if($temp!=(int)$trans){//error
-            $years[$i]=(int)$trans;
-
-        }
-        else{
-            $years[$i]=$temp;
-        }
-    }
-    return $years;
-}
-function getData($data,$decada){
-    $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    $i=0;
-    foreach($data as $key=>$value){
-        if(substr($key,0,3)==$decada){
-            $out[substr($key,3,4)]=$value;
-            $i=$i+1;
-        }
-    }
-    return $out;
-}
-function setCategoryDecades($var1,$var2){
-    $categories=array();
-    reset($var1);
-    $anyo=date('Y');
-    if(sizeof($var1)==0){
-        $uno=1900;
-    }
-    else{
-        if(key($var1)==''){
-            $uno=1900;
-        }else{
-            $uno=key($var1);}
-    }
-    reset($var2);
-    if(sizeof($var2)==0){
-        $dos=1900;
-    }
-    else{
-        if(key($var2)==""){
-            next($var2);
-            $dos=key($var2);
-        }else{
-            $dos=key($var2);}
-    }
-    if($uno<=$dos){
-        $ini=substr($uno, 0, 3).'0';
-        $inicio=(int)$ini;
-        for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categories,$i);
-        }
-    }
-    else{
-        $ini=substr($dos, 0, 3).'0';
-        $inicio=(int)$ini;
-        for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categories,$i);
-        }
-    }
-    return $categories;
-
-}
-function createDrilldown($var,$categories){//function setYearCountData(yearCount)
-    $out=array();
-    $decadas=array();
-    $decadas2=array();
-    $deca=array();
-    $decadas2=$categories;
-    foreach($decadas2 as $value) {
-        $dec2 = substr($value, 0, 3);
-        array_push($deca,$dec2);
-    }
-    $i=0;
-    $aux=array();
-    foreach($var as $key=>$value) {
-        $dec2 = substr($key, 0, 3).'0';
-        array_push($aux,$dec2);
-    }
-    foreach($decadas2 as $value){
-        if(in_array($value,$aux)){//si existe decada en arreglo que llega
-            if(!in_array($value,$decadas)){//y si no esta agregado
-                array_push($decadas, $value);
-                $out[$i] = array(
-                    'y' => getSuma($var, $deca[$i]),//error
-                    'drilldown' => array(
-                        'name' => $value,
-                        'categories' => getYears($var, $deca[$i]),
-                        'data' => getData($var, $deca[$i]),
-                    )
-                );
-                $i+=1;
-            }
-        }
-        else{//Grafico vacio
-            $out[$i] = array(
-                'y' => getSuma($var, $deca[$i]),
-                'drilldown' => array(
-                    'name' => $value,
-                    'categories' => getYears($var, $deca[$i]),
-                    'data' => getData($var, $deca[$i]),
-                )
-            );
-            $i += 1;
-        }
-    }
-    return array($out,$decadas2);
-
-}
-function setPieData($graph){
-    $data=$graph;
-    $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
-    $outPie=array();
-    $i=0;
-    $outBar=array();
-    $categories=array();
-    foreach($data as $key=>$value){
-        $outPie[$i]=array($key,$value);
-        $categories[$i]=$key;
-        $outBar[$i]=array(
-            "y"=>$value,
-            "color"=>$colors[$i]
-        );
-        $i+=1;
-    }
-    $out=array($outPie,$categories,$outBar);
-    return $out;
-
-}
-function getWidth($a,$b){
-    return $b*44/$a;
-}
-function cmp($a,$b){
-    if ($a['data'][0] == $b['data'][0]) {
-        return 0;
-    }
-    return ($b['data'][0] < $a['data'][0]) ? -1 : 1;
-}
-function cmpInst($a,$b){
-    if ($a[1] == $b[1]) {
-        return 0;
-    }
-    return ($b[1] < $a[1]) ? -1 : 1;
-}
-function getResults($p,$s){
-    $parameters=$p;
-    $solr=$s;
-    try {
-        return $solr->search('*:*', 0, 0, $parameters);
-    }catch (Exception $e)
-    {
-        return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
-    }
-}
 $institutionInfo=array();
 $hierarchy='';
 $nameSpecieAuthor;
 $categories=array();
 $reuna='REUNA';
 $limit = 10000;
+$someVar = "";
 $results = false;
 $coordinatesReuna = array();
 $coordinatesGbif = array();
@@ -636,26 +234,40 @@ $regionsCoordinatesGbif=array();
 if ($family) {
     $parameters = array(
         'fq' => 'dwc.family_mt:'.$family,
-        'fl' => '',
+        'fl' => 'dwc.identifiedBy_s,dwc.institutionCode_s',
         'facet' => 'true',
         'facet.field' => 'dwc.identifiedBy_s',
         'facet.limit' => 1000000
     );
-    $results=getResults($parameters,$solr);
+    $results=getResults($parameters,$solr,10000);
     $salida='<div class="tableElement"><div class="key">Investigador</div><div class="value">Registros</div></div>';
-    $familiasPorInvestigador=array();
+    $especiesPorInvestigador=array();
     $primero=0;
     $nulos='';
     if($results){
+        $institInvest=array();
+        foreach ($results->response->docs as $doc) {
+            $inst='';
+            foreach ($doc as $field => $value) {
+                switch ($field) {
+                    case 'dwc.institutionCode_s':
+                        $inst=$value;
+                        break;
+                    case 'dwc.identifiedBy_s':
+                        $institInvest[$value]=$inst;
+                        break;
+                }
+            }
+        }
         foreach ($results->facet_counts->facet_fields as $doc) {
             foreach ($doc as $field => $value) {
                 if($value>0&&strcmp($field,'_empty_')!=0){
                     if($primero==0)$primero=$value;
-                    $salida.='<div class="tableElement"><div class="key2">'.$field.'</div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
-                    array_push($familiasPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
+                    $salida.='<div class="tableElement"><div class="key2">'.$field.'<div class="miniInst">['.$institInvest[$field].']</div></div><div class="tableGraphElement" style="width:'.getWidth($primero,$value).'%"></div><div class="value">'.$value.'</div></div>';
+                    array_push($especiesPorInvestigador,array('name:'=>$field,'data:'=>array($value)));
                 }
                 elseif(strcmp($field,'_empty_')==0){
-                    $nulos='<div class="tableElement"><div class="key"><b>Registros sin nombre</b></div><div class="value"><b>'.$value.'</b></div></div>';
+                    $nulos='<div class="tableFooter">*Registros sin investigador asociado ['.$value.']</div>';
                 }
             }
         }
@@ -684,7 +296,7 @@ if ($family) {
         $totalGbifWithCoordinates=$results->getTotalGbifWithCoordinates();
         $institutionNamesReuna=$results->getInstitutionNamesReuna();
         $institutionNamesGbif=$results->getInstitutionNamesGbif();
-        //uasort($institutionDataGbif[0],'cmpInst');
+        uasort($institutionNamesGbif,'cmpInst');
         $countSpecies=$results->getCountSpecies();
         $speciesFound=$results->getSpeciesFound();
         $totalInGbif=$results->getTotalInGbif();
@@ -764,6 +376,11 @@ if ($family) {
                     }
                 }
             }
+            $instNamesReuna=array();
+            foreach($institutionNamesReuna as $key=>$value){
+                array_push($instNamesReuna,array($key,$value));
+            }
+            $institutionNamesReuna=$instNamesReuna;
             ksort($yearCountReuna);
             $reunaVacios = $totalReuna - $i;
         }
@@ -810,6 +427,7 @@ if ($family) {
                     $content = file_get_contents($url);
                     $json = json_decode($content, true);
                     isset($json['publishingOrgKey']) ? $OrganizationKey = $json['publishingOrgKey'] : $OrganizationKey = 0;
+                    $someVar = getCountMonths($speciesKey);
                     foreach ($json['results'] as $i) {
                         $localArray=array($i['decimalLongitude'],$i['decimalLatitude']);
                         array_push($coordinatesGbif,$localArray );
@@ -834,6 +452,7 @@ if ($family) {
                 $url = 'http://api.gbif.org/v1/occurrence/search?taxonKey=' . $speciesKey . '&HAS_COORDINATE=true&country=CL&limit=' . $count . '&offset=' . $offset;
                 $content = file_get_contents($url);
                 $json = json_decode($content, true);
+                $someVar =getCountMonths($speciesKey);
                 //echo "<pre>".json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)."</pre>";
                 foreach ($json['results'] as $i) {
                     $localArray=array(strval($i['decimalLongitude']),strval($i['decimalLatitude']));
@@ -862,10 +481,10 @@ if ($family) {
         }
         $familyChildrens=getFamilyGenus($familyKey);
         foreach($familyChildrens as $key=>$value){
-            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
+            array_push($stackedChildrensGbif,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value,'pointWidth'=>28));
         }
         foreach($taxonChildrens as $key=>$value){
-            array_push($stackedChildrensReuna,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value));
+            array_push($stackedChildrensReuna,array('name'=>$key,'data'=>array($value), 'index'=>$value, 'legendIndex'=>$value,'pointWidth'=>28));
         }
         $categories=setCategoryDecades($yearCountReuna,$yearCountGbif);
         $drillDownDataGbif=createDrilldown($yearCountGbif,$categories);
