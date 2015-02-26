@@ -37,7 +37,9 @@ class Family{
     private $coordYearsReuna='';
     private $familyKey;
     private $categories=array();
-
+    public function setInstitutionInfo($institutionInfo){
+        $this->institutionInfo=$institutionInfo;
+    }
     public function setFamily(
         $nombreFamilia,
         $generos,
@@ -175,12 +177,31 @@ class Family{
     public function getNameSpecieAuthor(){
         return $this->nameSpecieAuthor;
     }
+    public function getInstitutionInfo(){
+        return $this->institutionInfo;
+    }
 
 }
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
 $path = drupal_get_path('module', 'analizador_biodiversidad');
 include($path . '/include/solrConnection.php');
 include($path . '/Apache/Solr/Service.php');
+function getOrgArray($instInfo,$name){
+    foreach($instInfo as $i){
+        if(strcmp($i['title'],$name)==0){
+            return $i;
+        }
+        else{}
+    }
+}
+function setInvestigatorSingPlu($var){
+    $tamano=count($var);
+    if($tamano==0 or $tamano==1){
+        return 'investigador ha';}
+    else{
+        return 'investigadores han';
+    }
+}
 function setRegistrosSingPlu($var){
     if($var==0 or $var==1)
     {return 'registro en ';}
@@ -309,13 +330,28 @@ function getCountYears($taxonKey, $count)
 function getOrganizationNames($organizations)
 {
     $result = array();
+    $orgData=array();
     foreach ($organizations as $key => $i) {
         $json = json_decode(file_get_contents('http://api.gbif.org/v1/organization/' . $key), true);
         $result[$json['title']] = $i;
-        //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
+        $localTemp=array(
+            'title'=>$json['title'],
+            'page'=>$json['homepage'],
+            'addr'=>$json['address']
+        );
+        $contacts=array();
+        foreach($json['contacts'] as $j){
+            array_push($contacts,array(
+                'name'=>$j['lastName'].' '.$j['firstName'],
+                'email'=>$j['email'],
+                'phone'=>$j['phone']
+            ));
+        }
+        array_push($localTemp,$contacts);
+        array_push($orgData,$localTemp);
     }
-    //var_dump($result);
-    return $result;
+    $finalResult=array($result,$orgData);
+    return $finalResult;
 }
 function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
     //d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
@@ -589,6 +625,7 @@ function getResults($p,$s){
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
+$institutionInfo=array();
 $hierarchy='';
 $nameSpecieAuthor;
 $categories=array();
@@ -691,6 +728,7 @@ if ($family) {
         $regionsCoordinatesGbif=$results->getRegionsCoordinates('gbif');
         $hierarchy=$results->getHierarchy();
         $nameSpecieAuthor=$results->getNameSpecieAuthor();
+        $institutionInfo=$results->getInstitutionInfo();
     }
     else{
         //$query = "RELS_EXT_hasModel_uri_ms:\"info:fedora/biodiversity:biodiversityCModel\"";
@@ -853,7 +891,9 @@ if ($family) {
                 }
             }
             $regionsCoordinatesGbif=array_count_values(getCountyName($coordinatesGbif,'gbif'));
-            $institutionNamesGbif = getOrganizationNames($OrganizationKeyArray);
+            $organizationNames=getOrganizationNames($OrganizationKeyArray);
+            $institutionNamesGbif = $organizationNames[0];
+            $institutionInfo=$organizationNames[1];
             uasort($institutionNamesGbif,'cmpInst');
         }
         $familyChildrens=getFamilyGenus($familyKey);
@@ -903,6 +943,7 @@ if ($family) {
             $hierarchy,
             $nameSpecieAuthor
         );
+        $FamilyObject->setInstitutionInfo($institutionInfo);
         cache_set($family, $FamilyObject, 'cache', 60*60*30*24); //30 dias
     }
 

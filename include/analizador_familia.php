@@ -96,7 +96,155 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     </div>
 </div>
 
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" >Distribución Temporal  &nbsp</div>
+    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la evolución temporal de los registros por año en Chile de
+        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>en ambas fuentes de datos.
+    </span>
+            <div id="temp-left">
+                <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
+                <span class="heading3">Registros por año</span>
 
+                <div id="contribucionBarrasREUNA"></div>
+                <div class="suave" style="margin-top:-5px; position:relative;">
+                    <?php reset($yearCountReuna);if(sizeof($yearCountReuna)==0){echo 0 .' ';}else{if(sizeof($yearCountReuna)==2 and key($yearCountReuna)==""){echo sizeof($yearCountReuna)-1 .' ';}else{if(key($yearCountReuna)==""){echo sizeof($yearCountReuna)-1 .' ';}else {echo sizeof($yearCountReuna).' ';}}};?></span><?php echo setYearSingPluReuna($yearCountReuna).$reuna; ?>
+                    (<?php if(sizeof($yearCountReuna)==1){echo key($yearCountReuna);}else{reset($yearCountReuna);if(key($yearCountReuna)==""){next($yearCountReuna);echo key($yearCountReuna).' - ';end($yearCountReuna);echo key($yearCountReuna);} else{echo key($yearCountReuna).' - ';end($yearCountReuna);echo key($yearCountReuna);}};?>)
+                </div>
+
+            </div>
+            <div id="temp-right">
+                <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
+                <!--<span class="heading3">Registros por mes</span>
+                <div id="reunaGbifBarras"></div>
+                <div id="GbifBarrasmes"></div>-->
+                <span class="heading3">Registros por año</span>
+                <div id="contribucionBarrasGBIF"></div>
+                <div class="suave" style="margin-top:-5px; position:relative;">
+                    <span class="bignumber"><?php echo sizeof($yearCountGbif).' '?></span><?php echo setYearSingPluGbif($yearCountGbif).'GBIF'; ?>
+                    (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
+                </div>
+            </div>
+            <p></p>&nbsp
+            <!--<div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalInGbif-end($accumulatedYearsGbif)); ?>] GBIF
+            </div>-->
+        </td></tr>
+</table>
+
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" >Distribución Taxonomica  &nbsp</div>
+    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la distribucion de los registros en Chile de
+        la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>en ambas fuentes de datos.
+    </span>
+            <?php if(count($stackedChildrensReuna)>0):?>
+                <div id="ReunaStacked"></div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos en <?php echo $reuna; ?> o hay problemas con el indice.</span>
+                </div>
+            <?php endif;?>
+            <?php if(count($stackedChildrensGbif)>0):?>
+                <div id="GbifStacked"></div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos en GBIF o hay problemas con el indice.</span>
+                </div>
+            <?php endif;?>
+
+
+
+        </td></tr>
+</table>
+
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" > Organizaciones contribuyentes en <?php echo $reuna; ?></div>
+            <p></p>
+            <?php if(count($institutionNamesReuna)>0):?>
+                <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
+                    <div class="heading3">Organizaciones</div>
+                    <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $reuna; ?>,
+                        <b><?php echo sizeof($institutionNamesReuna).' '?></b>
+                        <?php echo setOrganizationSingPlu($institutionNamesReuna).' contribuido con registros de la familia'?>
+                        <span class="species"> <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span> en Chile:</span>
+                    </div>
+                    <div id="REUNATable"><?php print '
+                <div class="tableElement">
+                    <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                    <div style="color: #168970;width:14%;float:right;font-size:0.9em;">Registros</div>
+                </div>';
+                        foreach($institutionNamesReuna as $elemento){
+                            print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$elemento[0]).'" target="_blank">'.$elemento[0].'</a></div><div class="value">'.$elemento[1].'</div></div>';
+                        }
+                        ?>
+                    </div>
+                    <p></p>
+                    <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:left;display:inline-block;width:85%;">
+                        Distribución relativa contribución de registros:
+                        <div id="institucionPieREUNA" class="institucionPie"></div>
+                        <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
+                    <div class="heading3">Investigadores</div>
+                    <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($familiasPorInvestigador).' '; ?></b><?php echo setInvestigatorSingPlu($familiasPorInvestigador).' contribuido con registros de la familia'?>
+                        <span class="species">
+                <span style="font-style:italic;">
+                    <?php if (isset($family)) echo $family; ?>
+                </span> en el repositorio <?php echo $reuna; ?>:</span>
+                    </div>
+                    <br>
+                    <div id="registrosPorInvestigador"><?print $salida;?></div>
+                </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No se encontraron registros asociados en esta plataforma</span>
+                </div>
+            <?php endif;?>
+        </td></tr>
+</table>
+
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2">Organizaciones contribuyentes en GBIF</div>
+            <?php if(count($institutionNamesGbif)>0):?>
+                <div style="width: 50%;float:left;text-align:left;margin-top:10px;">
+                    <div style="font-size: 1.2em;margin:20px;">En GBIF,
+                        <b><?php echo sizeof($institutionNamesGbif).' '?></b>
+                        <?php echo setOrganizationSingPlu($institutionNamesGbif).' contribuido con registros de la familia'?>
+                        <span class="species"> <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span> en Chile:</span>
+                    </div>
+                    <div id="GBIFTable"><?php
+                        print '
+                        <div class="tableElement">
+                            <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                            <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div>
+                        </div>';
+                        foreach($institutionDataGbif[0] as $key=>$value){
+                            $tooltip=getOrgArray($institutionInfo,$value[0]);
+                            print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['addr'][0].'&#xa;Contacto: '.$tooltip[0][0]['name'].'&#xa;Correo: '.$tooltip[0][0]['email'][0].'">
+                                    <div class="key">
+                                        <a href="'.$tooltip['page'][0].'" target="_blank">'.$value[0].'</a>
+                                    </div>
+                                    <div class="value">'.$value[1].'</div>
+                                </div>';
+                        }
+                        ?></div>
+                </div>
+                <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
+                    <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:</div>
+                    <div id="institucionPieGBIF" class="institucionPie"></div>
+                    <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]</div>
+                </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No se encontraron registros asociados en esta plataforma</span>
+                </div>
+            <?php endif;?>
+        </td></tr>
+</table>
 <script>
 
 (function ($) {
@@ -137,17 +285,75 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     }
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var dataReuna =<?php echo json_encode($institutionDataReuna); ?>;
-            var dataGbif =<?php echo json_encode($institutionDataGbif); ?>;
+            var institutionDataReuna =<?php echo json_encode($institutionDataReuna); ?>;
+            //console.log(institutionNamesReuna);
+            var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
             var name = 'Decada';
-            var tempREUNA = <?php echo json_encode($drillDownDataReuna); ?>;
-            var dataREUNA = tempREUNA[0];
-            var tempGBIF = <?php echo json_encode($drillDownDataGbif); ?>;
+            var drillDownDataReuna = <?php echo json_encode($drillDownDataReuna); ?>;
+            var dataREUNA = drillDownDataReuna[0];
+            var drillDownDataGbif = <?php echo json_encode($drillDownDataGbif); ?>;
+            var dataGBIF = drillDownDataGbif[0];
             var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
             var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
-            console.log(stackedGbifData);
-
-            $('#institucionPieREUNA').highcharts({
+            var noHayDatos={
+                title: {
+                    text: '<span style="">No hay datos para mostrar</span>',
+                    style: {
+                        color: 'black'
+                    }
+                },
+                anchorX: "left",
+                anchorY: "top",
+                allowDragX: true,
+                allowDragY: true,
+                x: 125,
+                y: 75
+            };
+            var y=0;
+            var institutionPieReunaOptions={
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
+                title: {
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend:{
+                    adjustChartSize: true
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: institutionDataReuna[0]
+                }],
+                annotations:[]
+            };
+            //console.log()
+            if(institutionDataReuna[0].length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
+            $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
+            /*$('#institucionPieREUNA').highcharts({
                 chart: {
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
@@ -184,8 +390,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     name: 'Total',
                     data: dataReuna[0]
                 }]
-            });
-            $('#institucionPieGBIF').highcharts({
+            });*/
+            /*$('#institucionPieGBIF').highcharts({
                 chart: {
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
@@ -220,37 +426,182 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 series: [{
                     type: 'pie',
                     name: 'Total',
-                    data: dataGbif[0]
+                    data: institutionDataGbif[0]
                 }]
-            });
-            if(tempREUNA[1].length>0)chartREUNA = new Highcharts.Chart({
+            });*/
+
+            var institutionPieGbifOptions={
                 chart: {
-                    renderTo: 'contribucionBarrasREUNA',
-                    type: 'column'
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
                 },
                 title: {
-                    text: null
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
                 },
                 credits: {
                     enabled: false
                 },
+                legend: {},
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: institutionDataGbif[0]
+                }],
+                annotations:[]
+            };
+            if(institutionDataGbif[0].length==0)institutionPieGbifOptions.annotations.push(noHayDatos);
+            $('#institucionPieGBIF').highcharts(institutionPieGbifOptions);
+
+
+
+            // GRAFICO TEMPORAL ANUAL GBIF
+            var chartGbifOptions={
+                chart: {
+                    renderTo: 'contribucionBarrasGBIF',
+                    type: 'column'
+                },
+                title: {
+                    text: 'GBIF',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
                 xAxis: {
-                    categories: tempREUNA[1],
+                    categories: drillDownDataGbif[1] ,
+                    labels: {
+                        rotation:-45,
+                        style: {
+                            color: '#000000',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Registros',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldown = this.drilldown;
+                                    if (drilldown) { // drill down
+                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
+                                    } else { // restore
+                                        setChart(chartGBIF, name, drillDownDataGbif[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            style: {
+                                fontWeight: 'regular',
+                                fontSize: '9px'
+
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
+                            }
+                        }
+                    },
+                    series: {
+                        color: 'rgba(83, 173, 37, 0.8)'
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataGBIF
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled:false
+                },
+                annotations: []
+            };
+            y=0;
+            for(var i=0;i<dataGBIF.length;i++){
+                y+=dataGBIF[i]['y'];
+            }
+            if(y==0)chartGbifOptions.annotations.push(noHayDatos);
+            chartGBIF = new Highcharts.Chart(chartGbifOptions);
+
+            // GRAFICO TEMPORAL ANUAL REUNA
+            var chartReunaOptions={
+                chart: {
+                    renderTo: 'contribucionBarras<?php echo $reuna; ?>',
+                    type: 'column'
+                },
+                title: {
+                    text: '<?php echo $reuna; ?>',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: drillDownDataReuna[1] ,
                     labels: {
                         rotation:-45,
                         style: {
 
                             color: '#000000'
-                            //font: '11px Trebuchet MS, Verdana, sans-serif'
                         }
-                    }
+                    },
+                    lineColor: '#666'
                 },
                 yAxis: {
                     title: {
-                        text: 'Observ. <?php echo $reuna; ?>',
+                        text: 'Registros',
                         style: {
                             color: '#000000',
-                            fontSize: '12px',
+
                             fontWeight: 'bold'
                         }
                     }
@@ -265,7 +616,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                                     if (drilldownREUNA) { // drill down
                                         setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
                                     } else { // restore
-                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
+                                        setChart(chartREUNA, name, drillDownDataReuna[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
                                     }
                                 }
                             }
@@ -274,7 +625,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                             enabled: true,
                             color: '#53AD25',
                             style: {
-                                fontWeight: 'bold'
+                                fontWeight: 'regular',
+                                fontSize: '9px'
                             },
                             formatter: function () {
                                 return this.y != 0 ? this.y : null;
@@ -300,7 +652,6 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 series: [{
                     name: name,
                     data: dataREUNA
-                    //color: 'white'
                 }],
                 exporting: {
                     enabled: false
@@ -309,110 +660,18 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     enabled: false
                 },
                 legend: {
-                    //layout: 'vertical',
-                    //align: 'right',
-                    /*floating: true,*/
-                    //x:0,
-                    //y:-150
-                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                     shadow: true*/
-                }
-            });
-            if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'contribucionBarrasGBIF',
-                    type: 'column'
+                    enabled:false
                 },
-                title: {
-                    text: null
-                },
-                credits: {
-                    enabled: false
-                },
-                xAxis: {
-                    categories: tempGBIF[1],
-                    labels: {
-                        rotation:-45,
-                        style: {
+                annotations:[]
+            };
+            y=0;
+            for(var i=0;i<dataREUNA.length;i++){
+                y+=dataREUNA[i]['y'];
+            }
+            if(y==0)chartReunaOptions.annotations.push(noHayDatos);
+            chartREUNA = new Highcharts.Chart(chartReunaOptions);
 
-                            color: '#000000'
-                            //font: '11px Trebuchet MS, Verdana, sans-serif'
-                        }
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: 'Observ. GBIF',
-                        style: {
-                            color: '#000000',
-                            fontSize: '12px',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                plotOptions: {
-                    column: {
-                        cursor: 'pointer',
-                        point: {
-                            events: {
-                                click: function () {
-                                    var drilldown = this.drilldown;
-                                    if (drilldown) { // drill down
-                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
-                                    } else { // restore
-                                        setChart(chartGBIF, name, tempGBIF[1], tempGBIF[0],'rgba(83, 173, 37, 0.8)');
-                                    }
-                                }
-                            }
-                        },
-                        dataLabels: {
-                            enabled: true,
-                            color: '#000000',
-                            style: {
-                                fontWeight: 'bold'
-                            },
-                            formatter: function () {
-                                return this.y != 0 ? this.y : null;
-                            }
-                        }
-                    },
-                    series: {
-                        color: 'rgba(83, 173, 37, 0.8)'
-                    }
-                },
-                tooltip: {
-                    formatter: function () {
-                        var point = this.point,
-                            s = this.x + ':<b>' + this.y + '</b><br/>';
-                        if (point.drilldown) {
-                            s += 'Click para expandir a ' + point.category;
-                        } else {
-                            s += 'Click para volver atrás.';
-                        }
-                        return s;
-                    }
-                },
-                series: [{
-                    name: name,
-                    data: tempGBIF[0]
-                    //color: 'white
-                }],
-                exporting: {
-                    enabled: false
-                },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    //layout: 'vertical',
-                    //align: 'right',
-                    /*floating: true,*/
-                    //x:0,
-                    //y:-150
-                    /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                     shadow: true*/
-                }
-            });
+
             if(Object.keys(stackedGbifData).length>0){
                 GbifStacked = new Highcharts.Chart({
                     chart: {

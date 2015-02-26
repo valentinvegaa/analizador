@@ -132,6 +132,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     </div>
         </td></tr>
 </table>
+
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
     <div class="heading2" > Organizaciones contribuyentes en <?php echo $reuna; ?></div>
