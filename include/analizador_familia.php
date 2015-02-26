@@ -49,7 +49,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 <div class="boxsec">
     <span class="species" style="margin-bottom:30px;">
         <span class="heading2">Distribución Geográfica </span>
-        <span style="font-size: 1.3em;"> registros de la especie
+        <span style="font-size: 1.3em;"> registros de la familia
         <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>
     en Chile </span>
     </span>

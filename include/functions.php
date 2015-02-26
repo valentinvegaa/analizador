@@ -5,6 +5,7 @@
  * Date: 25-02-2015
  * Time: 11:23
  */
+
 function countMonths($taxonKey)
 {
     $returnVal = array();

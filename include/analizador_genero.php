@@ -10,43 +10,30 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
-echo isset($genusKey) ? $genusKey : '';
-//var_dump($yearCountGbif);
 ?>
 <p></p>
 <div class="summary1">
     <div class="nombre-completo"><span style="color: darkgray">Genero </span>
         <br>
-        <span class="titspecies">
-            <?php
-            $i=0;
-            if (isset($nombreEspecieAutor)) $editado=str_replace('"','',$nombreEspecieAutor);
-            $editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);
-            $editado4=explode(' ',$editado3);
-            foreach($editado4 as $value){
-                $i+=1;
-                if($i==3){echo '( ';}
-                echo $value.' ';
-
-            }echo ')'; ?></span>
+           <span class="titspecies"><?php $i=0;if (isset($nameSpecieAuthor)) $editado=str_replace('"','',$nameSpecieAuthor);$editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);$editado4=explode(' ',$editado3);
+               foreach($editado4 as $value){$i+=1;if($i==2){echo '( ';}echo $value.' ';}echo ')'; ?>
+        </span>
         <br>
-        <div id="jerarquia"><span> <?php echo str_replace('"','',$jerarquia);?></span>
+        <div id="jerarquia"><span> <?php echo str_replace('"','',$hierarchy);?></span>
         </div><br>
-        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?></span>
+        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $genusKey;?></span>
         <div class="linea_hor"></div>
     </div>
     <div class="summary-left">
         <div id="boxleft">
             <span class="little">Contenido en fuentes de datos: </span> <br/>
             <b>
- <span class="Reuna">
-<span style="font-size: 2.5em;"><?php echo $totalReuna; ?></span>
-                                                            registros en <?php echo $REUNA; ?>
-</span>
+            <span class="Reuna">
+            <span style="font-size: 2.5em;"><?php echo $totalReuna.' '; ?></span><?php echo setRegistrosSingPlu($totalReuna).$reuna; ?>
+            </span>
                 &nbsp &nbsp &nbsp
             <span class="GBIF">
-<span style="font-size: 2em;"> <?php echo $totalEnGBIF; ?></span>
-                                                            registros en GBIF
+            <span style="font-size: 2em;"> <?php echo $totalInGbif.' '; ?></span><?php echo setRegistrosSingPlu($totalInGbif).'GBIF'; ?>
             </span>
             </b>
         </div>
@@ -62,7 +49,7 @@ echo isset($genusKey) ? $genusKey : '';
 <div class="boxsec">
     <span class="species" style="margin-bottom:30px;">
         <span class="heading2">Distribución Geográfica </span>
-      <span style="font-size: 1.3em;"> registros de la especie
+      <span style="font-size: 1.3em;"> registros del genero
         <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span>
     en Chile </span></span>
 
@@ -70,7 +57,7 @@ echo isset($genusKey) ? $genusKey : '';
 
     <div id="geo-left">
         <div id="mapContainer" class="mapContainer">
-            <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $REUNA; ?></div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $reuna; ?></div>
             <div id="legend"></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
@@ -81,11 +68,11 @@ echo isset($genusKey) ? $genusKey : '';
     <div id="right_geo">
         <p></p>
         <div class="heading3">Datos Georeferenciados</div>
-        <span style="font-size:1.1em"><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de los registros en <?php echo $REUNA; ?></span>
-        <span class="suave">(n=<?php echo $totalReunaConCoordenadas; ?>)</span>
+        <span style="font-size:1.1em"><?php echo round($totalReunaWithCoordinates*100/$totalReuna,1);?>% de los registros en <?php echo $reuna; ?></span>
+        <span class="suave">(n=<?php echo $totalReunaWithCoordinates; ?>)</span>
         <br>
-        <span style="font-size:1.1em"><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>% de los registros en GBIF</span>
-        <span class="suave">(n=<?php echo $totalGBIF; ?>)</span>
+        <span style="font-size:1.1em"><?php echo round($totalGbif*100/$totalInGbif,1);?>% de los registros en GBIF</span>
+        <span class="suave">(n=<?php echo $totalGbif; ?>)</span>
         <p></p>
         <p></p>
         <div>
@@ -101,53 +88,69 @@ echo isset($genusKey) ? $genusKey : '';
         </div>
     </div>
 </div>
-<div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
-<div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
-<div id="ReunaStacked"></div>
-<div id="GbifStacked"></div>
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" >Distribución de ocurrencias por genero  &nbsp</div>
+    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la distribucion de los registros en Chile del genero
+        <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span> en ambas fuentes de datos.
+    </span>
+            <?php if(count($stackedChildrensReuna)>0):?>
+                <div id="ReunaStacked"></div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos asociados a Chile en <?php echo $reuna; ?></span>
+                </div>
+            <?php endif;?>
+            <?php if(count($stackedChildrensGbif)>0):?>
+                <div id="GbifStacked"></div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos asociados a Chile en GBIF</span>
+                </div>
+            <?php endif;?>
+        </td></tr>
+</table>
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
             <div class="heading2" >Distribución Temporal  &nbsp</div>
-    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la evolución temporal de los registros en Chile de
-        la especie <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span>
-         en ambas fuentes de datos. Izquierda: la distribución de los registros por año, derecha: por el mes de registro.
+    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la evolución temporal de los registros en Chile del
+        genero <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span>
+         en ambas fuentes de datos.
     </span>
             <div id="temp-left">
                 <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
                 <span class="heading3">Registros por año</span>
                 <div id="contribucionBarrasREUNA"></div>
                 <div class="suave" style="margin-top:-5px; position:relative;">
-                    <?php reset($yearCount);if(key($yearCount)==""){echo sizeof($yearCount)-1;}else {echo sizeof($yearCount);};?></span> años con registros en <?php echo $REUNA; ?>
+                    <?php reset($yearCount);if(key($yearCount)==""){echo sizeof($yearCount)-1;}else {echo sizeof($yearCount);};?></span> años con registros en <?php echo $reuna; ?>
                     (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if(key($yearCount)==""){next($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
                 </div>
 
+
+            </div>
+            <div id="temp-right">
+                <span class="heading3">Registros por año</span>
                 <div id="contribucionBarrasGBIF"></div>
                 <div class="suave" style="margin-top:-5px; position:relative;">
                     <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en GBIF
                     (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
                 </div>
             </div>
-            <div id="temp-right">
-                <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
-                <span class="heading3">Registros por mes</span>
-                <div id="reunaGbifBarras"></div>
-                <div id="GbifBarrasmes"></div>
-            </div>
             <p></p>&nbsp
-            <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
+            <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalInGbif-end($accumulatedYearsGbif)); ?>] GBIF
             </div>
         </td></tr>
 </table>
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-            <div class="heading2" > Organizaciones contribuyentes en <?php echo $REUNA; ?></div>
+            <div class="heading2" > Organizaciones contribuyentes en <?php echo $reuna; ?></div>
             <p></p>
             <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
                 <div class="heading3">Organizaciones</div>
-                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $REUNA; ?>,
+                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $reuna; ?>,
                     <b><?php echo sizeof($institutionNamesReuna)?></b>
-                    Organizaciones han contribuido con registros de la especie
-                    <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
+                    <?php echo setOrganizationSingPlu($institutionNamesReuna).' contribuido con registros del genero'?>
+                    <span class="species"> <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span> en Chile:</span>
                 </div>
                 <?php if(count($institutionNamesReuna)>0):?>
                 <div id="REUNATable"><?php print '
@@ -173,11 +176,11 @@ echo isset($genusKey) ? $genusKey : '';
 
             <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
                 <div class="heading3">Investigadores</div>
-                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador); ?></b> Investigadores han contribuido con registros de la especie
+                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador); ?></b><?php echo setInvestigatorSingPlu($especiesPorInvestigador).' contribuido con registros del genero'?>
             <span class="species">
                 <span style="font-style:italic;">
-                    <?php if (isset($specie)) echo $specie; ?>
-                </span> en el repositorio <?php echo $REUNA; ?>:</span>
+                    <?php if (isset($search)) echo $search; ?>
+                </span> en el repositorio <?php echo $reuna; ?>:</span>
                 </div>
                 <br>
                 <div id="registrosPorInvestigador"><?print $salida;?></div>
@@ -196,8 +199,8 @@ echo isset($genusKey) ? $genusKey : '';
                 <div style="width: 50%;float:left;text-align:left;margin-top:10px;">
                     <div style="font-size: 1.2em;margin:20px;">En GBIF,
                         <b><?php echo sizeof($institutionNamesGBIF)?></b>
-                        Organizaciones han contribuido con registros de la especie
-                        <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
+                        Organizaciones han contribuido con registros del genero
+                        <span class="species"> <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span> en Chile:</span>
                     </div>
 
                     <div id="GBIFTable"><?php
@@ -237,9 +240,9 @@ function changeFeatures(first, last) {
     var newFeatures = [];
     var j = 0;
     var k = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+    for (var i = 0; i < arrayCoordinatesInJS.length; i++) {
         if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
-            var coordinate = [parseFloat(arrayCoordinatesInJS[i+1]), parseFloat(arrayCoordinatesInJS[i])];
+            var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
             var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
             newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
             j++;
@@ -250,17 +253,15 @@ function changeFeatures(first, last) {
     var newFeaturesGBIF = [];
     var j = 0;
     var k = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+    for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i++) {
         if (coordYearsGBIF[k]>= first && coordYearsGBIF[k] <= last) {
-            var coordinate = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i+1])];
+            var coordinate = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
             var tempLonlatGBIF = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
             newFeaturesGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
             j++;
         }
         k++;
     }
-
-    console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
     source.addFeatures(newFeatures);
 }
@@ -354,7 +355,10 @@ function changeFeatures(first, last) {
                     style: '"fontSize": "14px"'
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>',
+                    positioner: function () {
+                        return { x: 0, y: 0 };
+                    }
                 },
                 plotOptions: {
                     pie: {
@@ -399,7 +403,10 @@ function changeFeatures(first, last) {
                     style: '"fontSize": "14px"'
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>',
+                    positioner: function () {
+                        return { x: 0, y: 0 };
+                    }
                 },
                 plotOptions: {
                     pie: {
@@ -504,6 +511,9 @@ function changeFeatures(first, last) {
                             s += 'Click to return.';
                         }
                         return s;
+                    },
+                    positioner: function () {
+                        return { x: 0, y: 0 };
                     }
                 },
                 series: [{
@@ -532,11 +542,11 @@ function changeFeatures(first, last) {
             // GRAFICO TEMPORAL ANUAL REUNA
             var chartReunaOptions={
                 chart: {
-                    renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
+                    renderTo: 'contribucionBarras<?php echo $reuna; ?>',
                     type: 'column'
                 },
                 title: {
-                    text: '<?php echo $REUNA; ?>',
+                    text: '<?php echo $reuna; ?>',
                     style: {
                         fontSize: '14px',
                         fontWeight: 'bold'
@@ -605,6 +615,9 @@ function changeFeatures(first, last) {
                             s += 'Click to return.';
                         }
                         return s;
+                    },
+                    positioner: function () {
+                        return { x: 0, y: 0 };
                     }
                 },
                 series: [{
@@ -668,7 +681,10 @@ function changeFeatures(first, last) {
                     '<td style="padding:0"><b>{point.y}</b></td></tr>',
                     footerFormat: '</table>',
                     shared: true,
-                    useHTML: true
+                    useHTML: true,
+                    positioner: function () {
+                        return { x: 0, y: 0 };
+                    }
                 },
                 plotOptions: {
                     area: {
@@ -690,13 +706,11 @@ function changeFeatures(first, last) {
                 },
                 series: [{
                     name:'GBIF',
-                    /*Datos de prueba*/
-                    data: accumulatedDataGbif,//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
+                    data: accumulatedDataGbif,
                     color:'#53AD25'
                 },{
-                    name: '<?php echo $REUNA; ?>',
-                    /*Datos de prueba*/
-                    data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                    name: '<?php echo $reuna; ?>',
+                    data:accumulatedData,
                     color:'#000000'
                 }],
                 annotations:[]
@@ -717,7 +731,7 @@ function changeFeatures(first, last) {
                     renderTo: 'GbifStacked'
                 },
                 title: {
-                    text: 'Distribución de Ocurrencias por Genero (Base de Datos GBIF)'
+                    text: 'GBIF'
                 },
                 credits: {
                     enabled: false
@@ -745,6 +759,9 @@ function changeFeatures(first, last) {
                         var point = this.point,
                             s = this.series.name + ':<b>' + this.y + '</b><br/>';
                         return s;
+                    },
+                    positioner: function () {
+                        return { x: 0, y: 0 };
                     }
                 },
                 series: []
@@ -755,7 +772,7 @@ function changeFeatures(first, last) {
                     renderTo: 'ReunaStacked'
                 },
                 title: {
-                    text: 'Distribución de Ocurrencias por Genero (Base de Datos <?php echo $REUNA; ?>)'
+                    text: '<?php echo $reuna; ?>'
                 },
                 credits: {
                     enabled: false
@@ -775,6 +792,16 @@ function changeFeatures(first, last) {
                 plotOptions: {
                     series: {
                         stacking: 'percent'
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.series.name + ':<b>' + this.y + '</b><br/>';
+                        return s;
+                    },
+                    positioner: function () {
+                        return { x: 0, y: 0 };
                     }
                 }
             });
@@ -894,14 +921,10 @@ var clusters = new ol.layer.Vector({
         }
         return style;
     }
-//projection: ol.proj.get('EPSG:4326')
 });
 
 var geoJsonSource = new ol.source.GeoJSON({
     projection: 'EPSG:3857',
-    //url: '<?php //echo $path;?>/regiones/regiones.json'
-//url: '<?php //echo $path;?>/regiones/cuads25k_ll.geojson'
-});
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',
     source: geoJsonSource,
@@ -936,13 +959,6 @@ var geoJson = new ol.layer.Vector({
         return styleCache[text];
     }
 
-    /*style: new ol.style.Style({
-     stroke: new ol.style.Stroke({color: 'blue', width: 0.5
-     }),
-     fill: new ol.style.Fill({
-     color: 'rgba(255, 255, 0, 0.5)'
-     })
-     })*/
 });
 var map = new ol.Map({
     target: 'mapContainer',
@@ -959,21 +975,6 @@ if (largoGBIF > 0) {
         featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
 }
-/*var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
- if (largoGBIF > 0) {
- var featuresGBIF = new Array(largoGBIF);
- var j = 0;
- for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
- //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
- var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
- var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
- //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
- featuresGBIF[j] = new ol.Feature({'visible': 'true'});
- featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
- j++;
- }
- ;
- }*/
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
 });
@@ -1025,18 +1026,6 @@ var selectClick = new ol.interaction.Select({
     })
 });
 
-/*var newFeatures = [];
- var j = 0;
- var k = 0;
- for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
- if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
- var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
- newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
- j++;
- }
- k++;
- }*/
-
 var collection = selectClick.getFeatures();
 collection.on('add', function () {
     collection = selectClick.getFeatures();
@@ -1053,9 +1042,6 @@ collection.on('add', function () {
             });
         }
     );
-
-//console.log(featuresinBox);
-//featuresSelected.push(e);
 });
 collection.on('remove', function () {
     console.log('remove');
@@ -1089,7 +1075,6 @@ collectionGBIF.on('add', function () {
         }
     );
 });
-//collection.on('remove', function(){console.log('remove');});
 var changeInteraction = function () {
     select = selectClick;
     map.addInteraction(select);
@@ -1112,8 +1097,6 @@ boxControl.on('boxend', function () {
             featuresinBox.push(e);
         }
     });
-//document.getElementById("msg").innerHTML = featuresinBox.length;
-    console.log(featuresinBox);
 });
 changeInteraction();
 /***************************************/
