@@ -10,6 +10,7 @@ $desc_chart_1 = variable_get('desc_chart_1');
 $desc_chart_2 = variable_get('desc_chart_2');
 $desc_chart_3 = variable_get('desc_chart_3');
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
+
 ?>
 <p></p>
 <div class="summary1">
@@ -262,6 +263,8 @@ function changeFeatures(first, last) {
         }
         k++;
     }
+
+    console.log(j);
     sourceGBIF.addFeatures(newFeaturesGBIF);
     source.addFeatures(newFeatures);
 }
@@ -270,7 +273,7 @@ function changeFeatures(first, last) {
     var today = fecha.getFullYear();
     Drupal.behaviors.yourThemeSlider = {
         attach: function (context, settings) {
-            var steps = ['-1','0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
+            var steps = ['-1', '0', '1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', today];
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -278,11 +281,13 @@ function changeFeatures(first, last) {
                 step: 1,
                 values: [0, 14],
                 slide: function (event, ui) {
-                    $("#amount").val((steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]])) + " - " + (steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]])));
+                    $("#amountL").val(steps[ui.values[0]] == -1 ? 'Sin fecha' : (steps[ui.values[0]] == 0 ? 'Antes de 1900' : steps[ui.values[0]]));
+                    $("#amountR").val(steps[ui.values[1]] == -1 ? 'Sin fecha' : (steps[ui.values[1]] == 0 ? 'Antes de 1900' : steps[ui.values[1]]));
                     changeFeatures(steps[ui.values[0]], steps[ui.values[1]]);
                 }
             });
-            $("#amount").val('Sin fecha' + " - " + steps[$("#slider-range").slider("values", 1)]);
+            $("#amountL").val('Sin fecha');
+            $("#amountR").val(steps[$("#slider-range").slider("values", 1)]);
         }
     };
     var chartREUNA, colors = Highcharts.getOptions().colors;
@@ -850,7 +855,6 @@ function changeFeatures(first, last) {
             }
         }
     }
-
 })(jQuery);
 var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
@@ -924,7 +928,8 @@ var clusters = new ol.layer.Vector({
 });
 
 var geoJsonSource = new ol.source.GeoJSON({
-    projection: 'EPSG:3857',
+    projection: 'EPSG:3857'
+});
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',
     source: geoJsonSource,
@@ -1031,20 +1036,20 @@ collection.on('add', function () {
     collection = selectClick.getFeatures();
     collection.forEach(function (f) {
             var text = f.get('NOMBRE');
-            console.log(text);
+            //console.log(text);
             source.forEachFeature(function (e) {
                 if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
+                    //console.log('adentro');
                 }
                 else {
-                    console.log('afuera');
+                    //console.log('afuera');
                 }
             });
         }
     );
 });
 collection.on('remove', function () {
-    console.log('remove');
+    //console.log('remove');
 });
 var selectClickGBIF = new ol.interaction.Select({
     condition: ol.events.condition.click,
@@ -1063,13 +1068,13 @@ collectionGBIF.on('add', function () {
     collectionGBIF = selectClickGBIF.getFeatures();
     collectionGBIF.forEach(function (f) {
             var text = f.get('NOMBRE');
-            console.log(text);
+            //console.log(text);
             source.forEachFeature(function (e) {
                 if (ol.extent.containsCoordinate(f.getGeometry().getExtent(), e.getGeometry().getCoordinates())) {
-                    console.log('adentro');
+                    //console.log('adentro');
                 }
                 else {
-                    console.log('afuera');
+                    //console.log('afuera');
                 }
             });
         }
@@ -1097,6 +1102,8 @@ boxControl.on('boxend', function () {
             featuresinBox.push(e);
         }
     });
+//document.getElementById("msg").innerHTML = featuresinBox.length;
+    //console.log(featuresinBox);
 });
 changeInteraction();
 /***************************************/

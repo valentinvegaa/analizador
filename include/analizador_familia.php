@@ -273,7 +273,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
     }
     Drupal.behaviors.analizador_biodiversidad = {
         attach: function (context, settings) {
-            var institutionDataReuna =<?php echo json_encode($institutionDataReuna); ?>;
+            var institutionDataReuna =<?php echo json_encode($institutionNamesReuna); ?>;
             //console.log(institutionNamesReuna);
             var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
             var name = 'Decada';
@@ -332,16 +332,19 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     enabled: false
                 },
                 legend:{
-                    adjustChartSize: true
+                    itemStyle: {
+                        width: 360 // or whatever
+                    }
                 },
                 series: [{
                     type: 'pie',
                     name: 'Total',
-                    data: institutionDataReuna[0]
+                    data: institutionDataReuna
                 }],
                 annotations:[]
             };
-            //console.log()
+            console.log('instreunadata');
+            console.log(institutionDataReuna[0][0]);
             if(institutionDataReuna[0].length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
             $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
             var institutionPieGbifOptions={
@@ -377,7 +380,11 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 credits: {
                     enabled: false
                 },
-                legend: {},
+                legend: {
+                    itemStyle: {
+                        width: 360 // or whatever
+                    }
+                },
                 series: [{
                     type: 'pie',
                     name: 'Total',
@@ -478,7 +485,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     enabled: false
                 },
                 legend: {
-                    enabled:false
+                    enabled:false,
+                    itemStyle: {
+                        width: 360 // or whatever
+                    }
                 },
                 annotations: []
             };
@@ -580,7 +590,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     enabled: false
                 },
                 legend: {
-                    enabled:false
+                    enabled:false,
+                    itemStyle: {
+                        width: 360 // or whatever
+                    }
                 },
                 annotations:[]
             };
@@ -612,7 +625,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         }
                     },
                     legend: {
-                        reversed: true
+                        reversed: true,
+                        itemStyle: {
+                            width: 360 // or whatever
+                        }
                     },
                     plotOptions: {
                         series: {
@@ -654,7 +670,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                         }
                     },
                     legend: {
-                        reversed: true
+                        reversed: true,
+                        itemStyle: {
+                            width: 360 // or whatever
+                        }
                     },
                     plotOptions: {
                         series: {
@@ -688,7 +707,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     }
                 }
                 var arr=[cont];
-                GbifStacked.addSeries({
+                if(j>15)GbifStacked.addSeries({
                     name:'Otros',
                     data:arr,
                     index:cont,
@@ -708,7 +727,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                     }
                 }
                 var arre=[conta];
-                ReunaStacked.addSeries({
+                if(k>15)ReunaStacked.addSeries({
                     name:'Otros',
                     data:arre,
                     index:conta,
