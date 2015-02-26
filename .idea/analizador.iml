@@ -4,6 +4,20 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHP">
+        <CLASSES>
+          <root url="file://C:/xampp/htdocs/drupal/modules" />
+          <root url="file://C:/xampp/htdocs/drupal/sites/all/modules" />
+          <root url="file://C:/xampp/htdocs/drupal/includes" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://C:/xampp/htdocs/drupal/modules" />
+          <root url="file://C:/xampp/htdocs/drupal/sites/all/modules" />
+          <root url="file://C:/xampp/htdocs/drupal/includes" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 
