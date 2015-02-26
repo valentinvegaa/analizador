@@ -42,7 +42,7 @@ Explore los resultados:
         </div>
         <div id="right-b-index">
             <div class="title-b"><a href="#institucion">Instituciones</a></div>
-            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
+            <div class="line"><span><?php echo sizeof($institutionNamesReuna)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
         </div>
     </div>
 </div>

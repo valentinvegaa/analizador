@@ -94,11 +94,15 @@ function species_callback()
     $content['overlay']['#attached']['js'] = array(
         'http://openlayers.org/en/v3.0.0/build/ol.js' => array(
             'type' => 'external',
-        ),'http://code.highcharts.com/highcharts.js' => array(
+        ),
+        'http://code.highcharts.com/highcharts.js' => array(
             'type' => 'external',
         ),
-        'http://code.highcharts.com/modules/exporting.js' => array(
+        'http://l2.io/ip.js?var=myip' => array(
             'type' => 'external',
+        ),
+        $path.'/export-csv-master/exporting.src.js'=>array(
+            'type' => 'file',
         ),
         $path.'/export-csv-master/export-csv.js'=>array(
             'type' => 'file',

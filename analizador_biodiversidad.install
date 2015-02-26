@@ -1,0 +1,5 @@
+function analizador_biodiversidad_uninstall() {
+    variable_del('desc_chart_1');
+    variable_del('desc_chart_2');
+    variable_del('desc_chart_3');
+}

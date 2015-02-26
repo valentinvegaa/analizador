@@ -13,130 +13,222 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 echo isset($genusKey) ? $genusKey : '';
 //var_dump($yearCountGbif);
 ?>
-<!--<div>
-    <form  accept-charset="utf-8" method="post">
-        <input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
-        <input type="submit" value="Search"/>
-    </form>
-</div>-->
-<div class="nombre-completo"><span style="color: darkgray">GÉNERO </span><?php if (isset($search)) echo $search; ?>
-</div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos <?php echo $REUNA; ?></div>
-<div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalEnGBIF; ?></b> observaciones asociadas en la base de datos GBIF</div>
-<div style="font-size: 1.2em;">Observaciones no georeferencias en GBIF: <b><?php echo $totalEnGBIF-$totalGBIF; ?></b></div>
-<div style="font-size: 1.2em;">Observaciones sin fecha registrada en GBIF: <b><?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?></b></div>
-<div style="font-size: 1.2em;">Observaciones no georeferencias en REUNA: <b><?php echo $totalReuna-$totalReunaConCoordenadas; ?></b></div>
-<div style="font-size: 1.2em;">Observaciones sin fecha registrada en REUNA: <b><?php echo ($totalReuna-end($accumulatedYearsReuna)); ?></b></div>
+<p></p>
+<div class="summary1">
+    <div class="nombre-completo"><span style="color: darkgray">Genero </span>
+        <br>
+        <span class="titspecies">
+            <?php
+            $i=0;
+            if (isset($nombreEspecieAutor)) $editado=str_replace('"','',$nombreEspecieAutor);
+            $editado2=str_replace('(','',$editado);$editado3=str_replace(')','',$editado2);
+            $editado4=explode(' ',$editado3);
+            foreach($editado4 as $value){
+                $i+=1;
+                if($i==3){echo '( ';}
+                echo $value.' ';
 
-Explore los resultados:
-<div id="index">
-    <div id="left-index">
-        <div id="left-t-index">
-            <div class="title-a">Composición Taxonómica</div>
-            <div class="line"><a href="#ReunaStacked"><span><?php echo sizeof($taxonChildrens);?> Especies</span> en la base de datos <?php echo $REUNA; ?>.</a></div>
-            <div class="line"><a href="#GbifStacked"><span><?php echo sizeof(getChildrenNames($genusKey));//sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
-            <div class="endline">Última especie del Genero ingresado a <?php echo $REUNA; ?>:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
-        </div>
-        <div id="left-b-index">
-            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo $totalGBIF; ?></span> Ocurrencias Georeferenciadas en la base de datos GBIF</div>
-            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
+            }echo ')'; ?></span>
+        <br>
+        <div id="jerarquia"><span> <?php echo str_replace('"','',$jerarquia);?></span>
+        </div><br>
+        <span style="font-size: 0.7em"> <?php echo 'GBIF ID: ' . $speciesKey;?></span>
+        <div class="linea_hor"></div>
+    </div>
+    <div class="summary-left">
+        <div id="boxleft">
+            <span class="little">Contenido en fuentes de datos: </span> <br/>
+            <b>
+ <span class="Reuna">
+<span style="font-size: 2.5em;"><?php echo $totalReuna; ?></span>
+                                                            registros en <?php echo $REUNA; ?>
+</span>
+                &nbsp &nbsp &nbsp
+            <span class="GBIF">
+<span style="font-size: 2em;"> <?php echo $totalEnGBIF; ?></span>
+                                                            registros en GBIF
+            </span>
+            </b>
         </div>
     </div>
-    <div id="right-index">
-        <div id="right-t-index">
-            <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCount)?></span> años con registros en la base de datos <?php echo $REUNA; ?></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-            <div class="endline">Periodo de registros <?php echo $REUNA; ?>: <span class="bignumber"><?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);};?></span></div>
-            <div class="endline">Periodo de registros GBIF: <span class="bignumber"><?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);next($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?></span></div>
-        </div>
-        <div id="right-b-index">
-            <div class="title-b"><a href="#institucion">Instituciones</a></div>
-            <div class="line"><span><?php echo sizeof($institutionNames)?></span> Organismos (<?php echo $REUNA; ?>) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
-            <div class="line"><span><?php echo sizeof($institutionNamesGBIF)?></span> Organismos (GBIF) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
-        </div>
+    <div id="summary-right">
+        <div id="acumuladas"></div>
+        <span style="color:gray">*Existen datos sin fecha de registro</span>
     </div>
+
 </div>
-<div class="wraper-container" style="border: thick; border-color: black;">
-    <div class="left">
-        <div class="title-a subtitulo">Distribución Temporal</div>
-        <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div>
-        <?php if(count($drillDownDataReuna[1])>0):?>
-            <div id="contribucionBarrasREUNA"></div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-        <?php if(count($drillDownDataGbif[0])>0&&count($drillDownDataGbif[1])>0):?>
-            <div id="contribucionBarrasGBIF"></div>
-        <?php else:?>
-            <div class="sinGrafico">
-                <span>No hay datos en GBIF o hay problemas con el indice.</span>
-            </div>
-        <?php endif;?>
-    </div>
-    <div id="containers" class="containers">
-        <div class="title-a subtitulo">Distribución Geográfica</div>
-        <div style="margin-left:10px;"><span style="font-size: 1.3em;"></span>De un total de <?php echo $totalReuna; ?> observaciones , existen <?php echo $totalReunaConCoordenadas; ?> ocurrencias Georeferenciadas, correspondiente al  <?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de las ocurrencias.</div>
+<p></p>
+
+<div class="boxsec">
+    <span class="species" style="margin-bottom:30px;">
+        <span class="heading2">Distribución Geográfica </span>
+      <span style="font-size: 1.3em;"> registros de la especie
+        <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span>
+    en Chile </span></span>
+
+    <!--<span class="species"> <?php if (isset($search)) echo $search; ?> en Chile</span>-->
+
+    <div id="geo-left">
         <div id="mapContainer" class="mapContainer">
-            <div class="mapTitle"><?php echo $REUNA; ?></div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;"><?php echo $REUNA; ?></div>
+            <div id="legend"></div>
         </div>
         <div id="mapContainerGBIF" class="mapContainerGBIF">
-            <div class="mapTitle">GBIF</div>
+            <div style="font-weight: bold;text-align: center;padding-bottom:8px;">GBIF</div>
         </div>
-        <div id="slider-range"></div>
-        <input type="text" id="amount" readonly>
+
+    </div>
+    <div id="right_geo">
+        <p></p>
+        <div class="heading3">Datos Georeferenciados</div>
+        <span style="font-size:1.1em"><?php echo round($totalReunaConCoordenadas*100/$totalReuna,1);?>% de los registros en <?php echo $REUNA; ?></span>
+        <span class="suave">(n=<?php echo $totalReunaConCoordenadas; ?>)</span>
+        <br>
+        <span style="font-size:1.1em"><?php echo round($totalGBIF*100/$totalEnGBIF,1);?>% de los registros en GBIF</span>
+        <span class="suave">(n=<?php echo $totalGBIF; ?>)</span>
+        <p></p>
+        <p></p>
+        <div>
+            <span class="heading3">Distribución por región:</span> <p></p>
+            XV<br>I<br>II<br>III<br>IV<br>V<br>RM<br>VI<br>VII<br>VIII<br>IX<br>XIV<br>X<br>XI<br>XII<br>
+        </div>
+        <br>
+        <strong><span class="suave">Filtro temporal:</span></strong>
+        <div id="slider-range" style="clear: both; bottom: -10px;"></div>
+        <div style="widt:100%">
+            <input type="text"  id="amountL" readonly style="float:left;border:0; position:relative; bottom: -10px; color:#000000;">
+            <input type="text"  id="amountR" readonly style="text-align:right; float:right;border:0; position:relative; bottom: -10px; color:#000000;">
+        </div>
     </div>
 </div>
-<br>
-<br>
-<div class="wraper-container" style="border: thick; border-color: black;">
-    <div class="title-a subtitulo">Observaciones Acumuladas</div>
-        <div id="acumuladas" style="margin-left: 10px"></div>
-</div>
-<div class="wraper-container" style="padding-top: 40px;">
-    <div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
-    <div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
-    <?php if(count($stackedChildrens)>0):?>
-        <div id="ReunaStacked"></div>
-    <?php else:?>
-        <div class="sinGrafico">
-            <span>No hay datos en <?php echo $REUNA; ?> o hay problemas con el indice.</span>
-        </div>
-    <?php endif;?>
-    <?php if(count($stackedChildrensGbif)>0):?>
-        <div id="GbifStacked"></div>
-    <?php else:?>
-        <div class="sinGrafico">
-            <span>No hay datos en GBIF o hay problemas con el indice.</span>
-        </div>
-    <?php endif;?>
-    <div class="title-a subtitulo" id="institucion">Instituciones</div>
-    <div class="parrafo"><?php echo $desc_chart_3['value']; ?></div>
-    <div style="width: 45%;float:left"><b>Contribuyentes</b> a los<?php if (isset($specie)) echo $specie; ?> registros <span
-            style="color: darkgray">Base de Datos <?php echo $REUNA; ?></span></div>
-    <div style="width: 45%;float:right"><b>Contribuyentes</b> a los <?php if (isset($specie)) echo $specie; ?> registros <span
-            style="color: darkgray">Base de Datos GBIF</span></div>
-    <!--<div id="institucionBar" class="institucionBar"></div>-->
-    <div id="institucionPieREUNA" class="institucionPie"></div>
-    <div id="institucionPieGBIF" class="institucionPie"></div>
-    <div id="REUNATable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institución</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionNames as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
-        }
-        ?></div>
-    <div id="GBIFTable"><?php
-        print '<div class="tableElement"><div class="tableRow">Institution</div><div style="color: #444444;font-weight: bold;width:13%;float: right">Registros</div></div>';
-        foreach($institutionNamesGBIF as $key=>$value){
-            print '<div class="tableElement"><div class="key">'.$key.'</div><div class="value">'.$value.'</div></div>';
-        }
-        ?></div>
-    <div id="registrosPorInvestigador"><?print $salida;?></div>
-</div>
+<div id="taxonomica" class="title-a subtitulo">Composición Taxonómica</div>
+<div class="parrafo"><?php //echo $desc_chart_2['value']; ?></div>
+<div id="ReunaStacked"></div>
+<div id="GbifStacked"></div>
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" >Distribución Temporal  &nbsp</div>
+    <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la evolución temporal de los registros en Chile de
+        la especie <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span>
+         en ambas fuentes de datos. Izquierda: la distribución de los registros por año, derecha: por el mes de registro.
+    </span>
+            <div id="temp-left">
+                <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_1['value']; ?></div> -->
+                <span class="heading3">Registros por año</span>
+                <div id="contribucionBarrasREUNA"></div>
+                <div class="suave" style="margin-top:-5px; position:relative;">
+                    <?php reset($yearCount);if(key($yearCount)==""){echo sizeof($yearCount)-1;}else {echo sizeof($yearCount);};?></span> años con registros en <?php echo $REUNA; ?>
+                    (<?php if(sizeof($yearCount)==1){echo key($yearCount);}else{reset($yearCount);if(key($yearCount)==""){next($yearCount);echo key($yearCount).' - ';end($yearCount);echo key($yearCount);} else{echo key($yearCount).' - ';end($yearCount);echo key($yearCount);}};?>)
+                </div>
+
+                <div id="contribucionBarrasGBIF"></div>
+                <div class="suave" style="margin-top:-5px; position:relative;">
+                    <span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en GBIF
+                    (<?php if(sizeof($yearCountGbif)==1){echo key($yearCountGbif);}else{reset($yearCountGbif);echo key($yearCountGbif).' - ';end($yearCountGbif);echo key($yearCountGbif);};?>)
+                </div>
+            </div>
+            <div id="temp-right">
+                <!-- TEXTO MODIFICABLE <div class="parrafo"><?php echo $desc_chart_2['value']; ?></div> -->
+                <span class="heading3">Registros por mes</span>
+                <div id="reunaGbifBarras"></div>
+                <div id="GbifBarrasmes"></div>
+            </div>
+            <p></p>&nbsp
+            <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalEnGBIF-end($accumulatedYearsGbif)); ?>] GBIF
+            </div>
+        </td></tr>
+</table>
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2" > Organizaciones contribuyentes en <?php echo $REUNA; ?></div>
+            <p></p>
+            <div style="width: 49%;display:inline-block;text-align:left;margin:10px 0 0 20px;">
+                <div class="heading3">Organizaciones</div>
+                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;">En el repositorio <?php echo $REUNA; ?>,
+                    <b><?php echo sizeof($institutionNamesReuna)?></b>
+                    Organizaciones han contribuido con registros de la especie
+                    <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
+                </div>
+                <?php if(count($institutionNamesReuna)>0):?>
+                <div id="REUNATable"><?php print '
+                <div class="tableElement">
+                    <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                    <div style="color: #168970;width:14%;float:right;font-size:0.9em;">Registros</div>
+                </div>';
+                    foreach($institutionNamesReuna as $elemento){
+                        print '<div class="tableElement"><div class="key"><a href="http://www.google.cl/search?q='.str_replace(' ','+',$elemento[0]).'" target="_blank">'.$elemento[0].'</a></div><div class="value">'.$elemento[1].'</div></div>';
+                    }
+                    ?>
+                </div>
+
+                <div style="font-size:1.1em;margin:50px 20px 0px 20px;text-align:left;display:inline-block;width:85%;">
+                    Distribución relativa contribución de registros:
+
+                    <div id="institucionPieREUNA" class="institucionPie"></div>
+                    <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]
+
+                    </div>
+                </div>
+            </div>
+
+            <div style="width: 45%;text-align:left;margin-top:10px;float:right;">
+                <div class="heading3">Investigadores</div>
+                <div style="font-size: 1.2em;margin:10px 20px 0 0 ;"><b><?php echo count($especiesPorInvestigador); ?></b> Investigadores han contribuido con registros de la especie
+            <span class="species">
+                <span style="font-style:italic;">
+                    <?php if (isset($specie)) echo $specie; ?>
+                </span> en el repositorio <?php echo $REUNA; ?>:</span>
+                </div>
+                <br>
+                <div id="registrosPorInvestigador"><?print $salida;?></div>
+            </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
+        </td></tr>
+</table>
+<table style="margin:20px;width:945px;">
+    <tr><td class="boxinstituc">
+            <div class="heading2">Organizaciones contribuyentes en GBIF</div>
+            <?php if(count($institutionNamesGBIF)>0):?>
+                <div style="width: 50%;float:left;text-align:left;margin-top:10px;">
+                    <div style="font-size: 1.2em;margin:20px;">En GBIF,
+                        <b><?php echo sizeof($institutionNamesGBIF)?></b>
+                        Organizaciones han contribuido con registros de la especie
+                        <span class="species"> <span style="font-style:italic;"><?php if (isset($specie)) echo $specie; ?></span> en Chile:</span>
+                    </div>
+
+                    <div id="GBIFTable"><?php
+                        print '
+                        <div class="tableElement">
+                            <div style="color: #168970;width:86%;float:left;font-size:0.9em;">Organización</div>
+                            <div style="color: #168970;font-weight: bold;width:14%;float: right;font-size:0.9em;">Registros</div>
+                        </div>';
+                        foreach($institutionDataGbif[0] as $key=>$value){
+                            $tooltip=getOrgArray($institutionInfo,$value[0]);
+                            print '<div class="tableElement" tooltip="Sitio Web: '.$tooltip['page'][0].'&#xa;Direccion: '.$tooltip['addr'][0].'&#xa;Contacto: '.$tooltip[0][0]['name'].'&#xa;Correo: '.$tooltip[0][0]['email'][0].'">
+                                    <div class="key">
+                                        <a href="'.$tooltip['page'][0].'" target="_blank">'.$value[0].'</a>
+                                    </div>
+                                    <div class="value">'.$value[1].'</div>
+                                </div>';
+                        }
+                        ?></div>
+                </div>
+                <div style="width: 44%;text-align:left;margin-top:10px;float:right;">
+                    <div style="font-size:1.1em;margin:20px 20px 0px 20px;text-align:center;">Distribución relativa contribución de registros:</div>
+                    <div id="institucionPieGBIF" class="institucionPie"></div>
+                    <div class="suave" style="margin:20px 20px 20px 20px;text-align:center;">[ Click en una organización para quitarla del gráfico ]</div>
+                </div>
+            <?php else:?>
+                <div class="sinGrafico">
+                    <span>No hay datos para mostrar</span>
+                </div>
+            <?php endif;?>
+        </td></tr>
+</table>
 <script>
 function changeFeatures(first, last) {
     source.clear();
@@ -207,422 +299,418 @@ function changeFeatures(first, last) {
         });
     }
 
-    $(document).ready(function ($) {
+    Drupal.behaviors.analizador_biodiversidad={
+        attach: function(context,settings){
+            var data=<?php echo json_encode($dataReuna); ?>;
+            var monthCount =<?php echo json_encode($monthCount); ?>;
+            var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
+            var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
+            var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
+            var name = 'Década';
+            var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
+            var dataREUNA = tempREUNA[0];
+            var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
+            var dataGBIF = tempGBIF[0];
+            var categoryYears=<?php echo json_encode($categoryYears); ?>;
+            var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
+            var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
 
-        var data=<?php echo json_encode($dataReuna); ?>;
-        var monthCount =<?php echo json_encode($monthCount); ?>;
-        var monthCountGBIF =<?php echo json_encode($someVar); ?>;
-        var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
-        console.log(stackedGbifData);
-        var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
-        var name = 'Década';
-        var tempREUNA=<?php echo json_encode($drillDownDataReuna);?>;
-        var dataREUNA = tempREUNA[0];
-        //var decadasREUNA=tempREUNA[1];
-        var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
-        var dataGBIF = tempGBIF[0];
-        console.log(tempGBIF[1]);
-        console.log(tempGBIF[0]);
-        var categoryYears=<?php echo json_encode($categoryYears); ?>;
-        var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
-        var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
-        console.log(accumulatedDataGbif);
-       // console.log(categoryYears);
+            var graph =<?php echo json_encode($institutionNamesReuna); ?>;
+            var yearCount =<?php echo json_encode($yearCount); ?>;
+            var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
 
-        $('#institucionPieREUNA').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 250,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: data[0]
-            }]
-        });
+            var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
+            var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
+            var catNames=<?php echo json_encode($categoriesGBIF); ?>;
 
-        var data=<?php echo json_encode($dataGbif); ?>;
-
-        $('#institucionPieGBIF').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: true,
-                spacingTop: 0,
-                spacingLeft: 0,
-                marginTop: 0,
-                marginLeft: 0
-            },
-            title: {
-                text: null,
-                style: '"fontSize": "14px"'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                pie: {
-                    size: 250,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {},
-            series: [{
-                type: 'pie',
-                name: 'Total',
-                data: data[0]
-            }]
-        });
-
-        $('#institucionBar').highcharts({
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Registros por institución',
-                style: '"fontSize": "14px"',
-                x: 15
-            },
-            xAxis: {
-                categories: data[1],
+            var noHayDatos={
                 title: {
-                    text: null
-                }
-            },
-            yAxis: {
-                min: 0,
+                    text: '<span style="">No hay datos para mostrar</span>',
+                    style: {
+                        color: 'black'
+                    }
+                },
+                anchorX: "left",
+                anchorY: "top",
+                allowDragX: true,
+                allowDragY: true,
+                x: 125,
+                y: 75
+            };
+            var y=0;
+
+            var institutionPieReunaOptions={
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
                 title: {
                     text: null,
-                    align: 'high'
+                    style: '"fontSize": "14px"'
                 },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            tooltip: {
-                pointFormat: '<b>{point.y} Registros</b>'
-            },
-            plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true
-                    },
-                    showInLegend: true
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right'
-            },
-            credits: {
-                enabled: false
-            },
-            series: [{
-                //name: data[1],
-                data: data[2]
-            }]
-        });
-
-        if(tempREUNA[1].length>0)chartREUNA = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
-                type: 'column'
-            },
-            title: {
-                text: null
-            },
-            xAxis: {
-                categories: tempREUNA[1],
-                labels: {
-                    rotation:-45,
-                    style: {
-
-                        color: '#000000'
-                        //font: '11px Trebuchet MS, Verdana, sans-serif'
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
                     }
-                }
-            },
-            yAxis: {
+                },
+                credits: {
+                    enabled: false
+                },
+                legend:{
+                    itemStyle: {
+                        width: 360 // or whatever
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: graph//data[0]
+                }],
+                annotations:[]
+            };
+            if(graph.length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
+            $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
+
+            var institutionPieGbifOptions={
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    spacingTop: 0,
+                    spacingLeft: 0,
+                    marginTop: 0,
+                    marginLeft: 0
+                },
                 title: {
-                    text: 'Observ. <?php echo $REUNA; ?>',
+                    text: null,
+                    style: '"fontSize": "14px"'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> con <b>{point.y} Registros</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    itemStyle: {
+                        width: 360
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Total',
+                    data: institutionDataGbif[0]
+                }],
+                annotations:[]
+            };
+            if(institutionDataGbif[0].length==0)institutionPieGbifOptions.annotations.push(noHayDatos);
+            $('#institucionPieGBIF').highcharts(institutionPieGbifOptions);
+
+            // GRAFICO TEMPORAL ANUAL GBIF
+            var chartGbifOptions={
+                chart: {
+                    renderTo: 'contribucionBarrasGBIF',
+                    type: 'column'
+                },
+                title: {
+                    text: 'GBIF',
                     style: {
-                        color: '#000000',
-                        fontSize: '12px',
+                        fontSize: '14px',
                         fontWeight: 'bold'
                     }
-                }
-            },
-            plotOptions: {
-                area:{
-                    pointStart: 1900
                 },
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldownREUNA = this.drilldown;
-                                if (drilldownREUNA) { // drill down
-                                    setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
-                                } else { // restore
-                                    setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
+                xAxis: {
+                    categories: tempGBIF[1] ,
+                    labels: {
+                        rotation:-45,
+                        style: {
+                            color: '#000000',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Registros',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldown = this.drilldown;
+                                    if (drilldown) { // drill down
+                                        setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data, 'rgba(83, 173, 37, 0.8)');
+                                    } else { // restore
+                                        setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
+                                    }
                                 }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            style: {
+                                fontWeight: 'regular',
+                                fontSize: '9px'
+
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
                             }
                         }
                     },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#53AD25',
-                        style: {
-                            fontWeight: 'bold'
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
+                    series: {
+                        color: 'rgba(83, 173, 37, 0.8)'
                     }
                 },
-                series: {
-                    color: 'rgba(0, 0, 0, 0.8)'
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click para expandir a ' + point.category;
-                    } else {
-                        s += 'Click para volver atrás.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataREUNA
-                //color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-        if(tempGBIF[1].length>0)chartGBIF = new Highcharts.Chart({
-            chart: {
-                renderTo: 'contribucionBarrasGBIF',
-                type: 'column'
-            },
-            title: {
-                text: null
-            },
-            xAxis: {
-                categories: tempGBIF[1],
-                labels: {
-                    rotation:-45,
-                    style: {
-
-                        color: '#000000'
-                        //font: '11px Trebuchet MS, Verdana, sans-serif'
-                    }
-                }
-               // categories:[1900,1910,1920,1930,1940,1950,1960,1970,1980,2000,2010,2020]
-            },
-            yAxis: {
-                title: {
-                    text: 'Observ. GBIF',
-                    style: {
-                        color: '#000000',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            plotOptions: {
-                column: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                var drilldown = this.drilldown;
-                                if (drilldown) { // drill down
-                                    setChart(chartGBIF, drilldown.name, drilldown.categories, drilldown.data,'rgba(83, 173, 37, 0.8)');//, drilldown.color);
-                                } else { // restore
-                                    setChart(chartGBIF, name, tempGBIF[1], dataGBIF,'rgba(83, 173, 37, 0.8)');
-                                }
-                            }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            fontWeight: 'bold'
-                        },
-                        formatter: function () {
-                            return this.y != 0 ? this.y : null;
-                        }
-                    }
-                },
-                series: {
-                    color: 'rgba(83, 173, 37, 0.8)'
-                }
-            },
-            tooltip: {
-                formatter: function () {
-                    var point = this.point,
-                        s = this.x + ':<b>' + this.y + '</b><br/>';
-                    if (point.drilldown) {
-                        s += 'Click para expandir a ' + point.category;
-                    } else {
-                        s += 'Click para volver atrás.';
-                    }
-                    return s;
-                }
-            },
-            series: [{
-                name: name,
-                data: dataGBIF
-                //color: 'white'
-            }],
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                //layout: 'vertical',
-                //align: 'right',
-                /*floating: true,*/
-                //x:0,
-                //y:-150
-                /*backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-                 shadow: true*/
-            }
-        });
-        //console.log('asd');
-        //console.log(dataGBIF);
-
-
-        $('#acumuladas').highcharts({
-            chart: {
-                type: 'area'
-            },
-            credits: {
-                enabled: false
-            },
-            title: {
-                text: '',
-                style: '"fontSize": "12px"'
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                allowDecimals: false,
-                //categories: categoryYears,
-                labels: {
-                   // enabled: false,
-                    rotation: 0,
+                tooltip: {
                     formatter: function () {
-                        return this.value; // clean, unformatted number for year
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
                     }
+                },
+                series: [{
+                    name: name,
+                    data: dataGBIF
+                    //color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled:false
+                },
+                annotations: []
+            };
+            y=0;
+            for(var i=0;i<dataGBIF.length;i++){
+                y+=dataGBIF[i]['y'];
+            }
+            if(y==0)chartGbifOptions.annotations.push(noHayDatos);
+            chartGBIF = new Highcharts.Chart(chartGbifOptions);
 
-                }
-            },
-            yAxis: {
-                allowDecimals: false,
-                min: 0,
-                max:null,
+            // GRAFICO TEMPORAL ANUAL REUNA
+            var chartReunaOptions={
+                chart: {
+                    renderTo: 'contribucionBarras<?php echo $REUNA; ?>',
+                    type: 'column'
+                },
                 title: {
-                    text: '<b>Observaciones</b>'
-                }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:20px">Año:{point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                area: {
-                    pointStart: 1900,
-                    marker: {
-                        enabled: false,
-                        symbol: 'circle',
-                        radius: 2,
-                        states: {
-                            hover: {
-                                enabled: true
-                            }
+                    text: '<?php echo $REUNA; ?>',
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 'bold'
+                    }
+                },
+                xAxis: {
+                    categories: tempREUNA[1] ,
+                    labels: {
+                        rotation:-45,
+                        style: {
+
+                            color: '#000000'
+                            //font: '11px Trebuchet MS, Verdana, sans-serif'
+                        }
+                    },
+                    lineColor: '#666'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Registros',
+                        style: {
+                            color: '#000000',
+
+                            fontWeight: 'bold'
                         }
                     }
                 },
-                series:{lineColor:'#FFFFFF'}
-            },
-            series: [
-
-                {
-                    name: 'GBIF',
-                    data: accumulatedDataGbif,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
-                    color:'#53AD25'
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    var drilldownREUNA = this.drilldown;
+                                    if (drilldownREUNA) { // drill down
+                                        setChart(chartREUNA, drilldownREUNA.name, drilldownREUNA.categories, drilldownREUNA.data, 'rgba(0, 0, 0, 0.8)');
+                                    } else { // restore
+                                        setChart(chartREUNA, name, tempREUNA[1], dataREUNA,'rgba(0, 0, 0, 0.8)');
+                                    }
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            color: '#53AD25',
+                            style: {
+                                fontWeight: 'regular',
+                                fontSize: '9px'
+                            },
+                            formatter: function () {
+                                return this.y != 0 ? this.y : null;
+                            }
+                        }
+                    },
+                    series: {
+                        color: 'rgba(0, 0, 0, 0.8)'
+                    }
                 },
-                {
-                    name: '<?php echo $REUNA; ?>',
-                    data: accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]
-                    color: '#000000'
-                }]
-        });
+                tooltip: {
+                    formatter: function () {
+                        var point = this.point,
+                            s = this.x + ':<b>' + this.y + '</b><br/>';
+                        if (point.drilldown) {
+                            s += 'Click to expand to ' + point.category;
+                        } else {
+                            s += 'Click to return.';
+                        }
+                        return s;
+                    }
+                },
+                series: [{
+                    name: name,
+                    data: dataREUNA
+                    //color: 'white'
+                }],
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled:false
+                },
+                annotations:[]
+            };
+            y=0;
+            for(var i=0;i<dataREUNA.length;i++){
+                y+=dataREUNA[i]['y'];
+            }
+            if(y==0)chartReunaOptions.annotations.push(noHayDatos);
+            chartREUNA = new Highcharts.Chart(chartReunaOptions);
 
-        if(Object.keys(stackedGbifData).length>0){
+            // GRAFICO TEMPORAL ACUMULACION
+            var acumulatedOptions={
+                chart: {
+                    type: 'area'
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    //itemWidth: 150
+                    adjustChartSize: true
+                },
+                title: {
+                    text: 'Acumulación registros en el tiempo por fuente de datos',
+                    style: '"fontSize": "12px"'
+                },
+                xAxis: {
+                    allowDecimals: false,
+                    labels: {
+                        rotation: 0,
+                        formatter: function () {
+                            return this.value; // clean, unformatted number for year
+                        }
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    fontWeight: 'bold',
+                    title: {
+                        text: '<b></b>' // AQUI LEYENDA EJE Y
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:25px">año {point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    area: {
+                        pointStart: 1900,
+                        marker: {
+                            enabled: false,
+                            symbol: 'circle',
+                            radius: 2,
+                            states: {
+                                hover: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    series :{
+                        lineColor: '#FFFFFF'
+                    }
+                },
+                series: [{
+                    name:'GBIF',
+                    /*Datos de prueba*/
+                    data: accumulatedDataGbif,//[1, 1, 6, 9, 10, 8, 3, 1,1, 6,1, 1, 2, 7, 5, 6, 5, 9, 9, 9]
+                    color:'#53AD25'
+                },{
+                    name: '<?php echo $REUNA; ?>',
+                    /*Datos de prueba*/
+                    data:accumulatedData,//[1, 1, 2, 3, 5, 8, 5, 4, 3, 2,1, 1, 2, 3, 5, 8, 5, 4, 3, 2]//accumulatedData
+                    color:'#000000'
+                }],
+                annotations:[]
+            };
+            y=0;
+            for(var i=0;i<accumulatedDataGbif.length;i++){
+                y+=accumulatedDataGbif[i];
+            }
+            for(var i=0;i<accumulatedData.length;i++){
+                y+=accumulatedData[i];
+            }
+            if(y==0)acumulatedOptions.annotations.push(noHayDatos);
+            $('#acumuladas').highcharts(acumulatedOptions);
+
             GbifStacked = new Highcharts.Chart({
                 chart: {
                     type: 'bar',
@@ -660,8 +748,7 @@ function changeFeatures(first, last) {
                     }
                 },
                 series: []
-            });}
-        if(Object.keys(stackedReunaData).length>0){
+            });
             ReunaStacked = new Highcharts.Chart({
                 chart: {
                     type: 'bar',
@@ -691,76 +778,66 @@ function changeFeatures(first, last) {
                     }
                 }
             });
-        }
-        //addSeriesStacked(GbifStacked,stackedGbifData);
-        //addSeriesStacked(ReunaStacked,stackedReunaData);
-        var j=0;
-        var cont=0;
-        if(Object.keys(stackedGbifData).length>0){
-            for(var x in stackedGbifData){
-                if(j<15) {
-                    GbifStacked.addSeries(stackedGbifData[x]);
-                    j=j+1;
+
+            var j=0;
+            var cont=0;
+            if(Object.keys(stackedGbifData).length>0){
+                for(var x in stackedGbifData){
+                    if(j<15) {
+                        GbifStacked.addSeries(stackedGbifData[x]);
+                        j=j+1;
+                    }
+                    else{
+                        cont+=stackedGbifData[x].index;
+                    }
+
                 }
-                else{
-                    cont+=stackedGbifData[x].index;
+                var arr=[cont];
+                GbifStacked.addSeries({
+                    name:'Otros',
+                    data:arr,
+                    index:cont,
+                    legendIndex:cont
+                });
+            }
+
+            var k=0;
+            var conta=0;
+            if(Object.keys(stackedReunaData).length>0){
+                for(var x in stackedReunaData){
+                    if(k<15){
+                        ReunaStacked.addSeries(stackedReunaData[x]);
+                        k=k+1;
+                    }
+                    else{
+                        conta+=stackedReunaData[x].index;
+                    }
                 }
-
+                var arre=[conta];
+                ReunaStacked.addSeries({
+                    name:'Otros',
+                    data:arre,
+                    index:conta,
+                    legendIndex:conta
+                });
             }
-            var arr=[cont];
-            GbifStacked.addSeries({
-                name:'Otros',
-                data:arr,
-                index:cont,
-                legendIndex:cont
-            });
         }
+    }
 
-        var k=0;
-        var conta=0;
-        if(Object.keys(stackedReunaData).length>0){
-            for(var x in stackedReunaData){
-                if(k<15){
-                ReunaStacked.addSeries(stackedReunaData[x]);
-                    k=k+1;
-            }
-                else{
-                    conta+=stackedReunaData[x].index;
-                }
-            }
-            var arre=[conta];
-            ReunaStacked.addSeries({
-                name:'Otros',
-                data:arre,
-                index:conta,
-                legendIndex:conta
-            });
-        }
-
-
-    });
 })(jQuery);
-var arrayCoordinatesInJS =<?php if($coordinatesInPHP!="")echo "[".$coordinatesInPHP."]";else{echo "[]";}?>;
-var arrayCoordinatesGBIFInJS =<?php if($coordinatesGBIFInPHP!="")echo "[".$coordinatesGBIFInPHP."]";else{echo "[]";}?>;
+var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
+var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-console.log(arrayCoordinatesInJS);
-console.log(arrayCoordinatesGBIFInJS);
-console.log(coordYearsGBIF);
-console.log(coordYearsReuna);
-var largo = (arrayCoordinatesInJS.length) / 2;
+
+var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinate = [parseFloat(arrayCoordinatesInJS[i + 1]), parseFloat(arrayCoordinatesInJS[i])];
+    for (var i = 0; i < arrayCoordinatesInJS.length; i ++) {
+        var coordinate = [parseFloat(arrayCoordinatesInJS[i][1]), parseFloat(arrayCoordinatesInJS[i][0])];
         var tempLonlat = ol.proj.transform(coordinate, 'EPSG:4326', 'EPSG:3857');
-        //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        features[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
-        j++;
+        features[i] = new ol.Feature(new ol.geom.Point(tempLonlat));
     }
-    ;
 }
 var mapView = new ol.View({
     projection: 'EPSG:3857',
@@ -774,14 +851,26 @@ var source = new ol.source.Vector({
 });
 
 var clusterSource = new ol.source.Cluster({
-    distance: 2,
+    distance: 8,
     source: source
 });
+function createLegend(){
+    var legend='<div class="legendRow"><div class="qntity">Registros</div></div>';
+    document.getElementById("legend").innerHTML = legend;
+    for(var i=6;i>=1;i--){
+        legend='<div class="legendRow"><div class="colorType" style="background-color:'+getColor(i-1)+';"></div><div class="qntity">'+(i==6?'>5':i)+'</div></div>';
+        document.getElementById("legend").innerHTML += legend;
+    }
+}
+createLegend();
 function getColor(index) {
     var colors = ['#FFFF00', '#FFD700', '#FFA500', '#FF8C00', '#FF4500', '#FF2000'];
     return colors[index] ? colors[index] : '#FF2000';
 }
-var capaOsm = new ol.layer.Tile({source: new ol.source.MapQuest({layer: 'osm'})});
+var capaOsm = new ol.layer.Tile({
+    source: new ol.source.OSM()
+});
+//{source: new ol.source.MapQuest({layer: 'osm'})}
 var raw = new ol.layer.Vector({source: source});
 var styleCache = {};
 var clusters = new ol.layer.Vector({
@@ -805,12 +894,13 @@ var clusters = new ol.layer.Vector({
         }
         return style;
     }
-    //projection: ol.proj.get('EPSG:4326')
+//projection: ol.proj.get('EPSG:4326')
 });
 
 var geoJsonSource = new ol.source.GeoJSON({
     projection: 'EPSG:3857',
     //url: '<?php //echo $path;?>/regiones/regiones.json'
+//url: '<?php //echo $path;?>/regiones/cuads25k_ll.geojson'
 });
 var geoJson = new ol.layer.Vector({
     title: 'Regiones',
@@ -860,26 +950,35 @@ var map = new ol.Map({
     renderer: 'canvas',
     view: mapView
 });
-var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
+var largoGBIF = (arrayCoordinatesGBIFInJS.length);
 if (largoGBIF > 0) {
     var featuresGBIF = new Array(largoGBIF);
-    var j = 0;
-    for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
-        //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
-        var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i]), parseFloat(arrayCoordinatesGBIFInJS[i + 1])];
+    for (var i = 0; i < arrayCoordinatesGBIFInJS.length; i ++) {
+        var coordinateGBIF = [parseFloat(arrayCoordinatesGBIFInJS[i][0]), parseFloat(arrayCoordinatesGBIFInJS[i][1])];
         var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
-        //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
-        featuresGBIF[j] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
-        j++;
+        featuresGBIF[i] = new ol.Feature(new ol.geom.Point(tempLonlatGBIF));
     }
-    ;
 }
+/*var largoGBIF = (arrayCoordinatesGBIFInJS.length) / 2;
+ if (largoGBIF > 0) {
+ var featuresGBIF = new Array(largoGBIF);
+ var j = 0;
+ for (var i = 0; i < arrayCoordinatesGBIFInJS.length - 1; i += 2) {
+ //alert(arrayCoordinatesInJS[i] + " " + arrayCoordinatesInJS[i+1]);
+ var coordinateGBIF = [arrayCoordinatesGBIFInJS[i], arrayCoordinatesGBIFInJS[i + 1]];
+ var tempLonlatGBIF = ol.proj.transform(coordinateGBIF, 'EPSG:4326', 'EPSG:3857');
+ //var tempLonlat = [arrayCoordinatesInJS[i], arrayCoordinatesInJS[i+1]];
+ featuresGBIF[j] = new ol.Feature({'visible': 'true'});
+ featuresGBIF[j].setGeometry(new ol.geom.Point(tempLonlatGBIF));
+ j++;
+ }
+ ;
+ }*/
 var sourceGBIF = new ol.source.Vector({
     features: featuresGBIF
 });
-
 var clusterSourceGBIF = new ol.source.Cluster({
-    distance: 2,
+    distance: 8,
     source: sourceGBIF
 });
 var rawGBIF = new ol.layer.Vector({source: sourceGBIF});
@@ -912,6 +1011,7 @@ var mapGBIF = new ol.Map({
     renderer: 'canvas',
     view: mapView
 });
+/***************************************/
 var selectClick = new ol.interaction.Select({
     condition: ol.events.condition.click,
     style: new ol.style.Style({
@@ -924,6 +1024,18 @@ var selectClick = new ol.interaction.Select({
         })
     })
 });
+
+/*var newFeatures = [];
+ var j = 0;
+ var k = 0;
+ for (var i = 0; i < arrayCoordinatesInJS.length - 1; i += 2) {
+ if (coordYearsReuna[k] <= last && coordYearsReuna[k] >= first) {
+ var tempLonlat = ol.proj.transform([arrayCoordinatesInJS[i + 1], arrayCoordinatesInJS[i]], 'EPSG:4326', 'EPSG:3857');
+ newFeatures[j] = new ol.Feature(new ol.geom.Point(tempLonlat));
+ j++;
+ }
+ k++;
+ }*/
 
 var collection = selectClick.getFeatures();
 collection.on('add', function () {
@@ -942,8 +1054,8 @@ collection.on('add', function () {
         }
     );
 
-    //console.log(featuresinBox);
-    //featuresSelected.push(e);
+//console.log(featuresinBox);
+//featuresSelected.push(e);
 });
 collection.on('remove', function () {
     console.log('remove');
@@ -1000,10 +1112,10 @@ boxControl.on('boxend', function () {
             featuresinBox.push(e);
         }
     });
-    //document.getElementById("msg").innerHTML = featuresinBox.length;
+//document.getElementById("msg").innerHTML = featuresinBox.length;
     console.log(featuresinBox);
 });
 changeInteraction();
-//mapGBIF.bindTo('layergroup', map);
+/***************************************/
 mapGBIF.bindTo('view', map);
 </script>
