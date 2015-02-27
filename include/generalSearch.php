@@ -129,6 +129,7 @@ try {
     //$searchOrder = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $queryFilterWord . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=ORDER'), true);
     //$searchInstitutions = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?q=' . $queryFilterWord . '&dataset_key=fab88965-e69d-4491-a04d-e3198b626e52&rank=FAMILY&limit=300'), true);
     //print
+    var_dump($_SERVER);
     print '<div id="tabs"><ul>';
     print ' <li><a href="#tabs-1"><div class="title">Resultados</div></a></li>';
     print ' <li><a href="#tabs-2"><div class="title">Instituciones</div></a></li>';

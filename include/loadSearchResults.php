@@ -45,10 +45,10 @@ function makeTaxaHierarchy($i){
         $result.=''.$order.'';
     }
     if($family!=''){
-        $result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/family/'.$family.'">'.$family.'</a>';
+        $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/family/'.$family.'">'.$family.'</a>';
     }
     if($genus!=''){
-        $result.=' > <a href="http://www.ecoinformatica.cl/site/analizador/genus/'.$genus.'">'.$genus.'</a>';
+        $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/genus/'.$genus.'">'.$genus.'</a>';
     }
     return $result;
 };
@@ -136,7 +136,7 @@ function constructResult($searchResults,$solr,$number){
                 $cleanResults.= '<div class="result" id="'.($reunaCount+$count).'">';
                 $cleanResults.= '<div class="scientificName">';
                 $cleanResults.= '<span>'.$number.') </span>'; // aqui va el numero de la aparicion
-                $cleanResults.= '<a href="http://www.ecoinformatica.cl/site/analizador/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
+                $cleanResults.= '<a href="'.$_SERVER['HTTP_REFERER'].'/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
                 $cleanResults.= '</div>';//div fin scientificName
                 $cleanResults.= '<div class="moreInfo">
                     <div class="rank">Tipo: '.$rank.'</div>
