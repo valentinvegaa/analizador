@@ -210,7 +210,9 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 </td></tr>
 </table>
 <script>
-
+    /**
+     * Funcion que muestra/oculta las coordenadas marcadas en el mapa, dependiendo del año elegido (barra horizontal)
+     * */
     function changeFeatures(first, last) {
         source.clear();
         sourceGBIF.clear();

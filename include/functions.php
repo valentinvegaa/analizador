@@ -5,7 +5,12 @@
  * Date: 25-02-2015
  * Time: 11:23
  */
-
+/**
+ * Cuenta el numero de ocurrencias por mes.
+ *
+ * @return array con las ocurrencias
+ * @param integer $taxonKey clave de la especie
+ */
 function countMonths($taxonKey)
 {
     $returnVal = array();
@@ -15,6 +20,12 @@ function countMonths($taxonKey)
     }
     return $returnVal;
 }
+/**
+ * Obtiene informacioón de las organizaciones.
+ *
+ * @return array con la informacion
+ * @param array $organizations arreglo con los nombres de las organizaciones
+ */
 function getOrganizationNames($organizations)
 {
     $result = array();
@@ -38,27 +49,35 @@ function getOrganizationNames($organizations)
         }
         array_push($localTemp,$contacts);
         array_push($orgData,$localTemp);
-
-        //array_push($result,array($json['title'],$i));
-        //$org=json_decode(file_get_contents("http://api.gbif.org/v1/organization/$i"),true);
     }
     $finalResult=array($result,$orgData);
     return $finalResult;
 }
+/**
+ * Obtiene todas las especies asociadas a un genero
+ *
+ * @return array con las especies
+ * @param integer $key clave numeria del genero
+ */
 function getChildrenNames($key){
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/'.$key.'/children/?limit=300'), true);//106311492
     $result=array();
     foreach($children['results'] as $i){
         $count = json_decode(file_get_contents('http://api.gbif.org/v1/occurrence/count?taxonKey='.$i['nubKey'].'&country=CL&isGeoreferenced=true'),true);
         if($count>0){
-            //$result.="{'name':'".$i['species']."','data':[".$count."]},";
             $result[$i['species']]=$count;
         }
-        //echo 'species '.$i['species'].' count '.$count;
     };
     arsort($result);
     return $result;
 }
+/**
+ * Obtiene todas las ocurrencias por decada
+ *
+ * @return array con las especies
+ * @param array $data con numero de ocurrencias por año
+ * @param integer $decada con decada especifica (decada del 50 igual 195)
+ */
 function getYears($data,$decada)
 {
     $years=array();
@@ -73,7 +92,7 @@ function getYears($data,$decada)
     for($i=0;$i<10;$i++){
         $cambio=strval($i);
         $trans=$decada.$cambio;
-        if($temp!=(int)$trans){//error
+        if($temp!=(int)$trans){
             $years[$i]=(int)$trans;
 
         }
@@ -84,6 +103,13 @@ function getYears($data,$decada)
     return $years;
 
 }
+/**
+ * Obtiene las ocurrencias para una decada (1950 a 1959)
+ *
+ * @return array con las ocurrencias por año
+ * @param array $data con numero de ocurrencias por año
+ * @param integer $decada con decada especifica (decada del 50 igual 195)
+ */
 function getData($data,$decada) {
     $out=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     $i=0;
@@ -95,197 +121,64 @@ function getData($data,$decada) {
     }
     return $out;
 }
-function CalculaEjeX($var1,$var2){
-    $categorias=array();
-    reset($var1);
-    $anyo=date('Y');
-    if(sizeof($var1)==0){
-        $uno=1900;
-    }
-    else{
-        $uno=key($var1);
-    }
-
-    reset($var2);
-    if(sizeof($var2)!==0){
-        next($var2);//Gbif trae registros sin año
-        $dos=key($var2);}
-    else{
-        $dos=1900;
-    }
-
-    var_dump($uno);
-    var_dump($dos);
-
-
-    if($uno<=$dos){
-        $ini=substr($uno, 0, 3).'0';
-        $inicio=(int)$ini;
-        for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categorias,$i);
-        }
-    }
-    else{
-        $ini=substr($dos, 0, 3).'0';
-        $inicio=(int)$ini;
-        for($i=$inicio;$i<=$anyo;$i+=10){
-            array_push($categorias,$i);
-        }
-    }
-    return $categorias;
-
-}
-function createDrilldown($var,$categorias){//function setYearCountData(yearCount)
+/**
+ * Crea graficos para las decadas y su numero de registros
+ *
+ * @return array con los graficos y las decadas (eje x)
+ * @param array $var con el numero de ocurrencias por año (1955:6)
+ * @param array $categorias con las decadas para el grafico (1950,1960...)
+ */
+function createDrilldown($var,$categorias){
     $out=array();
-
     $decadas=array();
-    $decadas2=array();
     $deca=array();
-    //$decadas2=array(1900,1910,1920,1930,1940,1950,1960,1970,1980,1990,2000,2010);
     $decadas2=$categorias;
     foreach($decadas2 as $value) {
         $dec2 = substr($value, 0, 3);
         array_push($deca,$dec2);
     }
-    //$deca=array(190,191,192,193,194,195,196,197,198,199,200,201);
     $i=0;
     $aux=array();
-    //$colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
-    //for($i=0;$i<sizeof($var);$i++){
     foreach($var as $key=>$value) {
-        $dec2 = substr($key, 0, 3).'0';//$dec . '0';
+        $dec2 = substr($key, 0, 3).'0';
         array_push($aux,$dec2);
     }
-
-    /*foreach($aux as $value){
-        if($value==0){
-                    $out[$i] = array(
-                        'y' => suma($var, 000),//error
-                        //'color'=>$colors[$i],
-                        // 'color'=>'rgba(0,0,255, 0.5)',
-                        'drilldown' => array(
-                            'name' => 'Sin año registrado',
-                            'categories' => getYears($var, 000),//error
-                            'data' => getData($var, 000),//error
-                            //'color'=>'#53AD25'
-                        )
-                    );//
-                    $i += 1;
-
-                }
-
-
-            }*/
-
     foreach($decadas2 as $value){
         if(in_array($value,$aux)){//si existe decada en arreglo que llega
             if(!in_array($value,$decadas)){//y si no esta agregado
                 array_push($decadas, $value);
                 $out[$i] = array(
                     'y' => suma($var, $deca[$i]),//error
-                    //'color' => $colors[$i],
-                    //'color'=>'#53AD25',
                     'drilldown' => array(
                         'name' => $value,
-                        'categories' => getYears($var, $deca[$i]),//error
-                        'data' => getData($var, $deca[$i]),//error
-                        //'color' => $colors[$i]
-                        //'color'=>'#53AD25'
+                        'categories' => getYears($var, $deca[$i]),
+                        'data' => getData($var, $deca[$i]),
                     )
                 );//
                 $i+=1;
             }
-
         }
-        else{//Grafico vacio
+        else{
             $out[$i] = array(
                 'y' => suma($var, $deca[$i]),
-                //'color' => $colors[$i],
-                //'color'=>'#53AD25',
                 'drilldown' => array(
                     'name' => $value,
                     'categories' => getYears($var, $deca[$i]),
                     'data' => getData($var, $deca[$i]),
-                    //'color' => $colors[$i]
-                    //'color'=>'#53AD25'
                 )
-            );//
+            );
             $i += 1;
         }
-
-
     }
-    /*$decadas=array();
-    $decadas2=array(1900,1910,1920,1930,1940,1950,1960,1970,1980,1990,2000,2010,2020);
-    $i=0;
-
-    foreach($var as $key=>$value) {
-        $dec = substr($key, 0, 3);//.'0';
-        $dec2 = $dec . '0';
-        if ($dec2 == 0) {
-            if (!in_array($dec2, $decadas)) {
-                $dec2 = 'N/A';
-                array_push($decadas, $dec2);
-                //$algo=substr($key,0,3);//error
-                $out[$i] = array(
-                    'y' => suma($var, $dec),//error
-                    //'color'=>$colors[$i],
-                    // 'color'=>'rgba(0,0,255, 0.5)',
-                    'drilldown' => array(
-                        'name' => 'Sin año registrado',
-                        'categories' => getYears($var, $dec),//error
-                        'data' => getData($var, $dec),//error
-                        //'color'=>'#53AD25'
-                    )
-                );//
-                $i += 1;
-
-            }
-
-        } else {
-
-
-            if (!in_array($dec2, $decadas)) {
-                array_push($decadas, $dec2);
-                //$algo=substr($key,0,3);//error
-                $out[$i] = array(
-                    'y' => suma($var, $dec),//error
-                    //'color' => $colors[$i],
-                    //'color'=>'#53AD25',
-                    'drilldown' => array(
-                        'name' => $dec2,
-                        'categories' => getYears($var, $dec),//error
-                        'data' => getData($var, $dec),//error
-                        //'color' => $colors[$i]
-                        //'color'=>'#53AD25'
-                    )
-                );//
-                $i += 1;
-
-            } else {//agrega graficos vacios
-                $out[$i] = array(
-                    'y' => 0,//error
-                    //'color' => $colors[$i],
-                    //'color'=>'#53AD25',
-                    'drilldown' => array(
-                        'name' => $dec2,
-                        'categories' => getYears($var, $dec),//error
-                        'data' => 0,//error
-                        //'color' => $colors[$i]
-                        //'color'=>'#53AD25'
-                    )
-                );//
-                $i += 1;
-            }
-
-
-        }
-    }*/
     return array($out,$decadas2);
-
 }
+/**
+ * obtiene numero de ocurrencias acumuladas por año
+ *
+ * @return array con los graficos y las decadas correspondientes (eje x)
+ * @param array $categorias con las decadas para el grafico, ejemplo (1950,1960...)
+ */
 function setAccumulatedYears($yearCount){
-
     $result=array();
     $year=date('Y');
     $n=0;
@@ -307,57 +200,33 @@ function setAccumulatedYears($yearCount){
         if($j==1){
             array_push($result,$last);
             $j=0;}
-//intentar de manera normal arreglando el categoryYears
-
     }
     return $result;
-
-
-
 }
-function Rellena($yearCount){
-    $result=array();
-    $year=date('Y');
-    $anyo=115;
-    for($i=0;$i<=$anyo;$i++) {
-        if (array_key_exists($year - $anyo + $i, $yearCount)) {
-
-            $result[$year - $anyo + $i]=$yearCount[$year - $anyo + $i];
-
-        }
-        else{
-            $result[$year - $anyo + $i]=0;
-        }
-    }
-
-    return $result;
-
-
-
-}
+/**
+ * establece años desde 1900 al actual
+ *
+ * @return array con los años
+ *
+ */
 function setCategoryYears(){
-
-    $anyo=115;
     $result=array();
     $year=date('Y');
-    //$n=0;
     $n=1900;
-    /*for($i=0;$i<$anyo;$i++){
-        $n=$year-$anyo+$i;
-        $ene=strval($n);
-        array_push($result,$ene);
-    }*/
     while($n<=$year){
 
         $ene=strval($n);
         array_push($result,$ene);
-        //$n+=5;
         $n++;
     }
-
     return $result;
-
 }
+/**
+ * Crea arreglo con informacion de las instituciones para ser graficadas
+ *
+ * @return array con datos para graficar
+ * @param array $graph con la informacion de instituciones y su cantidad de registros
+ */
 function setPieData($graph){
     $data=$graph;
     $colors=array('#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1','#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1');
@@ -378,6 +247,14 @@ function setPieData($graph){
     return $out;
 
 }
+/**
+ * obtiene resultados de la busqueda en solr
+ *
+ * @return array
+ * @param array $p con parametros de busqueda
+ * @param object $s para conexion a Apache_Solr_Service
+ * @param integer $limit numero de resultados
+ */
 function getResults($p,$s,$limit){
     $parameters=$p;
     $solr=$s;
@@ -388,10 +265,16 @@ function getResults($p,$s,$limit){
         return die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
     }
 }
+/**
+ * obtiene ancho
+ *
+ * @return integer con ancho
+ * @param integer $a
+ * @param integer $b
+ */
 function getWidth($a,$b){
     return $b*44/$a;
 }
-
 function getCountyName($coords,$r){
     $coordsWithCounty=array();
     if(false)//se arruinó la llave :(
@@ -411,6 +294,13 @@ function getCountyName($coords,$r){
         }
     return $coordsWithCounty;
 }
+/**
+ * cuenta numero de ocurrencias por año
+ *
+ * @return array con numero de ocurrencias por año
+ * @param integer $taxonKey clave para buscar
+ * @param integer $count numero de resultados encontrados
+ */
 function countYears($taxonKey, $count)
 {
     $returnVal = array();
@@ -442,6 +332,7 @@ function countYears($taxonKey, $count)
     ksort($returnVal);
     return $returnVal;
 }
+
 function getOrgArray($instInfo,$name){
     foreach($instInfo as $i){
         if(strcmp($i['title'],$name)==0){
@@ -450,6 +341,13 @@ function getOrgArray($instInfo,$name){
         else{}
     }
 }
+/**
+ * suma numero de ocurrencias para una decada
+ *
+ * @return integer con la suma total
+ * @param array $data con ocurrencias por año
+ * @param integer $decada con decada a comparar
+ */
 function suma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
@@ -459,6 +357,12 @@ function suma($data,$decada){
     }
     return $sum;
 }
+/**
+ * obtiene taxonomia
+ *
+ * @return string con taxonomia
+ * @param  object $i con informacion a filtrar
+ */
 function makeTaxaHierarchy($i){
     isset($i['kingdom'])?$kingdom=json_encode($i['kingdom']):$kingdom='';
     isset($i['phylum'])?$phylum=json_encode($i['phylum']):$phylum='';
@@ -488,18 +392,6 @@ function makeTaxaHierarchy($i){
     }
     return $result;
 }
-function createDrilldownCategories($var){
-    $decadas=array();
-    for($i=0;$i<sizeof($var);$i++){
-        $dec=substr($var[$i],0,3).'0';
-        if(!in_array($dec,$decadas)){
-            array_push($decadas,$dec);
-        }
-    }
-    return $decadas;
-
-
-}
 //no sirve, solo permite 2500 por dia
 function checkPosition($coords){
     for($i=0;$i<count($coords);$i++){
@@ -509,6 +401,7 @@ function checkPosition($coords){
         var_dump($result);
     }
 }
+
 function cmp($a,$b){
     if ($a['data'][0] == $b['data'][0]) {
         return 0;
@@ -521,10 +414,13 @@ function cmpInst($a,$b){
     }
     return ($b < $a) ? -1 : 1;
 }
-
+/**
+ * obtiene generos y su cantidad para una familia dada
+ *
+ * @return array con generos y su cantidad
+ * @param  integer $key con clave de familia
+ */
 function getFamilyGenus($key){//obtiene la cantidad de observaciones de cada genero asociado a la familia $key
-    //d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
-    //fab88965-e69d-4491-a04d-e3198b626e52
     $children = json_decode(file_get_contents('http://api.gbif.org/v1/species/search?dataset_key=d7dddbf4-2cf0-4f39-9b2a-bb099caae36c&rank=GENUS&limit=300&highertaxon_key='.$key), true);//106311492
     $result=array();
     $genusCount=$children['count'];
@@ -595,7 +491,12 @@ function FamilyChildrens($key){
     }
     return $result;
 }
-
+/**
+ * Cambia palabra (singular o plural) para investigador
+ *
+ * @return string
+ * @param  integer $var con numero de investigadores
+ */
 function setInvestigatorSingPlu($var){
     $tamano=count($var);
     if($tamano==0 or $tamano==1){
@@ -604,11 +505,23 @@ function setInvestigatorSingPlu($var){
         return 'investigadores han';
     }
 }
+/**
+ * Cambia palabra (singular o plural) para registros
+ *
+ * @return string
+ * @param  integer $var con numero de registros
+ */
 function setRegistrosSingPlu($var){
     if($var==0 or $var==1)
     {return 'registro en ';}
     else{ return 'registros en ';}
 }
+/**
+ * Cambia palabra (singular o plural) para años
+ *
+ * @return string
+ * @param  integer $var con numero de años en Reuna
+ */
 function setYearSingPluReuna($var){
     $tamano=sizeof($var);
     reset($var);
@@ -626,6 +539,12 @@ function setYearSingPluReuna($var){
         return 'años con registros en ';
     }
 }
+/**
+ * Cambia palabra (singular o plural) para años
+ *
+ * @return string
+ * @param  integer $var con numero de años en Gbif
+ */
 function setYearSingPluGbif($var){
     $tamano=sizeof($var);
     reset($var);
@@ -635,6 +554,12 @@ function setYearSingPluGbif($var){
         return 'años con registros en ';
     }
 }
+/**
+ * Cambia palabra (singular o plural) para organizacion
+ *
+ * @return string
+ * @param  integer $var con numero de organizaciones
+ */
 function setOrganizationSingPlu($var){
     $tamano=sizeof($var);
     if($tamano==0 or $tamano==1){
@@ -643,6 +568,12 @@ function setOrganizationSingPlu($var){
         return 'organizaciones han';
     }
 }
+/**
+ * Cuenta el numero de ocurrencias por mes.
+ *
+ * @return array con las ocurrencias
+ * @param integer $taxonKey clave de la especie
+ */
 function getCountMonths($taxonKey)
 {
     $returnVal = array();
@@ -652,6 +583,13 @@ function getCountMonths($taxonKey)
     }
     return $returnVal;
 }
+/**
+ * cuenta numero de ocurrencias por año
+ *
+ * @return array con numero de ocurrencias por año
+ * @param integer $taxonKey clave para buscar
+ * @param integer $count numero de resultados encontrados
+ */
 function getCountYears($taxonKey, $count)
 {
     $returnVal = array();
@@ -720,6 +658,13 @@ function getFamilyChildrens($key){
     }
     return $result;
 }
+/**
+ * suma numero de ocurrencias para una decada
+ *
+ * @return integer con la suma total
+ * @param array $data con ocurrencias por año
+ * @param integer $decada con decada a comparar
+ */
 function getSuma($data,$decada){
     $sum=0;
     foreach($data as $key=>$value){
@@ -729,6 +674,13 @@ function getSuma($data,$decada){
     }
     return $sum;
 }
+/**
+ * establece las categorias en decadas para los graficos de registros anuales
+ *
+ * @return array con las categorias
+ * @param array $var1 con coordenadas de años
+ * @param array $var2 con coordenadas de años
+ */
 function setCategoryDecades($var1,$var2){
     $categories=array();
     reset($var1);

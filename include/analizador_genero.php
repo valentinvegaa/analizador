@@ -91,7 +91,7 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
 </div>
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-            <div class="heading2" >Distribución de ocurrencias por genero  &nbsp</div>
+            <div class="heading2" >Distribución de ocurrencias por especie  &nbsp</div>
     <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la distribucion de los registros en Chile del genero
         <span style="font-style:italic;"><?php if (isset($search)) echo $search; ?></span> en ambas fuentes de datos.
     </span>
@@ -308,8 +308,6 @@ function changeFeatures(first, last) {
     Drupal.behaviors.analizador_biodiversidad={
         attach: function(context,settings){
             var data=<?php echo json_encode($dataReuna); ?>;
-            var monthCount =<?php echo json_encode($monthCount); ?>;
-            var monthCountGBIF =<?php echo json_encode($mesGbif); ?>;
             var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
             var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
             var name = 'Década';
@@ -317,18 +315,10 @@ function changeFeatures(first, last) {
             var dataREUNA = tempREUNA[0];
             var tempGBIF=<?php echo json_encode($drillDownDataGbif); ?>;
             var dataGBIF = tempGBIF[0];
-            var categoryYears=<?php echo json_encode($categoryYears); ?>;
             var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
             var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
-
             var graph =<?php echo json_encode($institutionNamesReuna); ?>;
-            var yearCount =<?php echo json_encode($yearCount); ?>;
-            var yearCountGbif=<?php echo json_encode($yearCountGbif); ?>;
-
-            var instNames=<?php echo json_encode($institutionNamesGBIF); ?>;
             var institutionDataGbif =<?php echo json_encode($institutionDataGbif); ?>;
-            var catNames=<?php echo json_encode($categoriesGBIF); ?>;
-
             var noHayDatos={
                 title: {
                     text: '<span style="">No hay datos para mostrar</span>',
@@ -344,7 +334,6 @@ function changeFeatures(first, last) {
                 y: 75
             };
             var y=0;
-
             var institutionPieReunaOptions={
                 chart: {
                     plotBackgroundColor: null,
@@ -386,13 +375,12 @@ function changeFeatures(first, last) {
                 series: [{
                     type: 'pie',
                     name: 'Total',
-                    data: graph//data[0]
+                    data: graph
                 }],
                 annotations:[]
             };
             if(graph.length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
             $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
-
             var institutionPieGbifOptions={
                 chart: {
                     plotBackgroundColor: null,
@@ -440,7 +428,6 @@ function changeFeatures(first, last) {
             };
             if(institutionDataGbif[0].length==0)institutionPieGbifOptions.annotations.push(noHayDatos);
             $('#institucionPieGBIF').highcharts(institutionPieGbifOptions);
-
             // GRAFICO TEMPORAL ANUAL GBIF
             var chartGbifOptions={
                 chart: {
@@ -543,7 +530,6 @@ function changeFeatures(first, last) {
             }
             if(y==0)chartGbifOptions.annotations.push(noHayDatos);
             chartGBIF = new Highcharts.Chart(chartGbifOptions);
-
             // GRAFICO TEMPORAL ANUAL REUNA
             var chartReunaOptions={
                 chart: {
@@ -647,7 +633,6 @@ function changeFeatures(first, last) {
             }
             if(y==0)chartReunaOptions.annotations.push(noHayDatos);
             chartREUNA = new Highcharts.Chart(chartReunaOptions);
-
             // GRAFICO TEMPORAL ACUMULACION
             var acumulatedOptions={
                 chart: {
@@ -729,7 +714,6 @@ function changeFeatures(first, last) {
             }
             if(y==0)acumulatedOptions.annotations.push(noHayDatos);
             $('#acumuladas').highcharts(acumulatedOptions);
-
             GbifStacked = new Highcharts.Chart({
                 chart: {
                     type: 'bar',
@@ -810,7 +794,6 @@ function changeFeatures(first, last) {
                     }
                 }
             });
-
             var j=0;
             var cont=0;
             if(Object.keys(stackedGbifData).length>0){
@@ -860,7 +843,6 @@ var arrayCoordinatesInJS =<?php echo json_encode($coordinatesReuna);?>;
 var arrayCoordinatesGBIFInJS =<?php echo json_encode($coordinatesGBIFInPHP);?>;
 var coordYearsReuna =<?php if(isset($coordYearsREUNA)&&$coordYearsREUNA!="")echo "[".$coordYearsREUNA."]";else{echo "[]";}?>;
 var coordYearsGBIF =<?php if(isset($coordYearsGBIF)&&$coordYearsGBIF!="")echo "[".$coordYearsGBIF."]";else{echo "[]";}?>;
-
 var largo = (arrayCoordinatesInJS.length);
 if (largo > 0) {
     var features = new Array(largo);

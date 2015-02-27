@@ -38,10 +38,10 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             </b>
         </div>
     </div>
-    <!--<div id="summary-right">
+    <div id="summary-right">
         <div id="acumuladas"></div>
         <span style="color:gray">*Existen datos sin fecha de registro</span>
-    </div>-->
+    </div>
 
 </div>
 <p></p>
@@ -117,14 +117,14 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 </div>
             </div>
             <p></p>&nbsp
-            <!--<div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalInGbif-end($accumulatedYearsGbif)); ?>] GBIF
-            </div>-->
+            <div class="suave" style="text-align:center;margin:40px 0 20px 0;display:block;float:none;"> *Datos sin fecha de registro: [<?php echo $totalReuna-end($accumulatedYearsReuna); ?>] Reuna; [<?php echo ($totalInGbif-end($accumulatedYearsGbif)); ?>] GBIF
+            </div>
         </td></tr>
 </table>
 
 <table style="margin:20px;width:945px;">
     <tr><td class="boxinstituc">
-            <div class="heading2" >Distribución Taxonomica  &nbsp</div>
+            <div class="heading2" >Distribución de ocurrencias por genero &nbsp</div>
     <span class="species" style="font-size: 1.2em;margin:10px 150px 20px 13px ;"> A continuación se presenta la distribucion de los registros en Chile de
         la familia <span style="font-style:italic;"><?php if (isset($family)) echo $family; ?></span>en ambas fuentes de datos.
     </span>
@@ -132,14 +132,14 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 <div id="ReunaStacked"></div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos en <?php echo $reuna; ?> o hay problemas con el indice.</span>
+                    <span>No hay datos asociados a Chile en <?php echo $reuna; ?></span>
                 </div>
             <?php endif;?>
             <?php if(count($stackedChildrensGbif)>0):?>
                 <div id="GbifStacked"></div>
             <?php else:?>
                 <div class="sinGrafico">
-                    <span>No hay datos en GBIF o hay problemas con el indice.</span>
+                    <span>No hay datos asociados a Chile en GBIF</span>
                 </div>
             <?php endif;?>
         </td></tr>
@@ -281,6 +281,8 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
             var dataREUNA = drillDownDataReuna[0];
             var drillDownDataGbif = <?php echo json_encode($drillDownDataGbif); ?>;
             var dataGBIF = drillDownDataGbif[0];
+            var accumulatedData=<?php echo json_encode($accumulatedYearsReuna); ?>;
+            var accumulatedDataGbif=<?php echo json_encode($accumulatedYearsGbif); ?>;
             var stackedReunaData=<?php echo json_encode($stackedChildrensReuna);?>;
             var stackedGbifData=<?php echo json_encode($stackedChildrensGbif);?>;
             var noHayDatos={
@@ -343,8 +345,88 @@ $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodi
                 }],
                 annotations:[]
             };
-            console.log('instreunadata');
-            console.log(institutionDataReuna[0][0]);
+            //console.log()
+            // GRAFICO TEMPORAL ACUMULACION
+            var acumulatedOptions={
+                chart: {
+                    type: 'area'
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    //itemWidth: 150
+                    adjustChartSize: true
+                },
+                title: {
+                    text: 'Acumulación registros en el tiempo por fuente de datos',
+                    style: '"fontSize": "12px"'
+                },
+                xAxis: {
+                    allowDecimals: false,
+                    labels: {
+                        rotation: 0,
+                        formatter: function () {
+                            return this.value; // clean, unformatted number for year
+                        }
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    fontWeight: 'bold',
+                    title: {
+                        text: '<b></b>' // AQUI LEYENDA EJE Y
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:25px">año {point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true,
+                    positioner: function () {
+                        return { x: 0, y: 0 };
+                    }
+                },
+                plotOptions: {
+                    area: {
+                        pointStart: 1900,
+                        marker: {
+                            enabled: false,
+                            symbol: 'circle',
+                            radius: 2,
+                            states: {
+                                hover: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    series :{
+                        lineColor: '#FFFFFF'
+                    }
+                },
+                series: [{
+                    name:'GBIF',
+                    data: accumulatedDataGbif,
+                    color:'#53AD25'
+                },{
+                    name: '<?php echo $reuna; ?>',
+                    data:accumulatedData,
+                    color:'#000000'
+                }],
+                annotations:[]
+            };
+            y=0;
+            for(var i=0;i<accumulatedDataGbif.length;i++){
+                y+=accumulatedDataGbif[i];
+            }
+            for(var i=0;i<accumulatedData.length;i++){
+                y+=accumulatedData[i];
+            }
+            if(y==0)acumulatedOptions.annotations.push(noHayDatos);
+            $('#acumuladas').highcharts(acumulatedOptions);
             if(institutionDataReuna[0].length==0)institutionPieReunaOptions.annotations.push(noHayDatos);
             $('#institucionPieREUNA').highcharts(institutionPieReunaOptions);
             var institutionPieGbifOptions={

@@ -7,44 +7,158 @@
  */
 $queryFilterWord = isset($_REQUEST['qw']) ? $_REQUEST['qw'] : false;
 $path = drupal_get_path('module', 'analizador_biodiversidad');
-include($path . '/include/functions.php');
-include($path . '/include/solrConnection.php');
-include($path . '/Apache/Solr/Service.php');
+include($path . '/include/functions.php');//libreria que carga todas las funciones a utilizar
+include($path . '/include/solrConnection.php');//libreria necesaria para la conexion a Solr
+include($path . '/Apache/Solr/Service.php');//libreria necesaria para los servicios de Solr
 //
 
 class Genero{
-    private $genusKey='';
+    /**
+     * clave del genero
+     * @var integer $genusKey
+     * @access private
+     */
+    private $genusKey=0;
+    /**
+     *jerarquia taxonomica
+     * @var sting $hierarchy
+     * @access private
+     */
     private $hierarchy='';
+    /**
+     *busqueda realizada
+     * @var array $search
+     * @access private
+     */
     private $search='';
-    private $specie=array();
-    private $categorias=array();
+    /**
+     *categorias en decadas para graficos anuales
+     * @var array $categories
+     * @access private
+     */
+    private $categories=array();
+    /**
+     *total de observaciones en Reuna
+     * @var integer $totalReuna
+     * @access private
+     */
     private $totalReuna;
+    /**
+     *total de observaciones con coordenadas
+     * @var integer $totalReunaWithCoordinates
+     * @access private
+     */
     private $totalReunaWithCoordinates=0;
+    /**
+     *coordenadas por año
+     * @var string
+     * @access private
+     */
     private $coordYearsREUNA;
     private $institutionNames=array();//(reuna)
+    /**
+     *años acumulados reuna
+     * @var array $accumulatedYearsReuna
+     * @access private
+     */
     private $accumulatedYearsReuna=array();
+    /**
+     *
+     * @var array $taxonChildrens
+     * @access private
+     */
     private $taxonChildrens=array();
     private $coordinatesReuna;
     private $dataReuna=array();
     private $yearCount=array();//reuna
+    /**
+     *graficos Reuna
+     * @var array $drillDownDataReuna
+     * @access private
+     */
     private $drillDownDataReuna=array();
+    /**
+     *especies de un genero dado
+     * @var array $stackedChildrensReuna
+     * @access private
+     */
     private $stackedChildrensReuna=array();
     private $totalGbif;
+    /**
+     *coordenadas por año
+     * @var string $coordYearsGbif
+     * @access private
+     */
     private $coordYearsGBIF;
+    /**
+     *cuenta años en Gbif
+     * @var array $yearCountGbif
+     * @access private
+     */
     private $yearCountGbif=array();
+    /**
+     *instituciones en Gbif
+     * @var array $institutionNamesGbif
+     * @access private
+     */
     private $institutionNamesGBIF=array();
+    /**
+     *cuenta registros por mes
+     * @var array $monthCountReuna
+     * @access private
+     */
     private $monthCount=array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     private $someVar='';
-    private $drillDownDataGbif=array();//grafico Gbif
+    /**
+     *graficos Gbif
+     * @var array $drillDownDataGbif
+     * @access private
+     */
+    private $drillDownDataGbif=array();
+    /**
+     *años acumulados Gbif
+     * @var array $accumulatedYearsGbif
+     * @access private
+     */
     private $accumulatedYearsGbif=array();
     private $categoryYears;
+    /**
+     *coordenadas de Gbif
+     * @var array $coordinatesGbifInPhp
+     * @access private
+     */
     private $coordinatesGBIFInPHP=array();
     private $dataGbif=array();
+    /**
+     *total de observaciones en Gbif
+     * @var integer $totalInGbif
+     * @access private
+     */
     private $totalInGbif;
     private $stackedChildrensGbif=array();
+    /**
+     *toda la informacion de institucion para ser graficado
+     * @var array $institutionDataReuna
+     * @access private
+     */
     private $institutionDataReuna=array();
+    /**
+     *toda la informacion de institucion para ser graficado
+     * @var array $institutionDataGbif
+     * @access private
+     */
     private $institutionDataGbif=array();
+    /**
+     *informacion de instituciones
+     * @var array $institutionInfo
+     * @access private
+     */
     private $institutionInfo=array();
+    /**
+     *nombre del autor y genero
+     * @var string $nameSpecieAuthor
+     * @access private
+     */
     private $nameSpecieAuthor='';
 
     public function setInstitutionInfo($institutionInfo){
@@ -54,7 +168,7 @@ class Genero{
     public function setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaWithCoordinates,$totalGbif,$coordYearsREUNA,
                                 $coordYearsGBIF,$yearCountGbif,$institutionNames,$institutionNamesGBIF,$yearCount,$monthCount,$someVar,
                                 $drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears,$coordinatesGBIFInPHP,$coordinatesReuna
-                            ,$dataReuna,$dataGbif,$totalInGbif,$stackedChildrensReuna,$stackedChildrensGbif,$categorias,
+                            ,$dataReuna,$dataGbif,$totalInGbif,$stackedChildrensReuna,$stackedChildrensGbif,$categories,
                                 $institutionDataReuna,
                                 $institutionDataGbif,$nameSpecieAuthor,$hierarchy){
 
@@ -84,7 +198,7 @@ class Genero{
         $this->totalInGbif=$totalInGbif;
         $this->stackedChildrensReuna=$stackedChildrensReuna;
         $this->stackedChildrensGbif=$stackedChildrensGbif;
-        $this->categorias=$categorias;
+        $this->categories=$categories;
         $this->institutionDataReuna=$institutionDataReuna;
         $this->institutionDataGbif=$institutionDataGbif;
         $this->nameSpecieAuthor=$nameSpecieAuthor;
@@ -175,8 +289,8 @@ class Genero{
     public function getStackedChildrensGbif(){
         return $this->stackedChildrensGbif;
     }
-    public function getCategorias(){
-        return $this->categorias;
+    public function getCategories(){
+        return $this->categories;
     }
     public function getInstitutionInfo(){
         return $this->institutionInfo;
@@ -191,7 +305,7 @@ class Genero{
 }
 $hierarchy='';
 $nameSpecieAuthor='';
-$categorias=array();
+$categories=array();
 $stackedChildrensReuna=array();
 $stackedChildrensGbif=array();
 $reuna='REUNA';
@@ -225,11 +339,11 @@ $institutionNamesReuna = array();
 $institutionNamesGBIF = array();
 $instituionsNamesOcurr = array();
 $yearCount = array();
+$yearCountGbif = array();
 $genusKey='';
 $totalInGbif=0;
 $yearsGBIFforRange = array();
 $monthCount = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-$yearCountGbif = array();
 $coordYearsREUNA;
 $coordYearsGBIF;
 $additionalParameters = array();
@@ -313,7 +427,7 @@ if ($search) {
         $totalInGbif=$results->getTotalInGbif();
         $stackedChildrensReuna=$results->getStackedChildrensReuna();
         $stackedChildrensGbif=$results->getStackedChildrensGbif();
-        $categorias=$results->getCategorias();
+        $categories=$results->getCategories();
         $institutionInfo=$results->getInstitutionInfo();
         $institutionDataReuna=$results->getInstitutionData('reuna');
         $institutionDataGbif=$results->getInstitutionData('gbif');
@@ -470,9 +584,9 @@ if ($search) {
                 }
             }
         }
-        $categorias=CalculaEjeX($yearCount,$yearCountGbif);
-        $drillDownDataGbif=createDrilldown($yearCountGbif,$categorias);
-        $drillDownDataReuna=createDrilldown($yearCount,$categorias);
+        $categories=setCategoryDecades($yearCount,$yearCountGbif);
+        $drillDownDataGbif=createDrilldown($yearCountGbif,$categories);
+        $drillDownDataReuna=createDrilldown($yearCount,$categories);
         $categoryYears=setCategoryYears();
         $accumulatedYearsGbif=setAccumulatedYears($yearCountGbif);
         $accumulatedYearsReuna=setAccumulatedYears($yearCount);
@@ -493,7 +607,7 @@ if ($search) {
 
         $GenusObject->setGenero($genusKey,$search,$totalReuna,$taxonChildrens,$totalReunaWithCoordinates,$totalGbif,$coordYearsREUNA,
             $coordYearsGBIF,$yearCountGbif,$institutionNamesReuna,$institutionNamesGBIF,$yearCount,$monthCount,$mesGbif,$drillDownDataGbif,$drillDownDataReuna,$accumulatedYearsGbif,$accumulatedYearsReuna,$categoryYears
-            ,$coordinatesGBIFInPHP,$coordinatesReuna,$dataReuna,$dataGbif,$totalInGbif,$stackedChildrensReuna,$stackedChildrensGbif,$categorias,$institutionDataReuna,
+            ,$coordinatesGBIFInPHP,$coordinatesReuna,$dataReuna,$dataGbif,$totalInGbif,$stackedChildrensReuna,$stackedChildrensGbif,$categories,$institutionDataReuna,
             $institutionDataGbif,$nameSpecieAuthor,$hierarchy);
         $GenusObject->setInstitutionInfo($institutionInfo);
 
