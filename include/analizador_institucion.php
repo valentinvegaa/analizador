@@ -7,53 +7,15 @@
  */
 $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'analizador_biodiversidad');
 ?>
-<!--<div>
-    <form  accept-charset="utf-8" method="post">
-        <input id="qw" class="busqueda" name="qw" type="text" size="35" value="<?php //echo htmlspecialchars($specie, ENT_QUOTES, 'utf-8'); ?>"/>
-        <input type="submit" value="Search"/>
-    </form>
-</div>-->
 <div class="nombre-completo"><span style="color: darkgray">INSTITUCIÓN </span><?php if (isset($search)) echo $search; ?>
 </div>
 <div style="font-size: 1.2em;">Se encontraron <b><?php echo $totalReuna; ?></b> observaciones asociadas en la base de datos REUNA</div>
 Explore los resultados:
-<div id="index">
-    <div id="left-index">
-        <div id="left-t-index">
-            <div class="title-a">Composición Taxonómica</div>
-            <div class="line"><a href="#ReunaStacked"><span><?php ?> Especies</span> en la base de datos REUNA.</a></div>
-            <div class="line"><a href="#GbifStacked"><span><?php //sizeof($familyChildrens);?> Especies</span> en la base de datos GBIF.</a></div>
-            <div class="endline">Última especie del Genero ingresado a REUNA:  <span><?php //ultimo taxon menor?>"leptochiton"</span></div>
-        </div>
-        <div id="left-b-index">
-            <div class="title-a"><a href="#geografica">Distribución Geográfica</a></div>
-            <div class="line"><span class="bignumber"><?php echo $totalReunaConCoordenadas; ?></span> Ocurrencias Georeferenciadas en la base de datos Reuna</div>
-            <div class="line"><span class="bignumber"><?php echo $totalGbifWithCoordinates; ?></span> Ocurrencias Georeferenciadas en la base de datos Gbif</div>
-            <div class="endline"><span class="bignumber"><?php //numero de regiones?></span> Regiones presentes</div>
-        </div>
-    </div>
-    <div id="right-index">
-        <div id="right-t-index">
-            <div class="title-b"><a href="#temporal">Distribución Temporal</a></div>
-            <div class="line"><span class="bignumber"><?php echo sizeof(array_unique(explode(', ',$coordYearsREUNA)))?></span> años con registros en la base de datos Reuna</div>
-            <div class="line"><span class="bignumber"><?php echo sizeof($yearCountGbif)?></span> años con registros en la base de datos Gbif</div>
-            <div class="endline">Periodo de registros Reuna: <span class="bignumber"><?php $var=explode(',',$coordYearsREUNA);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-            <div class="endline">Periodo de registros Gbif: <span class="bignumber"><?php $var=explode(',',$coordYearsGbif);ksort($var);echo $var[count($var)-2].' - '.$var[0]?></span></div>
-        </div>
-        <div id="right-b-index">
-            <div class="title-b"><a href="#institucion">Instituciones</a></div>
-            <div class="line"><span><?php echo sizeof($institutionNamesReuna)?></span> Organismos (REUNA) han contribuido con registros de la Familia <?if (isset($search)) echo $search;?></div>
-        </div>
-    </div>
-</div>
 <div class="wraper-container" style="padding-top: 40px;">
     <div id="rank"></div>
     <div>
         <div>Años en los que participa esta entidad</div>
         <div id="participacionAnual"></div>
-        <div id="anyos">Grafico de barras participacion anual, ultimos 80 años para esta entidad</div>
-        <div>Años acumulados en los que participa esta entidad</div>
-        <div id="anyos">Grafico de lineas participacion anual acumulada, ultimos 80 años años para esta entidad</div>
     </div>
     <div id="mapContainerHorizontal" class="mapContainerHorizontal"></div>
     <div style="margin-bottom: 50px"><div class="izq">Nombre region</div><div class="der">participacion</div></div>
