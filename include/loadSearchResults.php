@@ -45,10 +45,21 @@ function makeTaxaHierarchy($i){
         $result.=''.$order.'';
     }
     if($family!=''){
-        $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/family/'.$family.'">'.$family.'</a>';
+        if(strpos($_SERVER['HTTP_REFERER'],'?q=')==false){
+            $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/family/'.$family.'">'.$family.'</a>';
+        }
+        else{
+            $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . 'family/'.$family.'">'.$family.'</a>';
+        }
     }
     if($genus!=''){
-        $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/genus/'.$genus.'">'.$genus.'</a>';
+        if(strpos($_SERVER['HTTP_REFERER'],'?q=')==false){
+            $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . '/genus/'.$genus.'">'.$genus.'</a>';
+        }
+        else{
+            $result.=' > <a href="'.$_SERVER['HTTP_REFERER'] . 'genus/'.$genus.'">'.$genus.'</a>';
+        }
+
     }
     return $result;
 };
@@ -136,7 +147,12 @@ function constructResult($searchResults,$solr,$number){
                 $cleanResults.= '<div class="result" id="'.($reunaCount+$count).'">';
                 $cleanResults.= '<div class="scientificName">';
                 $cleanResults.= '<span>'.$number.') </span>'; // aqui va el numero de la aparicion
-                $cleanResults.= '<a href="'.$_SERVER['HTTP_REFERER'].'/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
+                if(strpos($_SERVER['HTTP_REFERER'],'?q=')==false){
+                    $cleanResults.= '<a href="'.$_SERVER['HTTP_REFERER'].'/'.$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
+                }
+                else{
+                    $cleanResults.= '<a href="'.$_SERVER['HTTP_REFERER'].$taxaUrl.'/' .$i['canonicalName']. '">' . $i['canonicalName'].'</a> '.$autor .'<div class="resultCount">[Registros] Reuna: '.$reunaCount.' Gbif: '.$count.'</div>';//URL
+                }
                 $cleanResults.= '</div>';//div fin scientificName
                 $cleanResults.= '<div class="moreInfo">
                     <div class="rank">Tipo: '.$rank.'</div>
